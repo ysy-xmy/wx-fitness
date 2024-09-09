@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "tab-buycourse": "../../components/index/tab-buycourse",
+    "tab-mycourse": "../../components/index/tab-mycourse"
+  }
+}

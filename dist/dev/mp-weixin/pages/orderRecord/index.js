@@ -1,0 +1,1 @@
+"use strict";const e={};const r=require("../../common/vendor.js")._export_sfc(e,[["render",function(e,r){return{}}],["__file","D:/code/vscode project/fitness-wxclient/src/pages/orderRecord/index.vue"]]);wx.createPage(r);

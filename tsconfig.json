@@ -1,0 +1,24 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "baseUrl": ".",
+    "strict": true,
+    "isolatedModules": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@vant/weapp/*": ["path/to/node_modules/@vant/weapp/dist/*"]
+
+    },
+    "lib": ["esnext", "dom"],
+    "types": [
+      "@dcloudio/types",
+      
+    ]
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+
+}

@@ -1,0 +1,1 @@
+<canvas wx:if="{{a}}" type="2d" class="ec-canvas" canvas-id="{{b}}" bindinit="{{c}}" bindtouchstart="{{d}}" bindtouchmove="{{e}}" bindtouchend="{{f}}"></canvas><block wx:else><canvas wx:if="{{r0}}" class="ec-canvas" canvas-id="{{g}}" bindinit="{{h}}" bindtouchstart="{{i}}" bindtouchmove="{{j}}" bindtouchend="{{k}}"></canvas></block>
