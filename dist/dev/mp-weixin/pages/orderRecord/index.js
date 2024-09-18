@@ -1,1 +1,1 @@
-"use strict";const e={};const r=require("../../common/vendor.js")._export_sfc(e,[["render",function(e,r){return{}}],["__file","D:/code/vscode project/fitness-wxclient/src/pages/orderRecord/index.vue"]]);wx.createPage(r);
+"use strict";const e=require("../../common/vendor.js"),r={};function c(s,t){return{}}const n=e._export_sfc(r,[["render",c],["__file","D:/data/project/fitness/prod/wx-fitness/src/pages/orderRecord/index.vue"]]);wx.createPage(n);
