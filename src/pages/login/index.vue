@@ -2,7 +2,7 @@
     <view class="contain">
         <view class="con">
             <view class="content rounded-lg">
-                <view class="title text-3xl text-teal-500 my-4"> Sign In </view>
+                <view class="title text-3xl text-teal-500 my-4"> 登录 </view>
 
                 <!-- <view class="ip-info">
                     <view class="inps">
@@ -14,17 +14,14 @@
                 </view> -->
 
                 <view class="btns">
-                    <button class="bg-violet-300 w-auto rounded-lg text-zinc-50" @click="login">
-                        微信登录
+                    <button open-type="getPhoneNumber" class="bg-green-500 w-auto rounded-lg text-zinc-50"
+                        @click="login">
+                        手机号快捷登录
                     </button>
+
                 </view>
 
-                <view class="desc">
-                    <text>
-                        Don't have an account?
-                        <text class="text-violet-500"> Sign Up </text>
-                    </text>
-                </view>
+
             </view>
         </view>
     </view>
@@ -47,7 +44,13 @@ function login() {
     //     name: 'home',
     // });
 
+
+
 }
+
+
+
+
 
 const getLogincode = (code: string, nickName: string, avatarUrl: string) => {
     uni.request({

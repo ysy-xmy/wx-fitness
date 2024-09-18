@@ -32,10 +32,16 @@
                     <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
                         alt="">
                 </div>
-                <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
+                <div class="w-5/6 flex pl-2 flex-row items-center justify-between">
                     <div class="text-box">
                         <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练 <van-icon name="circle" />
+                            <h1 class="text-lg font-bold py-2"> 陈教练
+                                <text style="font-size: 25px; color:#a54aff ;"
+                                    class="cuIcon-female w-10 h-10 text-2xl text-red  margin-right-xs"></text>
+
+                                <text style="font-size: 25px; color:#16a9fa ;"
+                                    class="cuIcon-male w-10 h-10 text-2xl text-red  margin-right-xs"></text>
+
                                 <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
                             </h1>
 

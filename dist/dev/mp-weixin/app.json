@@ -1,13 +1,14 @@
 {
   "pages": [
+    "pages/home/index",
+    "pages/coursePurchase/index",
+    "pages/course/index",
     "pages/login/index",
     "pages/indicators/index",
-    "pages/home/index",
     "pages/orderRecord/index",
     "pages/exitinfo/index",
     "pages/mycourse/index",
     "pages/coachcontact/index",
-    "pages/course/index",
     "pages/wode/index"
   ],
   "usingComponents": {

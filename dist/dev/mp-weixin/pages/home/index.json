@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "健管家",
+  "navigationBarTitleText": "轻律健身小助手",
   "usingComponents": {
     "index": "../index/index",
     "action": "../action/index",

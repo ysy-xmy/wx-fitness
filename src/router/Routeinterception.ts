@@ -2,7 +2,7 @@
 import type { Router } from 'uni-mini-router';
 import { useAuthStore } from '@/state/modules/auth';
 // 设置一些白名单
-const whiteList = ['login', 'wode', 'home', 'index', 'course', 'contact', 'mycourse', 'info', 'orderRecord', 'indicators'];
+const whiteList = ['login', 'wode', 'home', 'index', 'course', 'contact', 'mycourse', 'info', 'orderRecord', 'indicators', 'buyCourse'];
 
 export function userRouternext(router: Router) {
     router.beforeEach((to, from, next) => {

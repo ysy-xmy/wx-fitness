@@ -9,7 +9,7 @@ export const useAppStore = defineStore({
     id: 'app-store',
     state: (): AppState => ({
         conunt: 1,
-        active: 'mine',
+        active: 'index',
     }),
     getters: {
         getNum(): number {

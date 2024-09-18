@@ -7,6 +7,36 @@
 	// 注意：此处定义的name字段必须全局唯一。
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages		
 		{
+			"path": "pages/home/index",
+			"name": "home",
+			"meta": {
+				"islogin": false
+			},
+			"style": {
+				"navigationBarTitleText": "轻律健身小助手"
+			}
+		},
+		{
+			"path": "pages/coursePurchase/index",
+			"name": "buyCourse",
+			"meta": {
+				"islogin": true
+			},
+			"style": {
+				"navigationBarTitleText": "购买"
+			}
+		},
+		{
+			"path": "pages/course/index",
+			"name": "course",
+			"meta": {
+				"islogin": true
+			},
+			"style": {
+				"navigationBarTitleText": "私教课"
+			}
+		},
+		{
 			"path": "pages/login/index",
 			"name": "login",
 			"meta": {
@@ -25,16 +55,6 @@
 			},
 			"style": {
 				"navigationBarTitleText": "健康指标"
-			}
-		},
-		{
-			"path": "pages/home/index",
-			"name": "home",
-			"meta": {
-				"islogin": false
-			},
-			"style": {
-				"navigationBarTitleText": "健管家"
 			}
 		},
 		{
@@ -75,16 +95,6 @@
 			},
 			"style": {
 				"navigationBarTitleText": "私教联系"
-			}
-		},
-		{
-			"path": "pages/course/index",
-			"name": "course",
-			"meta": {
-				"islogin": true
-			},
-			"style": {
-				"navigationBarTitleText": "私教课"
 			}
 		},
 		{
