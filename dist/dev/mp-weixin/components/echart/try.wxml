@@ -1,1 +1,1 @@
-<view class="data-v-862d94d1"><view class="title data-v-862d94d1">我的主页</view><view class="data-v-862d94d1"><l-echart class="echart r data-v-862d94d1" u-r="chart" bindfinished="{{b}}" u-i="862d94d1-0" bind:__l="__l"></l-echart></view></view>
+<view class="data-v-862d94d1"><view class="data-v-862d94d1"><l-echart class="echart r data-v-862d94d1" u-r="chart" bindfinished="{{b}}" u-i="862d94d1-0" bind:__l="__l"></l-echart></view></view>

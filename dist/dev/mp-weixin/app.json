@@ -1,8 +1,8 @@
 {
   "pages": [
-    "pages/login/index",
-    "pages/indicators/index",
     "pages/home/index",
+    "pages/indicators/index",
+    "pages/login/index",
     "pages/orderRecord/index",
     "pages/exitinfo/index",
     "pages/mycourse/index",
