@@ -1,1 +1,0 @@
-"use strict";const e=require("../../common/vendor.js"),n=e.defineComponent({__name:"index",setup(n){const o=e.H(),s=()=>{o.push({name:"info"})},r=()=>{o.push({name:"orderRecord"})},t=()=>{o.push({name:"indicators"})};return(n,o)=>({a:e.o(s),b:e.o(r),c:e.o(t)})}}),o=e._export_sfc(n,[["__file","J:/外包/wx-fitness/src/pages/mine/index.vue"]]);wx.createComponent(o);

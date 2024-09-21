@@ -1,1 +1,0 @@
-"use strict";const e=require("../../common/vendor.js"),s=require("../../state/modules/auth.js"),t=e.defineComponent({__name:"index",setup(t){function n(){}return e.H(),s.useAuthStore(),e.reactive({name:"小团体",passWord:"123456"}),(s,t)=>({a:e.o(n)})}}),n=e._export_sfc(t,[["__scopeId","data-v-45258083"],["__file","J:/外包/wx-fitness/src/pages/login/index.vue"]]);wx.createPage(n);

@@ -1,14 +1,22 @@
 {
   "pages": [
     "pages/home/index",
-    "pages/indicators/index",
-    "pages/login/index",
-    "pages/orderRecord/index",
-    "pages/exitinfo/index",
-    "pages/mycourse/index",
-    "pages/coachcontact/index",
-    "pages/course/index",
-    "pages/wode/index"
+    "pages/course/index"
+  ],
+  "subPackages": [
+    {
+      "root": "subpackages",
+      "pages": [
+        "studentDetail/index",
+        "coursePurchase/index",
+        "indicators/index",
+        "orderRecord/index",
+        "exitinfo/index",
+        "mycourse/index",
+        "coachcontact/index",
+        "wode/index"
+      ]
+    }
   ],
   "usingComponents": {
     "van-circle": "/wxcomponents/vant/circle/index",

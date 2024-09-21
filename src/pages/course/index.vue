@@ -123,7 +123,8 @@
                 <span class="btn-text">联系教练</span>
             </div>
             <div class="btn-item flex-1">
-                <van-button square class="w-full rounded-lg" size="large" type="primary" color="#fd7d46">报名</van-button>
+                <van-button @click="buyCourse" square class="w-full rounded-lg" size="large" type="primary"
+                    color="#fd7d46">报名</van-button>
 
             </div>
 
@@ -142,6 +143,12 @@ const router = useRouter();
 const contact = () => {
     router.push(
         { name: 'contact' }
+    );
+}
+
+const buyCourse = () => {
+    router.push(
+        { name: 'buyCourse' }
     );
 }
 </script>

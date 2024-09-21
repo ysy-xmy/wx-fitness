@@ -1,22 +1,15 @@
 <template>
     <view class="content w-screen px-2 flex flex-wrap">
 
-
-        <!-- 
-        <vin-button color="#7232dd" @click="push"> 跳转路由 </vin-button>
-
-        <vin-button color="#7232dd" @click="apis"> api请求 </vin-button>
- -->
         <view class="w-full flex justify-start items-center">
             <van-search class="flex-1" @search="onSearch" @cancel="onCancel" v-model="searchword"
                 placeholder="请输入搜索关键词" />
             <template #action>
                 <div @click="search">搜索</div>
             </template>
-
         </view>
-        <div class="w-full exhibition-box my-5  relative flex justify-centers">
 
+        <div class="w-full exhibition-box my-5  relative flex justify-centers">
             <div class="w-full h-full bg-black absolute opacity-25"></div>
             <img class="w-full h-50 " src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
             <div class="absolute text-white bottom-0 w-full p-2  flex-wrap flex justify-center items-center">
@@ -57,26 +50,15 @@
 <script setup lang="ts" name="index">
 import { ref } from 'vue';
 import { useRouter } from 'uni-mini-router';
-// import coas from '@/static/logo.png';
 import { useAppStore } from '@/state/app';
 import { getlist } from '@/api/common/user/user';
 import tabBuycourse from '@/components/index/tab-buycourse.vue';
 import tabMycourse from '@/components/index/tab-mycourse.vue';
-// import vinButton from '@vingogo/uni-ui/lib/components/button/index.vue';
-
 const router = useRouter();
 const usetsto = useAppStore();
-
 let env = import.meta.env.VITE_APP_ENV;
 let api = import.meta.env.VITE_BASE_URL;
-
-const title = ref('Tailwind CSS');
-
-const showPreview = ref(false);
-
 const searchword = ref('')
-const onSearch = () => { };
-const onCancel = () => { };
 // 跳转路由
 function push() {
     router.push({
@@ -85,7 +67,7 @@ function push() {
 }
 
 //搜索
-function search() {
+function onSearch() {
     console.log(searchword.value, '我搜索了');
 }
 // 请求api
