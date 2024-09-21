@@ -1,1 +1,0 @@
-.content{display:flex;justify-content:center;align-items:center;flex-direction:column}.logo{margin:200rpx auto 50rpx;width:200rpx;height:200rpx}.text-area{display:flex;justify-content:center}.vin-image-preview-custom-pop{display:flex;align-items:center;width:100%;height:100%;background:transparent!important}

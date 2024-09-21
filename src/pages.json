@@ -3,9 +3,17 @@
 		"autoscan": true,
 		"custom": {}
 	},
-	// 在pages.json中为页面路由指定name字段后，即可以使用name跳转
-	// 注意：此处定义的name字段必须全局唯一。
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages		
+	"pages": [
+		{
+			"path": "pages/studentDetail/index",
+			"name": "studentDetail",
+			"meta": {
+				"islogin": false
+			},
+			"style": {
+				"navigationBarTitleText": "学员详情"
+			}
+		},
 		{
 			"path": "pages/home/index",
 			"name": "home",
@@ -14,6 +22,28 @@
 			},
 			"style": {
 				"navigationBarTitleText": "轻律健身小助手"
+			}
+		},
+		{
+			"path": "pages/coachHome/index",
+			"name": "coachHome",
+			"meta": {
+				"islogin": false
+			},
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "login"
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"name": "login",
+			"meta": {
+				"islogin": false
+			},
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "login"
 			}
 		},
 		{
@@ -34,17 +64,6 @@
 			},
 			"style": {
 				"navigationBarTitleText": "私教课"
-			}
-		},
-		{
-			"path": "pages/login/index",
-			"name": "login",
-			"meta": {
-				"islogin": false
-			},
-			"style": {
-				"navigationStyle": "custom", // 使用自定义导航栏，系统会关闭默认的原生导航栏
-				"navigationBarTitleText": "login"
 			}
 		},
 		{

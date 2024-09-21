@@ -1,9 +1,11 @@
 {
   "pages": [
+    "pages/studentDetail/index",
     "pages/home/index",
+    "pages/coachHome/index",
+    "pages/login/index",
     "pages/coursePurchase/index",
     "pages/course/index",
-    "pages/login/index",
     "pages/indicators/index",
     "pages/orderRecord/index",
     "pages/exitinfo/index",
