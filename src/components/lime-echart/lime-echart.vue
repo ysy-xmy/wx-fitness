@@ -1,16 +1,38 @@
 <template>
   <view>
-	  <van-tabs v-if="type!=1" type="card" style="width: 130px;float: right;font-size: small;height: 30px;line-height: 30px;margin-top: 20px;">
-	    <van-tab title="周"></van-tab>
-	    <van-tab title="月"></van-tab>
-	    <van-tab title="日"></van-tab>
-	  </van-tabs>
-	  <van-tabs v-else type="card" style="width: 130px;float: right;font-size: small;height: 30px;line-height: 30px;margin-top: 20px;">
-	    <van-tab title="全部"></van-tab>
-	    <van-tab title="胸围"></van-tab>
-	    <van-tab title="腰围"></van-tab>
-	    <van-tab title="臀围"></van-tab>
-	  </van-tabs>
+    <van-tabs
+      v-if="type != 1"
+      type="card"
+      style="
+        width: 130px;
+        float: right;
+        font-size: small;
+        height: 30px;
+        line-height: 30px;
+        margin-top: 20px;
+      "
+    >
+      <van-tab title="周"></van-tab>
+      <van-tab title="月"></van-tab>
+      <van-tab title="日"></van-tab>
+    </van-tabs>
+    <van-tabs
+      v-else
+      type="card"
+      style="
+        width: 260px;
+        float: right;
+        font-size: small;
+        height: 30px;
+        line-height: 30px;
+        margin-top: 20px;
+      "
+    >
+      <van-tab title="全部"></van-tab>
+      <van-tab title="胸围"></van-tab>
+      <van-tab title="腰围"></van-tab>
+      <van-tab title="臀围"></van-tab>
+    </van-tabs>
     <l-echart ref="chart" @finished="init"></l-echart>
   </view>
 </template>
@@ -78,7 +100,7 @@ const init = () => {
   });
 };
 
-const type=ref(0)//和other
+const type = ref(0); //和other
 const save = () => {
   chart.value.canvasToTempFilePath({
     success(res) {
@@ -89,10 +111,9 @@ const save = () => {
 
 onMounted(() => {
   init();
-  uni.$on('changeType',val=>{
-	  console.log(val)
-		type.value=val;
-  })
+  uni.$on("changeType", (val) => {
+    type.value = val;
+  });
 });
 </script>
 
