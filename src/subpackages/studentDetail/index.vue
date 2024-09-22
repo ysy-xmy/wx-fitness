@@ -34,10 +34,14 @@
       </div>
     </div>
     <div
-      class="cardTitle w-11/12 flex bg-[#E9E9E9] h-10 leading-10 justify-between px-3 rounded mt-4"
+      class="cardTitle w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4"
     >
       <div class="font-bold">
-        运动基础课<span class="font-thin">(共10节课 已上6节)</span>
+        运动基础课<span
+          class="font-thin"
+          style="color: #6d819cff; margin-left: 2px"
+          >(共10节课 已上6节)</span
+        >
       </div>
       <van-circle
         class="mr-4"
@@ -51,18 +55,19 @@
       />
     </div>
     <div
-      class="w-11/12 flex h-16 bg-[#E9E9E9] justify-between px-3 cardBody"
+      class="w-11/12 flex h-16 bg-[rgba(248,250,255,1)] justify-between cardBody"
       v-for="item in dataList"
     >
       <div>
         <p class="title">{{ item.title }}</p>
-        <p><span class="cuIcon-card"></span> {{ item.day }}</p>
+        <p class="time"><span class="cuIcon-card"></span> {{ item.day }}</p>
       </div>
       <van-checkbox :value="item.finish" checked-color="#ec6853"></van-checkbox>
     </div>
-    <div class="addmore w-11/12 text-center bg-[#E9E9E9]">
+    <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
     </div>
+    <div class="addmore w-11/12">+ 添加课表</div>
   </div>
 </template>
 
@@ -100,22 +105,38 @@ let dataList = ref([
   border-bottom: 1px solid gray;
 }
 .cardBody {
+  padding-left: 0.75rem;
+  padding-right: 1.5rem;
   align-items: center;
   vertical-align: middle;
   //
   .title {
     font-weight: 400;
     font-size: large;
+    color: #282c37ff;
+  }
+  .time {
+    margin-top: 7px;
+    color: #6d819cff;
+    font-size: 14px;
   }
   // &:last-child {
   //   // border-radius: 5px;
   // }
 }
-.addmore {
+.showmore {
   height: 25px;
   line-height: 25px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
+  border-bottom: 1px solid gray;
+}
+.addmore {
+  text-align: right;
+  padding-right: 15px;
+  color: #ff5e3aff;
+  height: 42px;
+  line-height: 42px;
 }
 // .progress {
 //   width: 35px;
