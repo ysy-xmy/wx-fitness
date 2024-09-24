@@ -65,7 +65,7 @@
       <van-checkbox
         :value="item.finish"
         checked-color="#ec6853"
-        @change="changeCheck(e, item)"
+        @change="changeCheck(item)"
       ></van-checkbox>
     </div>
     <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
@@ -82,7 +82,7 @@ type data = {
   day: string;
   finish: boolean;
 };
-const changeCheck = (e: any, item: data) => {
+const changeCheck = (item: data) => {
   console.log(item.finish);
   item.finish = !item.finish;
 };
