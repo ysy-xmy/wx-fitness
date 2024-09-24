@@ -1,1 +1,1 @@
-"use strict";const e=require("../../common/vendor.js"),n=e.defineComponent({__name:"finishedtask",setup(t){return(o,c)=>({})}}),s=e._export_sfc(n,[["__scopeId","data-v-5bea66b0"],["__file","J:/外包/wx-fitness/src/components/mycourse/finishedtask.vue"]]);wx.createComponent(s);
+"use strict";const e=require("../../common/vendor.js"),s=e.defineComponent({__name:"finishedtask",setup:e=>(e,s)=>({})}),o=e._export_sfc(s,[["__scopeId","data-v-5bea66b0"],["__file","D:/code/vscode project/fitness-wxclient/src/components/mycourse/finishedtask.vue"]]);wx.createComponent(o);

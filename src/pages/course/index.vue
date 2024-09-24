@@ -130,11 +130,7 @@
 
 
         </div>
-
-
     </div>
-
-
 </template>
 <script lang="ts" setup name="course">
 import { useRouter } from 'uni-mini-router';
