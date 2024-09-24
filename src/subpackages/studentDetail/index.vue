@@ -2,11 +2,9 @@
   <div class="main flex w-full justify-center flex-col items-center">
     <div class="info mt-5 flex flex-col items-center">
       <div class="avatar">
-        <img
-          class="w-28 h-28 rounded-full"
+        <img class="w-28 h-28 rounded-full"
           src="https://tse2-mm.cn.bing.net/th/id/OIP-C.UjwT5Zhsxxr4S0wmFjSuMAAAAA?w=207&h=207&c=7&r=0&o=5&pid=1.7"
-          alt=""
-        />
+          alt="" />
       </div>
       <h1 class="my-3 text-2xl text-center font-bold">陈景盛</h1>
       <span class="text-gray-400 text-sm text-center">20岁</span>
@@ -33,31 +31,16 @@
         </div>
       </div>
     </div>
-    <div
-      class="cardTitle w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4"
-    >
+    <div class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4">
       <div class="font-bold">
-        运动基础课<span
-          class="font-thin"
-          style="color: #6d819cff; margin-left: 2px"
-          >(共10节课 已上6节)</span
-        >
+        运动基础课<span class="ml-2 font-thin tracking-wider" style="color: #6d819cff; margin-left: 2px">(共10节课 已上6节)</span>
       </div>
-      <van-circle
-        class="mr-4"
-        stroke-width="4"
-        size="40"
-        layer-color="#ebedf0"
-        color="#ec6853"
-        value="70"
-        text="70%"
-        style="margin-top: 15px"
-      />
+      <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
+        style="margin-top: 15px" />
     </div>
-    <div
-      class="w-11/12 flex h-16 bg-[rgba(248,250,255,1)] justify-between cardBody"
-      v-for="item in dataList"
-    >
+
+    <div class="w-11/12 flex h-16 bg-[rgba(248,250,255,1)] justify-between cardBody" v-for="item in dataList"
+      :key="item.title">
       <div>
         <p class="title">{{ item.title }}</p>
         <p class="time"><span class="cuIcon-card"></span> {{ item.day }}</p>
@@ -102,35 +85,42 @@ let dataList = ref([
   align-items: center;
   vertical-align: middle;
   border-radius: 5px;
-  border-bottom: 1px solid gray;
+  border-bottom: 0.5px solid #e5e5e5;
+
 }
+
 .cardBody {
   padding-left: 0.75rem;
   padding-right: 1.5rem;
   align-items: center;
   vertical-align: middle;
+
   //
   .title {
     font-weight: 400;
     font-size: large;
     color: #282c37ff;
   }
+
   .time {
     margin-top: 7px;
     color: #6d819cff;
     font-size: 14px;
   }
+
   // &:last-child {
   //   // border-radius: 5px;
   // }
 }
+
 .showmore {
   height: 25px;
   line-height: 25px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
-  border-bottom: 1px solid gray;
+  border-bottom: 0.5px solid gray;
 }
+
 .addmore {
   text-align: right;
   padding-right: 15px;
@@ -138,6 +128,7 @@ let dataList = ref([
   height: 42px;
   line-height: 42px;
 }
+
 // .progress {
 //   width: 35px;
 //   height: 35px;
@@ -157,5 +148,4 @@ let dataList = ref([
 //     top: 0;
 //     left: 0;
 //   }
-// }
-</style>
+// }</style>
