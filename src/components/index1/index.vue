@@ -1,14 +1,5 @@
 <template>
     <view class="content w-screen px-2 flex flex-wrap">
-
-        <view class="w-full flex justify-start items-center">
-            <van-search class="flex-1" @search="onSearch" @cancel="onCancel" v-model="searchword"
-                placeholder="请输入搜索关键词" />
-            <template #action>
-                <div @click="search">搜索</div>
-            </template>
-        </view>
-
         <div class="w-full exhibition-box my-5  relative flex justify-centers">
             <div class="w-full h-full bg-black absolute opacity-25"></div>
             <img class="w-full h-50 " src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
