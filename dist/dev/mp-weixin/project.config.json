@@ -15,11 +15,12 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "ignoreUploadUnusedFiles": false
   },
   "compileType": "miniprogram",
   "libVersion": "3.5.7",
-  "appid": "wxbd3942644dcc5aaa",
+  "appid": "touristappid",
   "projectname": "",
   "condition": {},
   "editorSetting": {

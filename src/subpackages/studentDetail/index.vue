@@ -62,7 +62,11 @@
         <p class="title">{{ item.title }}</p>
         <p class="time"><span class="cuIcon-card"></span> {{ item.day }}</p>
       </div>
-      <van-checkbox :value="item.finish" checked-color="#ec6853"></van-checkbox>
+      <van-checkbox
+        :value="item.finish"
+        checked-color="#ec6853"
+        @change="changeCheck(e, item)"
+      ></van-checkbox>
     </div>
     <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
@@ -73,6 +77,15 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+type data = {
+  title: string;
+  day: string;
+  finish: boolean;
+};
+const changeCheck = (e: any, item: data) => {
+  console.log(item.finish);
+  item.finish = !item.finish;
+};
 let dataList = ref([
   {
     title: "杠铃十组",
