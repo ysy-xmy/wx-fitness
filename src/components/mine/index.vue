@@ -116,6 +116,21 @@
             </div>
           </view>
         </view>
+        <view
+          @click="diyTab"
+          class="cu-item my-3 w-11/12 shadow-sm p-3 py-5 rounded-xl arrow"
+        >
+          <view class="content py-3 flex flex-row items-center">
+            <text
+              style="font-size: 25px; color: #ff5e3a"
+              class="cuIcon-circlefill text-grey"
+            ></text>
+            <div class="flex flex-col ml-3">
+              <text class="text-[#042c5c] text-xl font-bold">自定义课程</text>
+              <text class="text-gray-500">自定义课程内容</text>
+            </div>
+          </view>
+        </view>
       </view>
     </div>
   </div>
@@ -133,6 +148,9 @@ const orderinfo = () => {
 
 const bodyinfo = () => {
   router.push({ name: "indicators" });
+};
+const diyTab = () => {
+  router.push({ name: "diyTable" });
 };
 </script>
 

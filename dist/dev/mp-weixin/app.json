@@ -7,6 +7,7 @@
     {
       "root": "subpackages",
       "pages": [
+        "diyTable/index",
         "studentDetail/index",
         "coursePurchase/index",
         "indicators/index",
@@ -69,8 +70,7 @@
     "van-rate": "/wxcomponents/vant/rate/index",
     "van-collapse": "/wxcomponents/vant/collapse/index",
     "van-collapse-item": "/wxcomponents/vant/collapse-item/index",
-    "van-picker": "/wxcomponents/vant/picker/index",
-    "van-empty": "/wxcomponents/vant/empty/index"
+    "van-picker": "/wxcomponents/vant/picker/index"
   },
   "window": {
     "navigationBarTextStyle": "black",
