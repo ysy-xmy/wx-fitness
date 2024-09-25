@@ -1,1 +1,34 @@
-"use strict";const n=require("../state/modules/auth.js"),a=["login","wode","home","index","course","contact","mycourse","info","orderRecord","indicators","buyCourse","coachHome","studentDetail","diyTable"];function t(o){o.beforeEach((e,s,i)=>{n.useAuthStore().isLogin||a.includes(e.name)?i():i({name:"login"})}),o.afterEach(e=>{const s=n.useAuthStore();console.log("我先执行还是他先执行"),!s.isLogin&&e&&e.name!=="login"?a.includes(e.name)||o.push({name:"login",params:{...e.query}}):s.isLogin&&e&&e.name==="login"&&o.replaceAll({name:"home"})})}exports.userRouternext=t;
+"use strict";
+const e = require("../state/modules/auth.js"),
+  o = [
+    "login",
+    "wode",
+    "home",
+    "index",
+    "course",
+    "contact",
+    "mycourse",
+    "info",
+    "orderRecord",
+    "indicators",
+    "buyCourse",
+    "coachHome",
+    "studentDetail",
+    "searchStu",
+  ];
+exports.userRouternext = function (n) {
+  n.beforeEach((n, s, t) => {
+    e.useAuthStore().isLogin || o.includes(n.name) ? t() : t({ name: "login" });
+  }),
+    n.afterEach((s) => {
+      const t = e.useAuthStore();
+      console.log("我先执行还是他先执行"),
+        !t.isLogin && s && "login" !== s.name
+          ? o.includes(s.name) ||
+            n.push({ name: "login", params: { ...s.query } })
+          : t.isLogin &&
+            s &&
+            "login" === s.name &&
+            n.replaceAll({ name: "home" });
+    });
+};

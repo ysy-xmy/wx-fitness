@@ -17,6 +17,7 @@ const whiteList = [
   "coachHome",
   "studentDetail",
   "diyTable",
+  "searchStu",
 ];
 
 export function userRouternext(router: Router) {

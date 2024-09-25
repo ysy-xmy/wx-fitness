@@ -50,6 +50,16 @@
           }
         },
         {
+          "path": "searchStu/index",
+          "name": "searchStu",
+          "meta": {
+            "islogin": false
+          },
+          "style": {
+            "navigationBarTitleText": "搜索"
+          }
+        },
+        {
           "path": "coursePurchase/index",
           "name": "buyCourse",
           "meta": {
