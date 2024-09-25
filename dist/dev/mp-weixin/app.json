@@ -8,6 +8,7 @@
       "root": "subpackages",
       "pages": [
         "studentDetail/index",
+        "searchStu/index",
         "coursePurchase/index",
         "indicators/index",
         "orderRecord/index",
