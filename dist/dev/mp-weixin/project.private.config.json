@@ -3,6 +3,6 @@
   "projectname": "fitness-client",
   "setting": {
     "compileHotReLoad": true,
-    "preloadBackgroundData": true
+    "preloadBackgroundData": false
   }
 }
