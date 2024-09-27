@@ -1,1 +1,1 @@
-"use strict";const e=require("../../common/vendor.js").defineStore({id:"auth",state:()=>({token:void 0,user:{}}),getters:{isLogin(){return void 0!==this.token}},actions:{}});exports.useAuthStore=e;
+"use strict";const e=require("../../common/vendor.js").defineStore({id:"auth",state:()=>({token:void 0,user:{}}),getters:{isLogin(){return void 0!==this.token},getUser(){return this.user},getToken(){return this.token}},actions:{setToken(e){this.token=e},setUser(e){this.user=e},clearToken(){this.token=void 0},clearUser(){this.user={}}}});exports.useAuthStore=e;

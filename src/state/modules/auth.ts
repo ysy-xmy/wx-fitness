@@ -23,6 +23,25 @@ export const useAuthStore = defineStore({
         isLogin(): boolean {
             return this.token !== undefined;
         },
+        getUser(): any {
+            return this.user;
+        },
+        getToken(): string | undefined {
+            return this.token;
+        }
     },
-    actions: {},
+    actions: {
+        setToken(token: string) {
+            this.token = token;
+        },
+        setUser(user: any) {
+            this.user = user;
+        },
+        clearToken() {
+            this.token = undefined;
+        },
+        clearUser() {
+            this.user = {};
+        }
+    },
 });

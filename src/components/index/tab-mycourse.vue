@@ -41,7 +41,6 @@ const tomycourse = () => {
         { name: 'mycourse' }
     );
 }
-
 const tocourse = () => {
     router.push(
         { name: 'course' }
