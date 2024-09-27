@@ -1,1 +1,0 @@
-"use strict";const e=require("../../utils/request.js"),i=()=>e.http.get("/api/action/getFirstByName"),r=t=>(t=t.toString(),e.http.get("/api/action/getSecByFirst",{params:{FirstID:t}}));exports.getFirstmenulist=i;exports.getSecByFirst=r;

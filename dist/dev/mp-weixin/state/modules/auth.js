@@ -1,1 +1,0 @@
-"use strict";const t=require("../../common/vendor.js"),e=t.defineStore({id:"auth",state:()=>({token:void 0,user:{}}),getters:{isLogin(){return this.token!==void 0}},actions:{}});exports.useAuthStore=e;

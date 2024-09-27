@@ -1,1 +1,0 @@
-"use strict";const e=require("../../common/vendor.js"),n=e.defineComponent({__name:"finishedtask",setup(t){return(o,c)=>({})}}),s=e._export_sfc(n,[["__scopeId","data-v-5bea66b0"],["__file","J:/外包/wx-fitness/src/components/mycourse/finishedtask.vue"]]);wx.createComponent(s);

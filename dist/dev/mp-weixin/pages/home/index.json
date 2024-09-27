@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "健管家",
-  "usingComponents": {
-    "action": "../../components/action/index",
-    "mine": "../../components/mine/index",
-    "coach-home": "../../components/coachHome/index"
-  }
-}
