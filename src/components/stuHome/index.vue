@@ -18,7 +18,6 @@
             </div>
 
         </div>
-
         <div class="tabs  w-full">
             <van-tabs :class="['custom-class', 'my-custom-tabs']" nav-class="my-nav-class" tab-class="my-tab-class"
                 tab-active-class="my-tab-active-class" swipeable animated border="false" color="#ec6853"
@@ -33,9 +32,7 @@
 
             </van-tabs>
         </div>
-
     </view>
-
 </template>
 
 <script setup lang="ts" name="index">

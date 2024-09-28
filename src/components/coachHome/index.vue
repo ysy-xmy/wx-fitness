@@ -43,7 +43,6 @@ import myStudent from '@/components/myStudent/myStudent.vue';
 const router = useRouter();
 
 const enterSearch = () => {
-    console.log('我点击了搜索按钮');
     router.push({
         name: 'searchStu'
     }

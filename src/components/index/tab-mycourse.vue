@@ -89,7 +89,6 @@ const courseList = reactive<course[]>([]);
 const tomycourse = () => {
   router.push({ name: "mycourse" });
 };
-
 const tocourse = () => {
   router.push({ name: "course" });
 };
