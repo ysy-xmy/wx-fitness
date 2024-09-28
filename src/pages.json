@@ -188,7 +188,8 @@
       "van-rate": "/wxcomponents/vant/rate/index",
       "van-collapse": "/wxcomponents/vant/collapse/index",
       "van-collapse-item": "/wxcomponents/vant/collapse-item/index",
-      "van-picker": "/wxcomponents/vant/picker/index"
+      "van-picker": "/wxcomponents/vant/picker/index",
+      "van-empty": "/wxcomponents/vant/empty/index"
     }
   },
   "style": "v2"

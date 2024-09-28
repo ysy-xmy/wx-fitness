@@ -1,8 +1,8 @@
 <template>
   <div class="viewcontent">
     <div v-show="usetsto.active === 'index'" class="index-page">
-      <!-- <Index /> -->
-      <CoachHome />
+      <Index />
+      <!-- <CoachHome /> -->
     </div>
     <div v-show="usetsto.active === 'action'" class="action-page">
       <Action />
