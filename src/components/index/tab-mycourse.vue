@@ -73,6 +73,12 @@
 import { useRouter } from "uni-mini-router";
 import { getMycourese } from "@/api/courses/courses";
 import { onMounted, reactive } from "vue";
+const props = defineProps<{
+  change: () => void;
+}>();
+onMounted(() => {
+  getList("5", "1");
+});
 type course = {
   ID: number;
   Name: string;
@@ -90,11 +96,12 @@ const tomycourse = () => {
   router.push({ name: "mycourse" });
 };
 const tocourse = () => {
-  router.push({ name: "course" });
+  props.change();
 };
-const getList = async () => {
-  const res = await getMycourese();
+const getList = async (Size: string, Page: string) => {
+  const res = await getMycourese(Size, Page);
   const courseList = res.data;
+  console.log("我的课程", courseList);
 };
 onMounted(async () => {});
 </script>
