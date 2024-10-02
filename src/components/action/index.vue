@@ -1,12 +1,15 @@
 <template>
-    <view>
-        <view class="cu-bar search bg-white">
+    <view class="relative">
+        <view class="cu-bar relative search bg-white">
             <view class="search-form round">
                 <text class="cuIcon-search"></text>
-                <input :adjust-position="false" type="text" placeholder="搜索二级类目、动作" confirm-type="search" />
+                <input v-model="searchValue" :adjust-position="false" type="text" placeholder="搜索二级类目、动作"
+                    confirm-type="search" />
             </view>
 
+
         </view>
+
         <view class="fixed">
             <cu-custom :isBack="false" bgColor="bg-shadeTop text-white">
 
@@ -73,16 +76,78 @@
 
             </scroll-view>
         </view>
+
+        <van-index-bar v-if="searchResult.length > 0" class=" w-screen absolute  z-1000 top-10 bg-[#fafafa]"
+            :index-list="indexList">
+            <!-- 遍历搜索结果 -->
+            <view class="cu-list menu  sm-border card-menu ">
+                <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa' }">
+                    搜索结果
+                </van-divider>
+                <view v-for="(item, index) in searchResult" :key="index"
+                    class=" w-screen flex flex-col items-start content-start">
+                    <view class="content border-none  padding-tb-sm">
+                        <view class="text-black text-center flex justify-between text-lg font-extrabold">
+
+                            <text class="text-black "> 动作： {{ item.name }}</text>
+                            <text class="cuIcon-right text-lg text-blue margin-right-xs mr-3"></text>
+                        </view>
+                        <view v-if="item.children && item.children.length > 0" v-for="(item1, index1) in item.children">
+                            <view class="cu-item pl-8">
+                                <view class="content">
+                                    <view>{{ item1.name }}</view>
+                                </view>
+                            </view>
+
+
+
+                        </view>
+
+                    </view>
+                    <div style="height: 2px;width: 90%;background-color: #f7f8fc;"></div>
+
+
+                </view>
+            </view>
+        </van-index-bar>
+
+
     </view>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, watch } from 'vue';
 import { getFirstmenulist, getSecByFirst, getActionAll } from '@/api/action/action';
 //@ts-ignore
 import type { SourceCategory, TargetCategory, ActionItem, ListItem } from './types.ts'
+const firstmenu = ref<ListItem[]>([
+    { name: "A", id: 0, OrderNum: 1, children: [] },
+]);
+const indexList = ref()
+const searchValue = ref('');
+const searchResult = ref<ListItem[]>([]);
+//排序
+firstmenu.value = sortByOrderNumDescending(firstmenu.value)
+//定义总目录
+const actionrouterList = ref<ListItem[]>([]);
 
-//排序函数
+//定义二级类目menu
+const secMenu = ref<ListItem[]>([
+]);
+
+//排序后的数据
+const tabCur = ref(0);
+const mainCur = ref(0);
+const verticalNavTop = ref(0);
+const load = ref(true);
+const listCur = ref(firstmenu.value[0]);
+type TreeNode = {
+    name: string;
+    id: number;
+    OrderNum: number;
+    children: TreeNode[];
+};
+//总目录排序函数
 function sortByOrderNumDescending(routers: ListItem[]) {
     const sortByOrderIdAndIdDesc = (a: ListItem, b: ListItem): number => {
         if (a.OrderNum !== b.OrderNum) {
@@ -94,6 +159,7 @@ function sortByOrderNumDescending(routers: ListItem[]) {
 
     // 递归排序每个路由及其子项
     const sortChildren = (items: ListItem[]): ListItem[] => {
+        if (!items) return [];
         return items.map(item => ({
             ...item,
             children: sortChildren(item.children) // 递归排序子项
@@ -129,6 +195,32 @@ function transformCategories(source: SourceCategory[]): TargetCategory[] {
                     OrderNum: secondCategory.OrderNum,
                     children: []
                 };
+                if (secondCatInfo.ActionInfos) {
+                    console.log(secondCatInfo.ActionInfos, '22')
+                    secondCatInfo.ActionInfos.forEach(actionInfo => {
+                        console.log(actionInfo.ActionInfos, '33')
+                        const actionItem: ActionItem = {
+                            CreatedAt: actionInfo.ActionInfos.CreatedAt,
+                            Description: actionInfo.ActionInfos.Description,
+                            id: actionInfo.ActionInfos.ID,
+                            name: actionInfo.ActionInfos.Name,
+                            OrderNum: actionInfo.ActionInfos.OrderNum,
+                            SecondCategoryID: actionInfo.ActionInfos.SecondCategoryID,
+                        };
+                        targetSecondCat.children.push(actionItem);
+                    })
+                    // secondCatInfo.ActionInfos.ActionInfos.forEach(actionInfo => {
+                    //     const actionItem: ActionItem = {
+                    //         CreatedAt: actionInfo.CreatedAt,
+                    //         Description: actionInfo.Description,
+                    //         ID: actionInfo.ID,
+                    //         Name: actionInfo.Name,
+                    //         OrderNum: actionInfo.OrderNum,
+                    //         SecondCategoryID: actionInfo.SecondCategoryID,
+                    //     };
+                    //     targetSecondCat.children.push(actionItem);
+                    // });
+                }
 
 
                 targetItem.children.push(targetSecondCat);
@@ -141,63 +233,89 @@ function transformCategories(source: SourceCategory[]): TargetCategory[] {
     return target;
 }
 
+//处理二级目录被选中事件
 const secMenuSelect = (item: ListItem, index: number) => {
 
     actionrouterList.value[mainCur.value].children[index].active = !actionrouterList.value[mainCur.value].children[index].active
 
     console.log(actionrouterList.value[mainCur.value].children[index].active)
 }
+//定义搜索方法：
+const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
+    if (!searchQuery) {
+        searchResult.value = [];
+        return [];
+    }
+    const searchResults: TreeNode[] = [];
 
-const firstmenu = ref<ListItem[]>([
-    { name: "A", id: 0, OrderNum: 1, children: [] },
-    { name: "B", id: 1, OrderNum: 2, children: [] },
-    { name: "C", id: 2, OrderNum: 3, children: [] },
-    { name: "D", id: 3, OrderNum: 4, children: [] }
-]);
+    const searchNode = (node: TreeNode) => {
+        // 确保node.name存在并且是一个字符串
+        if (typeof node.name === 'string' && node.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+            searchResults.push(node);
+        }
+        // 如果有子节点，递归搜索每个子节点
+        if (node.children && node.children.length > 0) {
+            node.children.forEach(child => searchNode(child));
+        }
+    };
 
-firstmenu.value = sortByOrderNumDescending(firstmenu.value)
-
-const actionrouterList = ref<ListItem[]>([]);
-
-//定义二级类目menu
-const secMenu = ref<ListItem[]>([
-]);
-//定义三级类目menu
-const thirdMenu = ref<ListItem[]>([]);
+    // 对每个顶层节点调用递归搜索函数
+    data.forEach(node => searchNode(node));
+    console.log(searchResults, 'searchResults')
+    indexList.value = searchResults.map(item => item.name);
+    searchResult.value = searchResults;
+    return searchResults;
+};
 
 
-//排序后的数据
-const tabCur = ref(0);
-const mainCur = ref(0);
-const verticalNavTop = ref(0);
-const load = ref(true);
-const listCur = ref(firstmenu.value[0]);
+// 节流函数
+function throttle(func: any, limit: any) {
+    let inThrottle;
+    return function () {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+
+watch(searchValue, throttle(function (newQuery: any) {
+    fuzzySearch(actionrouterList.value, newQuery);
+}, 500));
+
+
 onMounted(() => {
     uni.showLoading({ title: '加载中...', mask: true });
     const newList: ListItem[] = [];
+    //先获取一级目录
     getFirstmenulist().then((res) => {
+        //遍历存到总数组中
         for (let item of res.data.data) {
             let data: ListItem = {
                 name: item.Name,
                 id: item.ID,
                 OrderNum: item.OrderNum,
                 children: [],
-                // hadactive: false
             }
             actionrouterList.value.push(data)
         }
+        //排序
         const sortedItems = sortByOrderNumDescending(actionrouterList.value);
         actionrouterList.value = sortedItems;
+        //获取二级目录信息，传入一个一级目录的
         getSelection(actionrouterList.value[0])
 
     })
+    //另一个进程获取全部完整的信息
+    getActionAll().then((res) => {
+        const transformedData = transformCategories(res.data.data);
+        actionrouterList.value = sortByOrderNumDescending(transformedData);
 
-    // getActionAll().then((res) => {
-    //     console.log(res.data.data)
-    //     const transformedData = transformCategories(res.data.data);
-    //     actionrouterList.value = sortByOrderNumDescending(transformedData);
-    // })
 
+    })
     nextTick(() => {
         uni.hideLoading();
     });
@@ -206,16 +324,10 @@ onMounted(() => {
 
 
 
-
-
-
-
 const getSelection = (item: ListItem) => {
     var firstmenuid = item.id
-
     if (item.children.length > 0) {
         toSecmenu(item)
-
     } else {
         uni.showLoading({
             title: '加载中...',
@@ -233,25 +345,14 @@ const getSelection = (item: ListItem) => {
                         // hadactive: true
                     }
                 })
-
             }
             toSecmenu(item)
             actionrouterList.value = sortByOrderNumDescending(actionrouterList.value)
-
             uni.hideLoading();
-
-
-
         }).finally(() => {
-
             uni.hideLoading();
-
-
-
-
         })
     }
-
 }
 
 
@@ -281,10 +382,7 @@ const TabSelect = async (e: any) => {
     tabCur.value = id;
     mainCur.value = id;
     verticalNavTop.value = (id - 1) * 50;
-
-
     getSelection(actionrouterList.value[id])
-
 };
 
 const VerticalMain = (e: any) => {
