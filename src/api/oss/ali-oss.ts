@@ -1,14 +1,3 @@
-import OSS from "ali-oss";
-import { rejects } from "assert";
-
-// 初始化OSS客户端。请将以下参数替换为您自己的配置信息。
-const client = new OSS({
-  region: import.meta.env.VITE_REGION, // 示例：'oss-cn-hangzhou'，填写Bucket所在地域。
-  accessKeyId: import.meta.env.VITE_OSS_ACCESS_KEY_ID, // 确保已设置环境变量OSS_ACCESS_KEY_ID。
-  accessKeySecret: import.meta.env.VITE_OSS_ACCESS_KEY_SECRET, // 确保已设置环境变量OSS_ACCESS_KEY_SECRET。
-  bucket: import.meta.env.VITE_BUCKET, // 示例：'my-bucket-name'，填写存储空间名称。
-});
-
 function getCurrentFormattedDate() {
   const now = new Date();
   const year = now.getFullYear();
