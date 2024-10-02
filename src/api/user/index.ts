@@ -1,13 +1,17 @@
 import request from "@/utils/request"; //导入http下的httpload.js
 
 export const getUserInfo = () => {
-    return request.get("/api/user/getInfo");
+  return request.get("/api/user/getInfo");
 };
 
 export const updateUserInfo = (data: any) => {
-    return request.put("/api/user/update", data);
-}
+  return request.put("/api/user/update", data);
+};
 
 export const refreshToken = () => {
-    return request.post("/api/user/token/refresh");
-}
+  return request.post("/api/user/token/refresh");
+};
+
+export const getHWInfo = () => {
+  return request.get("/api/user/getHW");
+};

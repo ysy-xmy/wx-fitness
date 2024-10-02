@@ -4,8 +4,7 @@
       <img class="w-screen z-0 absolute top-0" src="../../static/wave-bg.png" />
 
       <div class="user-info z-10 p-5 w-full h-32 flex items-center">
-        <view class="cu-avatar round lg" :style="
-            { backgroundImage: `url(${userAvatar})` }
+        <view class="cu-avatar round lg" :style="{ backgroundImage: `url(${userAvatar})` }
           ">
         </view>
         <div class="flex flex-wrap z-10">
@@ -26,16 +25,16 @@
       <div style="width: 90%" class="shadow-md rounded-lg px-10 bg-white flex justify-around flex-row py-5">
         <div class="mine-indicator bg-white">
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3">授课次数</span>
-            <span class="num text-2xl text-black font-bold tracking-wider">10次</span>
+            <span class="title text-gray-500 tracking-wider mb-3">{{ user.RoleName === 'student' ? 身高 : 售课次数 }}</span>
+            <span class="num text-2xl text-black font-bold tracking-wider">{{ showTab1 }}</span>
           </div>
 
           <div class="indicator-right"></div>
         </div>
         <div class="mine-indicator bg-white">
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3">学员总数</span>
-            <span class="num text-2xl text-black font-bold tracking-wider">74人</span>
+            <span class="title text-gray-500 tracking-wider mb-3">{{ user.RoleName === 'student' ? 体重 : 学员总数 }}</span>
+            <span class="num text-2xl text-black font-bold tracking-wider">{{ showTab2 }}</span>
           </div>
         </div>
       </div>
@@ -87,6 +86,8 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { getCourseAndStudentCount } from "@/api/coach";
+import { getHWInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 import { useRouter } from "uni-mini-router";
 import { onMounted, ref } from "vue";
@@ -96,9 +97,25 @@ const router = useRouter();
 
 let user = authStore.getUser;
 let userAvatar = ref<string>("https://ossweb-img.qq.com/images/lol/img/champion/Taric.png");
+const showTab1 = ref<number>(0)
+const showTab2 = ref<number>(0)
 onMounted(() => {
   user = authStore.getUser;
-  userAvatar.value = user.Avatar ? user.Avatar : "https://ossweb-img.qq.com/images/lol/img/champion/Taric.png"
+  userAvatar.value = user.Avatar ? user.Avatar : "https://ossweb-img.qq.com/images/lol/img/champion/Taric.png";
+
+  if (user.RoleName === "student") {
+    getHWInfo().then((res) => {
+      console.log(res);
+      showTab1.value = res.data.Height;
+      showTab2.value = res.data.Weight;
+    });
+  } else {
+    getCourseAndStudentCount().then((res) => {
+      console.log(res);
+      showTab1.value = res.data.CourseCount;
+      showTab2.value = res.data.StudentCount;
+    });
+  }
 });
 
 const exitinfo = () => {
