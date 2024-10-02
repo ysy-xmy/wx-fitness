@@ -5,7 +5,7 @@ export const getUserInfo = () => {
 };
 
 export const updateUserInfo = (data: any) => {
-    return request.put("/api/user/updateInfo", data);
+    return request.put("/api/user/update", data);
 }
 
 export const refreshToken = () => {
