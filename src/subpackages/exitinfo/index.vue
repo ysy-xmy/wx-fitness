@@ -59,13 +59,13 @@
             <view class="cu-form-group flex justify-space-between">
                 <view class="title">上传企业微信</view>
                 <view class="grid col-4 grid-square flex-sub">
-                    <view class="bg-img" v-for="(item, index) in imgList" :key="index" :data-url="imgList[index]">
-                        <image :src="imgList[index]" mode="aspectFill"></image>
+                    <view class="bg-img" v-for="(item, index) in wximgList" :key="index" :data-url="wximgList[index]">
+                        <image :src="wximgList[index]" mode="aspectFill"></image>
                         <view class="cu-tag bg-red" @tap.stop="DeteleWXimg" :data-index="index">
                             <text class='cuIcon-close'></text>
                         </view>
                     </view>
-                    <view class="solids" @tap="handleUploadWXimg" v-if="imgList.length < 1">
+                    <view class="solids" @tap="handleUploadWXimg" v-if="wximgList.length < 1">
                         <text class='cuIcon-cameraadd'></text>
                     </view>
                 </view>
@@ -80,7 +80,7 @@
                             <text class='cuIcon-close'></text>
                         </view>
                     </view>
-                    <view class="solids" @tap="handleUploadexamination" v-if="imgList.length < 9">
+                    <view class="solids" @tap="handleUploadimg" v-if="imgList.length < 9">
                         <text class='cuIcon-cameraadd'></text>
                     </view>
                 </view>
@@ -98,6 +98,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'uni-mini-router';
+import { uploadToOSS } from '@/api/oss/ali-oss';
+import http from '@/utils/request';
+const ageindex = ref();
 const router = useRouter();
 const avatarUrl = ref('../../static/user.png');
 const sexindex = ref();
@@ -106,9 +109,9 @@ const birthdate = ref()
 const sexs = ref(['男', '女'])
 const imgList = ref([])
 const ageList = ref(['14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '70', '71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '83', '84', '85', '86', '87'])
-
+const wximgList = ref([])
 const handleUploadimg = () => {
-    uni.handleUploadexamination({
+    uni.chooseImage({
         count: 9, //默认9
         sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
         sourceType: ['album'], //从相册选择
@@ -129,16 +132,18 @@ const handleUploadWXimg = () => {
         sourceType: ['album'], //从相册选择
         success: (res) => {
             console.log(res)
-            if (imgList.value.length != 0) {
-                imgList.value = imgList.value.concat(res.tempFilePaths)
+            if (wximgList.value.length != 0) {
+                wximgList.value = imgList.value.concat(res.tempFilePaths)
             } else {
-                imgList.value = res.tempFilePaths
+                wximgList.value = res.tempFilePaths
             }
         }
     });
 }
 
-
+const ageChange = (e: any) => {
+    ageindex.value = e.detail.value;
+}
 const sexChange = (e: any) => {
     sexindex.value = e.detail.value;
 }
@@ -175,12 +180,23 @@ const userInfo = ref({
     gender: 1,
     birthdate: '2022-01-01'
 })
-const onChooseAvatar = (e: any) => {
-    console.log(e.detail.avatarUrl)
-    userInfo.value.avatarUrl = e.detail.avatarUrl
-}
 
+const onChooseAvatar = async (e: any) => {
+    console.log("onChooseAvatar", e.detail);
 
+    const tempFilePath = e.detail.avatarUrl;
+    try {
+        const res = await http.get('/api/user/oss')
+        console.log("onChooseAvatar", res.data.data);
+        uploadToOSS(res.data.data, tempFilePath).then((url) => {
+            console.log("onChooseAvatar", url);
+            userInfo.value.avatarUrl = url;
+        });
+        userInfo.value.avatarUrl = e.detail.avatarUrl;
+    } catch (error) {
+        console.error("发生错误:", error);
+    }
+};
 
 const DateChange = (e: any) => {
     birthdate.value = e.detail.value

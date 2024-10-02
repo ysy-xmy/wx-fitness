@@ -18,7 +18,7 @@ http.interceptors.request.use(
     const token = uni.getStorageSync("token");
     console.log(token, "token");
     if (token) {
-      config.header["Authorization"] = "Bearer " + token;
+      config.header["Authorization"] = token;
     }
 
     if (config.method === "POST") {
