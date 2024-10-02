@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, defineProps } from "vue";
 import * as echarts from "echarts/dist/echarts.esm";
 import { getBodydata } from "@/api/body";
 const props = defineProps({
