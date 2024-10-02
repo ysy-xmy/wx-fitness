@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col h-screen items-center">
-        <div v-if="courseList.length > 0" v-for="(item, index) in orderList" :key="index"
+        <div v-for="(item, index) in orderList" :key="index"
             class="orderItem w-11/12 flex flex-wrap pb-[14px] bg-[#F9FAFB] border-[1px] border-[#F3F4F6] mt-[17px] rounded-xl">
             <div class="w-full">
                 <div class="text-[#333333] p-4 text-[14px]; font-medium">订单编号：{{ item.OrderNum }}</div>
@@ -26,7 +26,8 @@
                 </div>
             </div>
         </div>
-        <div v-else class="nodata-card flex flex-col justify-center items-center w-full h-64 p-20">
+        <div v-if="orderList.length === 0"
+            class="nodata-card flex flex-col justify-center items-center w-full h-64 p-20">
             <span class="p-5 text-lg text-center">暂无订单信息~</span>
 
         </div>
@@ -43,8 +44,14 @@ import { ref } from "vue"
 const orderList = ref([])
 
 const getOrderList = async () => {
-    const res = await getOrderlist()
+    let params = {
+        Page: "1",
+        Size: "10",
+    }
+    const res = await getOrderlist(params)
     orderList.value = res.data.OrderInfos
+    console.log(orderList.value)    
+
     orderList.value=orderList.value?.map(item=>({...item,PaymentTime:convertISO8601toDate(item.PaymentTime)}))
 }
 
