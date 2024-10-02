@@ -33,7 +33,6 @@
                             class="cu-bar text-black  font-extrabold solid-bottom bg-white">
                             <view style="font-size: 45rpx;" class="text-2xl action truncate ...">
                                 <text class="cuIcon-title "></text> {{ item1.name }}
-
                             </view>
                             <div class="curight-icon mr-5">
                                 <van-icon v-show="actionrouterList[mainCur].children[index1].active"
@@ -42,27 +41,18 @@
                             </div>
                         </view>
                         <view v-if="actionrouterList[mainCur].children[index1].active"
-                            class="cu-list  pt-3  menu-avatar flex bg-white ">
-                            <view class=" felx flex-col w-1/2  p-2 px-3  h-36  bg-[#f9fafb]">
-                                <img class="w-full h-24 rounded-md  lg"
-                                    src="https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg" />
-                                <view class="content">
-                                    <view class="text-black text-center text-lg font-extrabold">凯尔</view>
-
+                            class="cu-list  pt-3  menu-avatar flex flex-wrap bg-white ">
+                            <template v-for="(item2, index2) in actionrouterList[mainCur].children[index1].children"
+                                :key="index2">
+                                <view class=" felx flex-col w-1/2  p-2 px-3  h-36  bg-[#f9fafb]">
+                                    <img class="w-full h-24 rounded-md  lg"
+                                        :src="item2.Imgs ? item2.Imgs[0].Url : 'https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg'" />
+                                    <view class="content">
+                                        <view class="text-black text-center text-lg font-extrabold">{{ item2.name }}
+                                        </view>
+                                    </view>
                                 </view>
-
-                            </view>
-                            <view class=" felx flex-col  p-2 w-1/2 px-3  h-36  bg-[#f9fafb]">
-                                <img class="w-full h-24 rounded-md  lg"
-                                    src="https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg" />
-                                <view class="content">
-                                    <view class="text-black text-center text-lg font-extrabold">凯尔</view>
-
-                                </view>
-
-                            </view>
-
-
+                            </template>
                         </view>
                     </view>
 
@@ -86,7 +76,8 @@
                 </van-divider>
                 <view v-for="(item, index) in searchResult" :key="index"
                     class=" w-screen flex flex-col items-start content-start">
-                    <view class="content border-none  padding-tb-sm">
+                    <view @click="handlelocation(item.children.length > 0 ? item.children[0].id : item.id)"
+                        class="content border-none  padding-tb-sm">
                         <view class="text-black text-center flex justify-between text-lg font-extrabold">
 
                             <text class="text-black "> 动作： {{ item.name }}</text>
@@ -110,14 +101,12 @@
                 </view>
             </view>
         </van-index-bar>
-
-
     </view>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick, watch } from 'vue';
-import { getFirstmenulist, getSecByFirst, getActionAll } from '@/api/action/action';
+import { getFirstmenulist, getSecByFirst, getActionAll, getActionsBySec } from '@/api/action/action';
 //@ts-ignore
 import type { SourceCategory, TargetCategory, ActionItem, ListItem } from './types.ts'
 const firstmenu = ref<ListItem[]>([
@@ -171,6 +160,22 @@ function sortByOrderNumDescending(routers: ListItem[]) {
         ...router,
         children: sortChildren(router.children) // 对每个路由的子项进行排序
     })).sort(sortByOrderIdAndIdDesc);
+}
+
+//处理搜索点击事件
+const handlelocation = (actionid: number | string) => {
+    console.log(actionid)
+    const { firstCategoryId, secondCategoryId } = findCategoryIds(actionrouterList.value, actionid)
+    console.log(firstCategoryId, secondCategoryId)
+    if (firstCategoryId && secondCategoryId) {
+        mainCur.value = firstCategoryId
+        secMenuSelect(secMenu.value[secondCategoryId - 1], secondCategoryId - 1)
+    } else if (firstCategoryId) {
+        mainCur.value = firstCategoryId
+        secMenuSelect(secMenu.value[0], 0)
+    }
+    searchValue.value = ''
+    fuzzySearch(actionrouterList.value, searchValue.value)
 }
 
 //接口数据转换
@@ -230,12 +235,61 @@ function transformCategories(source: SourceCategory[]): TargetCategory[] {
 
     return target;
 }
+function findCategoryIds(menuItems, deepestId) {
+    let firstCategoryId = null;
+    let secondCategoryId = null;
+
+    function searchCategory(items) {
+        for (const item of items) {
+            // 检查当前项的 id 是否与最深层的 id 匹配
+            if (item.id === deepestId) {
+                // 如果匹配，则设置二级菜单 id
+                secondCategoryId = item.SecondCategoryID;
+                return true; // 找到匹配项，返回 true
+            }
+            // 如果有子项，则递归搜索
+            if (item.children && item.children.length > 0) {
+                const found = searchCategory(item.children);
+                if (found) {
+                    // 如果已经找到最深层的 id，则检查一级菜单 id
+                    if (secondCategoryId !== null && firstCategoryId === null) {
+                        firstCategoryId = item.id;
+                    }
+                    return true; // 找到匹配项，返回 true
+                }
+            }
+        }
+        return false; // 未找到匹配项，返回 false
+    }
+
+    // 开始搜索
+    searchCategory(menuItems);
+    const result = searchCategory(menuItems);
+    if (result) {
+        return { firstCategoryId, secondCategoryId }; // 如果 searchCategory 返回了结果，则返回这个结果
+    }
+    return { firstCategoryId, secondCategoryId }; // 如果没有找到，返回当前的类目ID
+}
 
 //处理二级目录被选中事件
 const secMenuSelect = (item: ListItem, index: number) => {
-
+    if (item.children.Imgs) return
     actionrouterList.value[mainCur.value].children[index].active = !actionrouterList.value[mainCur.value].children[index].active
-
+    getActionsBySec(item.id).then(res => {
+        actionrouterList.value[mainCur.value].children[index].children = res.data.data.map(item => {
+            return {
+                id: item.ID,
+                name: item.Name,
+                OrderNum: item.OrderNum,
+                children: [],
+                Imgs: item.Imgs,
+                Videos: item.Videos,
+                Description: item.Description,
+                CreatedAt: item.CreatedAt,
+            }
+        })
+        actionrouterList.value = sortByOrderNumDescending(actionrouterList.value)
+    })
 }
 //定义搜索方法：
 const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
@@ -309,7 +363,8 @@ onMounted(() => {
     getActionAll().then((res) => {
         const transformedData = transformCategories(res.data.data);
         actionrouterList.value = sortByOrderNumDescending(transformedData);
-
+        console.log(res.data.data)
+        console.log(actionrouterList.value)
 
     })
     nextTick(() => {

@@ -11,7 +11,10 @@ export const getSecByFirst = (FirstID: string) => {
     FirstID = FirstID.toString()
     return request.get('/api/action/getSecByFirst', { params: { FirstID } })
 }
-
+export const getActionsBySec = (SecID: string) => {
+    SecID = SecID.toString()
+    return request.get('/api/action/getActionsBySec', { params: { SecID } })
+}
 
 export const getActionAll = () => {
     return request.get('/api/action/getAll')
