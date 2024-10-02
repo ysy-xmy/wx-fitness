@@ -25,7 +25,8 @@
       <div style="width: 90%" class="shadow-md rounded-lg px-10 bg-white flex justify-around flex-row py-5">
         <div class="mine-indicator bg-white">
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3">{{ user.RoleName === 'student' ? 身高 : 售课次数 }}</span>
+            <span class="title text-gray-500 tracking-wider mb-3">{{ user.RoleName === "student" ? "身高" : "售课次数"
+              }}</span>
             <span class="num text-2xl text-black font-bold tracking-wider">{{ showTab1 }}</span>
           </div>
 
@@ -33,7 +34,8 @@
         </div>
         <div class="mine-indicator bg-white">
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3">{{ user.RoleName === 'student' ? 体重 : 学员总数 }}</span>
+            <span class="title text-gray-500 tracking-wider mb-3">{{ user.RoleName === "student" ? "体重" : "学员数量"
+              }}</span>
             <span class="num text-2xl text-black font-bold tracking-wider">{{ showTab2 }}</span>
           </div>
         </div>
@@ -90,30 +92,28 @@ import { getCourseAndStudentCount } from "@/api/coach";
 import { getHWInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 import { useRouter } from "uni-mini-router";
-import { onMounted, ref } from "vue";
-
-const authStore = useAuthStore();
+import { computed, onMounted, ref } from "vue";
 const router = useRouter();
-
-let user = authStore.getUser;
-let userAvatar = ref<string>("https://ossweb-img.qq.com/images/lol/img/champion/Taric.png");
-const showTab1 = ref<number>(0)
-const showTab2 = ref<number>(0)
+const authStore = useAuthStore();
+const user = computed(() => authStore.user);
+const userAvatar = ref<string>("https://ossweb-img.qq.com/images/lol/img/champion/Taric.png");
+const showTab1 = ref<string>('0')
+const showTab2 = ref<string>('0')
 onMounted(() => {
-  user = authStore.getUser;
-  userAvatar.value = user.Avatar ? user.Avatar : "https://ossweb-img.qq.com/images/lol/img/champion/Taric.png";
+  console.log('user', user);
+  userAvatar.value = user.value.Avatar;
 
-  if (user.RoleName === "student") {
+  if (user.value.RoleName === "student") {
     getHWInfo().then((res) => {
-      console.log(res);
-      showTab1.value = res.data.Height;
-      showTab2.value = res.data.Weight;
+      console.log("-----======", res.data.data);
+      showTab1.value = res.data.data.Height.toString();
+      showTab2.value = res.data.data.Weight.toString();
     });
   } else {
     getCourseAndStudentCount().then((res) => {
       console.log(res);
-      showTab1.value = res.data.CourseCount;
-      showTab2.value = res.data.StudentCount;
+      showTab1.value = res.data.data.CourseCount.toString();
+      showTab2.value = res.data.data.StudentCount.toString();
     });
   }
 });
