@@ -1,6 +1,4 @@
 import request from "@/utils/request"; //导入http下的httpload.js
-import type { IOrder } from "./types";
-
 export const getOrderlist = (Size: String, Page: String) => {
   let data = {
     Size,
