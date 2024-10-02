@@ -18,6 +18,7 @@ const whiteList = [
   "studentDetail",
   "diyTable",
   "searchStu",
+  "orderDetail",
 ];
 
 export function userRouternext(router: Router) {

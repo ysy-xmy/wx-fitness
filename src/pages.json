@@ -138,6 +138,16 @@
           "style": {
             "navigationBarTitleText": "我的"
           }
+        },
+        {
+          "path": "orderDetail/index",
+          "name": "orderDetail",
+          "meta": {
+            "islogin": true
+          },
+          "style": {
+            "navigationBarTitleText": "订单详情"
+          }
         }
       ]
     }

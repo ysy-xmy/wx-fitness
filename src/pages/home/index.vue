@@ -6,8 +6,8 @@
   >
     <div class="viewcontent">
       <div v-show="usetsto.active === 'index'" class="index-page">
-        <!-- <Index /> -->
-        <CoachHome />
+        <Index />
+        <!-- <CoachHome /> -->
       </div>
       <div v-show="usetsto.active === 'action'" class="action-page">
         <Action />
@@ -105,7 +105,11 @@ import { tabbardata } from "@/tabbar";
 import Action from "@/components/action/index.vue";
 import Mine from "@/components/mine/index.vue";
 import CoachHome from "@/components/coachHome/index.vue";
+import { onMounted } from "vue";
+import { useAuthStore } from "@/state/modules/auth";
+import { updateUserInfo } from "../login/wx_session";
 const usetsto = useAppStore();
+const AuthStore = useAuthStore();
 const onChange = (item: any) => {
   usetsto.setactive(item.detail);
 };
@@ -115,5 +119,35 @@ const lowerBottom = () => {
     uni.$emit("bot", true);
   }
 };
+onMounted(() => {
+  console.log(AuthStore.getUser, "user");
+  // if (AuthStore.getUser) {
+  //   uni.getUserInfo({
+  //     success: (res) => {
+  //       console.log("suceess", res);
+  //       const { nickName, avatarUrl, gender } = res.userInfo;
+
+  //       const userInfo = {
+  //         OpenID: OpenID,
+  //         Username: nickName,
+  //         Avatar: avatarUrl,
+  //         Sex: gender,
+  //       };
+
+  //       updateUserInfo(userInfo)
+  //         .then(() => {
+  //           console.log("更新用户信息成功");
+  //           authStore.setUserInfo(userInfo);
+  //         })
+  //         .catch((error) => {
+  //           console.error("更新用户信息失败：", error);
+  //         });
+  //     },
+  //     fail: (error) => {
+  //       console.error("获取用户信息失败：", error);
+  //     },
+  //   });
+  // }
+});
 </script>
 <style scoped></style>

@@ -16,7 +16,12 @@ export const useAuthStore = defineStore({
   id: "auth",
   state: (): AuthState => ({
     token: uni.getStorageSync("token"), //
-    user: {} as Record<string, any>, // user 类型为对象而不是数组
+    user: {
+      id: "1",
+      nickName: "Ye",
+      phone: "1333333333",
+      img: "https://img.js.design/assets/img/668c2ed952a8c9cae69e281b.png#4da10c88bc2ff6efbe0d64ef8f3eee6d",
+    } as Record<string, any>, // user 类型为对象而不是数组
   }),
   getters: {
     isLogin(): boolean {
