@@ -9,36 +9,35 @@ import { defineStore } from "pinia";
 
 interface AuthState {
   token?: string;
-
-  user: Record<string, any>;
+  user: object;
+  RoleName: string;
 }
 export const useAuthStore = defineStore({
   id: "auth",
   state: (): AuthState => ({
     token: uni.getStorageSync("token"), //
-    user: {
-      id: "1",
-      nickName: "Ye",
-      phone: "1333333333",
-      img: "https://img.js.design/assets/img/668c2ed952a8c9cae69e281b.png#4da10c88bc2ff6efbe0d64ef8f3eee6d",
-    } as Record<string, any>, // user 类型为对象而不是数组
+    user: Object, // user 类型为对象而不是数组
+    RoleName: "", // 角色名称
   }),
   getters: {
     isLogin(): boolean {
       return this.token.length > 0; // 判断 token 是否存在
     },
-    getUser(): Record<string, any> {
+    getUser(): object {
       return this.user;
     },
     getToken(): string {
       return this.token;
     },
+    getRoleName(): string {
+      return this.RoleName;
+    }
   },
   actions: {
     setToken(token: string) {
       this.token = token;
     },
-    setUser(user: Record<string, any>) {
+    setUser(user: object) {
       this.user = user;
     },
     clearToken() {
@@ -47,5 +46,8 @@ export const useAuthStore = defineStore({
     clearUser() {
       this.user = {}; // 清空 user 设置为空对象
     },
+    setRoleName(RoleName: string) {
+      this.RoleName = RoleName;
+    }
   },
 });
