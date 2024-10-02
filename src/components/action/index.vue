@@ -196,9 +196,7 @@ function transformCategories(source: SourceCategory[]): TargetCategory[] {
                     children: []
                 };
                 if (secondCatInfo.ActionInfos) {
-                    console.log(secondCatInfo.ActionInfos, '22')
                     secondCatInfo.ActionInfos.forEach(actionInfo => {
-                        console.log(actionInfo.ActionInfos, '33')
                         const actionItem: ActionItem = {
                             CreatedAt: actionInfo.ActionInfos.CreatedAt,
                             Description: actionInfo.ActionInfos.Description,
@@ -238,7 +236,6 @@ const secMenuSelect = (item: ListItem, index: number) => {
 
     actionrouterList.value[mainCur.value].children[index].active = !actionrouterList.value[mainCur.value].children[index].active
 
-    console.log(actionrouterList.value[mainCur.value].children[index].active)
 }
 //定义搜索方法：
 const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
@@ -261,7 +258,6 @@ const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
 
     // 对每个顶层节点调用递归搜索函数
     data.forEach(node => searchNode(node));
-    console.log(searchResults, 'searchResults')
     indexList.value = searchResults.map(item => item.name);
     searchResult.value = searchResults;
     return searchResults;
