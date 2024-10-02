@@ -68,5 +68,5 @@ export const getOrderlist = (Size: String, Page: String) => {
 };
 
 export const getOrderDetail = (id: string) => {
-  return request.get("/api/order/order-detail/" + id);
+  return request.get("/api/order/order-detail/", { params: { OrderID: "14" } });
 };

@@ -98,6 +98,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'uni-mini-router';
+import { uploadToOSS } from '@/api/oss/ali-oss';
+import http from '@/utils/request';
+
 const router = useRouter();
 const avatarUrl = ref('../../static/user.png');
 const sexindex = ref();
@@ -175,12 +178,23 @@ const userInfo = ref({
     gender: 1,
     birthdate: '2022-01-01'
 })
-const onChooseAvatar = (e: any) => {
-    console.log(e.detail.avatarUrl)
-    userInfo.value.avatarUrl = e.detail.avatarUrl
-}
 
+const onChooseAvatar = async (e: any) => {
+    console.log("onChooseAvatar", e.detail);
 
+    const tempFilePath = e.detail.avatarUrl;
+    try {
+        const res = await http.get('/api/user/oss')
+        console.log("onChooseAvatar", res.data.data);
+        uploadToOSS(res.data.data, tempFilePath).then((url) => {
+            console.log("onChooseAvatar", url);
+            userInfo.value.avatarUrl = url;
+        });
+        userInfo.value.avatarUrl = e.detail.avatarUrl;
+    } catch (error) {
+        console.error("发生错误:", error);
+    }
+};
 
 const DateChange = (e: any) => {
     birthdate.value = e.detail.value

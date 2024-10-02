@@ -15,6 +15,7 @@
           <div
             class="orderItem w-11/12 flex flex-wrap pb-[14px] bg-[#F9FAFB] border-[1px] border-[#F3F4F6] mt-[17px] rounded-xl"
             v-for="item in list"
+            @click="toDetail(item.id)"
           >
             <div class="w-full">
               <div class="text-[#333333] p-4 text-[14px]; font-medium">
@@ -71,6 +72,8 @@
 import scrollFrom from "@/components/scrollForm/index.vue";
 import { ref, onMounted } from "vue";
 import { getOrderlist } from "@/api/order";
+import { useRouter } from "uni-mini-router";
+const router = useRouter();
 const scorllFormRef = ref<any>(null);
 const dispose = (item: any) => {
   return item;
@@ -96,5 +99,10 @@ const getListData = () => {
       getListData();
     }, 500);
   }
+};
+const toDetail = (id: string) => {
+  router.push({
+    path: `/subpackages/orderDetail/index?id=${id}`, // 使用路径导航
+  });
 };
 </script>

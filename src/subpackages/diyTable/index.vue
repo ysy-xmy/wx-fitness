@@ -32,11 +32,29 @@
       <view class="title">价&nbsp;格</view>
       <input placeholder="请输入价格" name="input" v-model="form.money" />
     </view>
-    <button class="cu-btn bg-blue-200 round large margin-top">点击分享</button>
+    <button
+      class="cu-btn bg-blue-200 round large margin-top"
+      open-type="share"
+      :disabled="form.money == '' || form.num == ''"
+    >
+      点击分享
+    </button>
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
+import { onShareAppMessage } from "@dcloudio/uni-app";
+import { useAuthStore } from "@/state/modules/auth";
+const AuthStore = useAuthStore();
+const user = AuthStore.getUser;
+
+onShareAppMessage((res) => {
+  return {
+    title: `${user.name}的课程`,
+    path: `/subpackages/coursePurchase/index?name=${user.nickName}&&phone=${user.phone}&&img=${user.img}&&count=${form.num}&&price=${form.money}&&ifDiy=true`,
+  };
+});
+
 type form = {
   num: string;
   money: string;

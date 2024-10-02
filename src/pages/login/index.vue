@@ -53,6 +53,13 @@ function login() {
           if (res.data.code === 200) {
             const token = res.data.data.Token;
             uni.setStorageSync("token", token);
+            authStore.setUser({
+              name: res.data.data.Username || "微信用户",
+              id: res.data.data.ID,
+              phone: res.data.data.phone,
+              Sex: res.data.data.Sex || 0,
+              img: res.data.data.Avatar,
+            });
             authStore.setToken(token);
             router.push({
               name: "home",
