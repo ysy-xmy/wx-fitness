@@ -15,35 +15,41 @@
           <div
             class="orderItem w-11/12 flex flex-wrap pb-[14px] bg-[#F9FAFB] border-[1px] border-[#F3F4F6] mt-[17px] rounded-xl"
             v-for="item in list"
-            @click="toDetail(item.id)"
+            @click="toDetail(item.ID, item.CourseName)"
           >
             <div class="w-full">
               <div class="text-[#333333] p-4 text-[14px]; font-medium">
-                订单编号：{{ item.id }}
+                订单编号：{{ item.ID }}
               </div>
             </div>
             <div class="w-full flex">
               <div class="mt-[21px] ml-[9px]">
-                <img class="w-20 h-20 rounded-xl" :src="item.img" alt="" />
+                <img class="w-20 h-20 rounded-xl" :src="item.Img" alt="" />
               </div>
               <div class="flex flex-col justify-center ml-[16px]">
                 <div
                   class="w-full text-[16px] font-normal text-[#111827] flex-wrap whitespace-nowrap"
                 >
-                  {{ item.className }} {{ item.number }}节
+                  {{ item.CourseName }}
+                  <span v-if="item.CourseType == 'lesson'"
+                    >{{ item.LessonCount }}节</span
+                  >
+                  <span v-else-if="item.CourseType == 'month'">包月</span>
+                  <span v-else-if="item.CourseType == 'quarter'">包季</span
+                  ><span v-else-if="item.CourseType == 'year'">包年</span>
                 </div>
                 <div class="time w-full text-[#8c8c8c] mt-[12px]">
                   <span
                     class="cuIcon-time text-[12px] font-normal lh-[14px] mt-[10px]"
                   ></span>
-                  {{ item.time }}
+                  {{ item.PaymentTime }}
                 </div>
               </div>
               <div class="body-right flex flex-col w-full h-full pr-[15px]">
                 <div
                   class="price w-full flex justify-end items-center h-full pb-[20px]"
                 >
-                  ${{ item.money }}
+                  ${{ item.Amount }}
                 </div>
                 <div class="flex items-end justify-end mb-14px mr-15px">
                   <button
@@ -73,15 +79,21 @@ import scrollFrom from "@/components/scrollForm/index.vue";
 import { ref, onMounted } from "vue";
 import { getOrderlist } from "@/api/order";
 import { useRouter } from "uni-mini-router";
+
 const router = useRouter();
 const scorllFormRef = ref<any>(null);
+import dayjs from "dayjs";
 const dispose = (item: any) => {
-  return item;
+  // 返回一个新的对象，将 PaymentTime 格式化
+  return {
+    ...item, // 保留其他属性不变
+    PaymentTime: dayjs(item.PaymentTime).format("YYYY-MM-DD"), // 格式化时间
+  };
 };
+
 let list = ref<any[]>([]);
 onMounted(() => {
   uni.showLoading({ title: "数据加载中" });
-
   getListData();
 });
 const lowerBottom = () => {
@@ -100,7 +112,7 @@ const getListData = () => {
     }, 500);
   }
 };
-const toDetail = (id: string) => {
+const toDetail = (id: string, title: string) => {
   router.push({
     path: `/subpackages/orderDetail/index?id=${id}`, // 使用路径导航
   });

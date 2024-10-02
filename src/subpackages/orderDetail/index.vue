@@ -155,11 +155,16 @@ import { onMounted, ref } from "vue";
 
 import { getOrderDetail } from "@/api/order";
 import { useRouter } from "uni-mini-router";
+import { Dayjs } from "dayjs";
 const router: any = useRouter();
 onMounted(async () => {
   const id = router.route.value.query.id;
-  const data = await getOrderDetail(id);
-  console.log(data);
+  const res = await getOrderDetail(id);
+  courseInfo.value = {
+    title,
+    price: res.data.data.Amount,
+    time: new Dayjs(res.data.data.PaymentTime).format("YYYY-MM-DD"),
+  };
 });
 
 const pitchNumber = ref("10");

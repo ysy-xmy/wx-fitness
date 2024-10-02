@@ -1,6 +1,6 @@
 <template>
   <scrollFrom
-    :fun="getOrderlist"
+    :fun="getMycourese"
     :dispose="dispose"
     ref="scorllFormRef"
     :datasources="list"
@@ -12,7 +12,7 @@
           class="course-card mt-5 rounded-lg bg-[#e7eeff] w-11/12 flex flex-row h-36"
           v-for="(item, index) in list"
         >
-          <img class="w-1/3 h-full" :src="item.img" />
+          <img class="w-1/3 h-full" :src="item.Img" />
           <div
             class="main-content py-3 w-2/3 h-full content-evenly flex flex-wrap"
           >
@@ -23,8 +23,8 @@
                   stroke-width="8"
                   size="40"
                   color="#ec6853"
-                  value="60"
-                  text="20%"
+                  :value="item.Percentage"
+                  :text="item.Percentage + '%'"
                   class="mr-[0.75rem]"
                 />
               </div>
@@ -35,7 +35,14 @@
             <div class="main-btn mt-4 flex px-8 w-full justify-between">
               <van-button
                 class="custom-class"
-                @click="tomycourse"
+                @click="
+                  tomycourse(
+                    item.ID,
+                    item.Percentage,
+                    item.Name,
+                    item.Description
+                  )
+                "
                 round
                 type="warning"
                 color="#ffffff"
@@ -102,8 +109,28 @@ type course = {
   RemainingTime: number | null;
 };
 const router = useRouter();
-const tomycourse = () => {
-  router.push({ name: "mycourse" });
+const tomycourse = (
+  id: string,
+  Percentage: string,
+  name: string,
+  desc: string
+) => {
+  console.log({
+    id,
+    Percentage,
+    name,
+    desc,
+  });
+  router.push({
+    // path: `/subpackages/mycourse/index?id=${id}&&Percentage=${Percentage}&&name=${name}&&desc=${desc}`,
+    name: "mycourse",
+    params: {
+      id,
+      Percentage: Percentage,
+      name: name,
+      desc,
+    },
+  });
 };
 const tocourse = () => {
   props.change();
@@ -135,5 +162,6 @@ const getListData = () => {
       getListData();
     }, 500);
   }
+  console.log(list.value, "list.value");
 };
 </script>

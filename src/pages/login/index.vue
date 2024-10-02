@@ -45,7 +45,7 @@ function login() {
 
       //客户端成功获取授权临时票据（code）,向业务服务器发起登录请求。
       uni.request({
-        url: `http://43.139.169.144:8081/api/user/wx-login?code=${code}`, //仅为示例，并非真实接口地址。
+        url: `https://meet.ysyxmy.top/api/user/wx-login?code=${code}`, //仅为示例，并非真实接口地址。
         method: "POST",
         success: (res: any) => {
           let OpenID = res.data.data.OpenID;
@@ -59,9 +59,11 @@ function login() {
               phone: res.data.data.phone,
               Sex: res.data.data.Sex || 0,
               img: res.data.data.Avatar,
+              RoleName: res.data.data.RoleName,
+              Age: res.data.data.Age || "18",
             });
             authStore.setToken(token);
-            router.push({
+            router.replace({
               name: "home",
             });
           }

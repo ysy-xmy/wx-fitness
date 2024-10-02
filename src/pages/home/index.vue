@@ -6,8 +6,8 @@
   >
     <div class="viewcontent">
       <div v-show="usetsto.active === 'index'" class="index-page">
-        <Index />
-        <!-- <CoachHome /> -->
+        <Index v-if="permission == 'student'" />
+        <CoachHome v-else />
       </div>
       <div v-show="usetsto.active === 'action'" class="action-page">
         <Action />
@@ -105,7 +105,8 @@ import { tabbardata } from "@/tabbar";
 import Action from "@/components/action/index.vue";
 import Mine from "@/components/mine/index.vue";
 import CoachHome from "@/components/coachHome/index.vue";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
+import { getUserInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 import { updateUserInfo } from "../login/wx_session";
 const usetsto = useAppStore();
@@ -113,6 +114,7 @@ const AuthStore = useAuthStore();
 const onChange = (item: any) => {
   usetsto.setactive(item.detail);
 };
+const permission = ref("");
 const lowerBottom = () => {
   console.log("到底了");
   if (usetsto.active === "index") {
@@ -121,33 +123,19 @@ const lowerBottom = () => {
 };
 onMounted(() => {
   console.log(AuthStore.getUser, "user");
-  // if (AuthStore.getUser) {
-  //   uni.getUserInfo({
-  //     success: (res) => {
-  //       console.log("suceess", res);
-  //       const { nickName, avatarUrl, gender } = res.userInfo;
-
-  //       const userInfo = {
-  //         OpenID: OpenID,
-  //         Username: nickName,
-  //         Avatar: avatarUrl,
-  //         Sex: gender,
-  //       };
-
-  //       updateUserInfo(userInfo)
-  //         .then(() => {
-  //           console.log("更新用户信息成功");
-  //           authStore.setUserInfo(userInfo);
-  //         })
-  //         .catch((error) => {
-  //           console.error("更新用户信息失败：", error);
-  //         });
-  //     },
-  //     fail: (error) => {
-  //       console.error("获取用户信息失败：", error);
-  //     },
-  //   });
-  // }
+  if (AuthStore.getUser) {
+    getUserInfo().then((res) => {
+      permission.value = res.data.data.RoleName;
+      AuthStore.setUser({
+        name: res.data.data.Username || "微信用户",
+        id: res.data.data.ID,
+        phone: res.data.data.phone,
+        Sex: res.data.data.Sex || 0,
+        img: res.data.data.Avatar,
+        RoleName: res.data.data.RoleName,
+      });
+    });
+  }
 });
 </script>
 <style scoped></style>

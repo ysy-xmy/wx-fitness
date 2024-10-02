@@ -13,19 +13,21 @@
         </view>
         <div class="flex flex-wrap z-10">
           <div class="text-xl w-full z-10 text-white pl-4">
-            小木鱼
+            {{ state.name }}
 
             <text
               style="font-size: 25px; color: #a54aff"
+              v-if="state.Sex == 0"
               class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"
             ></text>
 
             <text
               style="font-size: 25px; color: #16a9fa"
+              v-else
               class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
             ></text>
           </div>
-          <p class="text-sm z-10 text-white pl-4">20岁</p>
+          <p class="text-sm z-10 text-white pl-4">{{ state.Age }}岁</p>
         </div>
       </div>
     </div>
@@ -38,7 +40,10 @@
         style="width: 90%"
         class="shadow-md rounded-lg px-10 bg-white flex justify-around flex-row py-5"
       >
-        <div class="mine-indicator bg-white">
+        <div
+          class="mine-indicator bg-white"
+          v-if="(state.RoleName = 'student')"
+        >
           <div class="indicator-left flex flex-col">
             <span class="title text-gray-500 tracking-wider mb-3"
               >授课次数</span
@@ -50,13 +55,34 @@
 
           <div class="indicator-right"></div>
         </div>
-        <div class="mine-indicator bg-white">
+        <div class="mine-indicator bg-white" v-else>
+          <div class="indicator-left flex flex-col">
+            <span class="title text-gray-500 tracking-wider mb-3">身高</span>
+            <span class="num text-2xl text-black font-bold tracking-wider"
+              >{{ height }}cm</span
+            >
+          </div>
+
+          <div class="indicator-right"></div>
+        </div>
+        <div
+          class="mine-indicator bg-white"
+          v-if="(state.RoleName = 'student')"
+        >
           <div class="indicator-left flex flex-col">
             <span class="title text-gray-500 tracking-wider mb-3"
               >学员总数</span
             >
             <span class="num text-2xl text-black font-bold tracking-wider"
               >74人</span
+            >
+          </div>
+        </div>
+        <div class="mine-indicator bg-white" v-else>
+          <div class="indicator-left flex flex-col">
+            <span class="title text-gray-500 tracking-wider mb-3">体重</span>
+            <span class="num text-2xl text-black font-bold tracking-wider"
+              >{{ weight }}kg</span
             >
           </div>
         </div>
@@ -137,6 +163,22 @@
 </template>
 <script lang="ts" setup>
 import { useRouter } from "uni-mini-router";
+import { useAuthStore } from "@/state/modules/auth";
+import { getBody } from "@/api/body";
+import { onMounted, ref } from "vue";
+const AuthStore = useAuthStore();
+const state = ref({});
+onMounted(() => {
+  state.value = AuthStore.getUser;
+  console.log(state);
+  getBody().then((res) => {
+    weight.value = res.data.data.width;
+    height.value = res.data.data.Height;
+  });
+});
+const weight = ref(0);
+const height = ref(0);
+
 const router = useRouter();
 const exitinfo = () => {
   router.push({ name: "info" });

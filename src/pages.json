@@ -5,16 +5,6 @@
   },
   "pages": [
     {
-      "path": "pages/login/index",
-      "name": "login",
-      "meta": {
-        "islogin": false
-      },
-      "style": {
-        "navigationBarTitleText": "登录"
-      }
-    },
-    {
       "path": "pages/home/index",
       "name": "home",
       "meta": {
@@ -22,6 +12,16 @@
       },
       "style": {
         "navigationBarTitleText": "健管家"
+      }
+    },
+    {
+      "path": "pages/login/index",
+      "name": "login",
+      "meta": {
+        "islogin": false
+      },
+      "style": {
+        "navigationBarTitleText": "登录"
       }
     },
     {

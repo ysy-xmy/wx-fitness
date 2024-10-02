@@ -37,14 +37,19 @@ const state = reactive<stateType>({
     state.changeData();
   },
   changeData() {
+    if (this.list.length >= this.total) return;
     let size = String(this.Size);
     let page = String(this.Page);
     props.fun(size, page).then((res: any) => {
-      res.data.list.forEach((item: any) => {
+      console.log(res, "res");
+      let temp = [];
+      if (res.data.data instanceof Array) temp = res.data.data;
+      else temp = res.data.data.OrderInfos;
+      this.total = res.data.Total || res.data.data.Total || temp.length;
+      temp.forEach((item: any) => {
         this.list.push(props.dispose ? props.dispose(item) : item);
       });
-      // console.log(this.list, "list");
-      // console.log(props.datasources, "data");
+
       this.Page++;
     });
   },
