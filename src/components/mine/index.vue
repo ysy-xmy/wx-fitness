@@ -6,28 +6,24 @@
       <div class="user-info z-10 p-5 w-full h-32 flex items-center">
         <view
           class="cu-avatar round lg"
-          style="
-            background-image: url(https://ossweb-img.qq.com/images/lol/img/champion/Taric.png);
-          "
+          :style="{ backgroundImage: `url(${userAvatar})` }"
         >
         </view>
         <div class="flex flex-wrap z-10">
           <div class="text-xl w-full z-10 text-white pl-4">
-            {{ state.name }}
-
+            {{ user.Username }}
             <text
+              v-if="user.Sex === 1"
               style="font-size: 25px; color: #a54aff"
-              v-if="state.Sex == 0"
               class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"
             ></text>
 
             <text
               style="font-size: 25px; color: #16a9fa"
-              v-else
               class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
             ></text>
           </div>
-          <p class="text-sm z-10 text-white pl-4">{{ state.Age }}岁</p>
+          <p class="text-sm z-10 text-white pl-4">20岁</p>
         </div>
       </div>
     </div>
@@ -40,22 +36,19 @@
         style="width: 90%"
         class="shadow-md rounded-lg px-10 bg-white flex justify-around flex-row py-5"
       >
-        <div
-          class="mine-indicator bg-white"
-          v-if="(state.RoleName = 'student')"
-        >
+        <div class="mine-indicator bg-white">
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3"
-              >授课次数</span
-            >
-            <span class="num text-2xl text-black font-bold tracking-wider"
-              >10次</span
-            >
+            <span class="title text-gray-500 tracking-wider mb-3">{{
+              user.RoleName === "student" ? "身高" : "售课次数"
+            }}</span>
+            <span class="num text-2xl text-black font-bold tracking-wider">{{
+              showTab1
+            }}</span>
           </div>
 
           <div class="indicator-right"></div>
         </div>
-        <div class="mine-indicator bg-white" v-else>
+        <!-- <div class="mine-indicator bg-white" v-else>
           <div class="indicator-left flex flex-col">
             <span class="title text-gray-500 tracking-wider mb-3">身高</span>
             <span class="num text-2xl text-black font-bold tracking-wider"
@@ -64,18 +57,18 @@
           </div>
 
           <div class="indicator-right"></div>
-        </div>
+        </div> -->
         <div
           class="mine-indicator bg-white"
           v-if="(state.RoleName = 'student')"
         >
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3"
-              >学员总数</span
-            >
-            <span class="num text-2xl text-black font-bold tracking-wider"
-              >74人</span
-            >
+            <span class="title text-gray-500 tracking-wider mb-3">{{
+              user.RoleName === "student" ? "体重" : "学员数量"
+            }}</span>
+            <span class="num text-2xl text-black font-bold tracking-wider">{{
+              showTab2
+            }}</span>
           </div>
         </div>
         <div class="mine-indicator bg-white" v-else>
@@ -162,24 +155,37 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { useRouter } from "uni-mini-router";
+import { getCourseAndStudentCount } from "@/api/coach";
+import { getHWInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
-import { getBody } from "@/api/body";
-import { onMounted, ref } from "vue";
-const AuthStore = useAuthStore();
-const state = ref({});
-onMounted(() => {
-  state.value = AuthStore.getUser;
-  console.log(state);
-  getBody().then((res) => {
-    weight.value = res.data.data.width;
-    height.value = res.data.data.Height;
-  });
-});
-const weight = ref(0);
-const height = ref(0);
-
+import { useRouter } from "uni-mini-router";
 const router = useRouter();
+const authStore = useAuthStore();
+const user = computed(() => authStore.user);
+const userAvatar = ref<string>(
+  "https://ossweb-img.qq.com/images/lol/img/champion/Taric.png"
+);
+const showTab1 = ref<string>("0");
+const showTab2 = ref<string>("0");
+onMounted(() => {
+  console.log("user", user);
+  userAvatar.value = user.value.Avatar;
+
+  if (user.value.RoleName === "student") {
+    getHWInfo().then((res) => {
+      console.log("-----======", res.data.data);
+      showTab1.value = res.data.data.Height.toString();
+      showTab2.value = res.data.data.Weight.toString();
+    });
+  } else {
+    getCourseAndStudentCount().then((res) => {
+      console.log(res);
+      showTab1.value = res.data.data.CourseCount.toString();
+      showTab2.value = res.data.data.StudentCount.toString();
+    });
+  }
+});
+
 const exitinfo = () => {
   router.push({ name: "info" });
 };

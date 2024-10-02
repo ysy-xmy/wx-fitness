@@ -10,3 +10,7 @@ export const getCoachcourseinfo = (id: number) => {
 export const getCoachStudentinfo = () => {
   return request.get("/api/coach/studentList");
 };
+
+export const getCourseAndStudentCount = () => {
+  return request.get("/api/coach/courseAndStudentCount");
+};

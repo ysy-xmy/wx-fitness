@@ -6,9 +6,7 @@ const authStore = useAuthStore()
 onLaunch(() => {
     if (authStore.isLogin) {
         getUserInfo().then(res => {
-            console.log(res)
-            authStore.setUserInfo(res.data)
-            console.log(authStore.getUser())
+            authStore.setUser(res.data.data)
         })
         refreshToken().then(res => {
             console.log(res)
