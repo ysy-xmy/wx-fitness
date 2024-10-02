@@ -4,8 +4,7 @@
       <img class="w-screen z-0 absolute top-0" src="../../static/wave-bg.png" />
 
       <div class="user-info z-10 p-5 w-full h-32 flex items-center">
-        <view class="cu-avatar round lg" :style="
-            { backgroundImage: `url(${userAvatar})` }
+        <view class="cu-avatar round lg" :style="{ backgroundImage: `url(${userAvatar})` }
           ">
         </view>
         <div class="flex flex-wrap z-10">
@@ -89,16 +88,16 @@
 <script lang="ts" setup>
 import { useAuthStore } from "@/state/modules/auth";
 import { useRouter } from "uni-mini-router";
-import { onMounted, ref } from "vue";
-
-const authStore = useAuthStore();
+import { computed, onMounted, ref } from "vue";
 const router = useRouter();
-
-let user = authStore.getUser;
-let userAvatar = ref<string>("https://ossweb-img.qq.com/images/lol/img/champion/Taric.png");
+const authStore = useAuthStore();
+const user = computed(() => authStore.user);
+const userAvatar = ref<string>("https://ossweb-img.qq.com/images/lol/img/champion/Taric.png");
 onMounted(() => {
-  user = authStore.getUser;
-  userAvatar.value = user.Avatar ? user.Avatar : "https://ossweb-img.qq.com/images/lol/img/champion/Taric.png"
+
+
+  console.log(user, 'user');
+  userAvatar.value = user.Avatar
 });
 
 const exitinfo = () => {
