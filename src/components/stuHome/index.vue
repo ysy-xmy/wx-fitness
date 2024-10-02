@@ -1,95 +1,123 @@
 <template>
-    <view class="content w-screen px-2 flex flex-wrap">
-        <div class="w-full exhibition-box my-5  relative flex justify-centers">
-            <div class="w-full h-full bg-black absolute opacity-25"></div>
-            <img class="w-full h-50 " src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
-            <div class="absolute text-white bottom-0 w-full p-2  flex-wrap flex justify-center items-center">
-                <div class=" text-left mb-5">“健身不只是身体上的锻炼，它还是心灵和情感的一种训练。”
-                </div>
-                <div class="text-signature mb-2 w-full flex justify-between flex-wrap">
-                    <div class="time-text">
-                        <span>7月8号 周一 2024</span>
-                    </div>
-                    <div class="writer-text">
-                        <span>亚里士多德</span>
-                    </div>
-
-                </div>
-            </div>
-
+  <view class="content w-screen px-2 flex flex-wrap">
+    <div class="w-full exhibition-box my-5 relative flex justify-centers">
+      <div class="w-full h-full bg-black absolute opacity-25"></div>
+      <img
+        class="w-full h-50"
+        src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
+      />
+      <div
+        class="absolute text-white bottom-0 w-full p-2 flex-wrap flex justify-center items-center"
+      >
+        <div class="text-left mb-5">
+          “健身不只是身体上的锻炼，它还是心灵和情感的一种训练。”
         </div>
-        <div class="tabs  w-full">
-            <van-tabs :class="['custom-class', 'my-custom-tabs']" nav-class="my-nav-class" tab-class="my-tab-class"
-                tab-active-class="my-tab-active-class" swipeable animated border="false" color="#ec6853"
-                class=" w-2/3 rounded-md " v-model:active="active" type="card">
-                <van-tab title="购买课程">
-                    <tabBuycourse />
-                </van-tab>
-                <van-tab title="我的课程">
-                    <tabMycourse />
-                </van-tab>
-
-
-            </van-tabs>
+        <div class="text-signature mb-2 w-full flex justify-between flex-wrap">
+          <div class="time-text">
+            <span>7月8号 周一 2024</span>
+          </div>
+          <div class="writer-text">
+            <span>亚里士多德</span>
+          </div>
         </div>
-    </view>
+      </div>
+    </div>
+    <div class="tabs w-full">
+      <van-tabs
+        :class="['custom-class', 'my-custom-tabs']"
+        nav-class="my-nav-class"
+        tab-class="my-tab-class"
+        tab-active-class="my-tab-active-class"
+        swipeable
+        animated
+        border="false"
+        color="#ec6853"
+        class="w-2/3 rounded-md"
+        v-model:active="active"
+        type="card"
+        @change="change"
+      >
+        <van-tab title="购买课程" name="buy">
+          <tabBuycourse />
+        </van-tab>
+        <van-tab title="我的课程" name="my">
+          <tabMycourse :change="changeTab" />
+        </van-tab>
+      </van-tabs>
+    </div>
+  </view>
 </template>
 
 <script setup lang="ts" name="index">
-import { ref } from 'vue';
-import { useRouter } from 'uni-mini-router';
-import { useAppStore } from '@/state/app';
-import { getlist } from '@/api/common/user/user';
-import tabBuycourse from '@/components/index/tab-buycourse.vue';
-import tabMycourse from '@/components/index/tab-mycourse.vue';
+import { onMounted, ref } from "vue";
+import { useRouter } from "uni-mini-router";
+import { useAppStore } from "@/state/app";
+import { getlist } from "@/api/common/user/user";
+import tabBuycourse from "@/components/index/tab-buycourse.vue";
+import tabMycourse from "@/components/index/tab-mycourse.vue";
 const router = useRouter();
 const usetsto = useAppStore();
 let env = import.meta.env.VITE_APP_ENV;
 let api = import.meta.env.VITE_BASE_URL;
-const searchword = ref('')
+const searchword = ref("buy");
+const change = (e: any) => {
+  active.value = e.detail.name;
+};
 // 跳转路由
 function push() {
-    router.push({
-        name: 'course',
-    });
+  router.push({
+    name: "course",
+  });
 }
+onMounted(() => {
+  uni.$on("bot", (val) => {
+    console.log(active.value);
+    uni.$emit("nextData", active.value);
+  });
+});
 
 //搜索
 function onSearch() {
-    console.log(searchword.value, '我搜索了');
+  console.log(searchword.value, "我搜索了");
 }
 // 请求api
 function apis() {
-    getlist({ id: 1 }).then((res) => {
-        console.log(res, '我点击了');
-    });
+  getlist({ id: 1 }).then((res) => {
+    console.log(res, "我点击了");
+  });
 }
+const active = ref<string>("buy");
+//改变tabs状态
+function changeTab() {
+  active.value = "buy";
+}
+defineExpose({ changeTab });
 </script>
 
 <style>
 .content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .logo {
-    margin: 200rpx auto 50rpx;
-    width: 200rpx;
-    height: 200rpx;
+  margin: 200rpx auto 50rpx;
+  width: 200rpx;
+  height: 200rpx;
 }
 
 .text-area {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 :deep(.vin-image-preview-custom-pop) {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background: transparent !important;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
 }
 </style>

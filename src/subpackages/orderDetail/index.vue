@@ -41,67 +41,20 @@
       <radio-group class="block" @change="handlePackageNo">
         <view class="cu-form-group">
           <view class="title">类型</view>
-          <view v-if="!ifDiy">
+          <view>
             <span class="mx-2">按课时收费</span>
-
-            <radio
-              class="red"
-              :class="packageNo == 'A' ? 'checked' : ''"
-              :checked="packageNo == 'A' ? true : false"
-              value="A"
-            ></radio>
-            <span class="mx-2">包月</span>
-
-            <radio
-              class="red"
-              :class="packageNo == 'B' ? 'checked' : ''"
-              :checked="packageNo == 'B' ? true : false"
-              value="B"
-            ></radio>
           </view>
-          <view v-else><span class="mx-2">按课时收费</span> </view>
         </view>
       </radio-group>
       <view v-if="packageNo == 'A'" class="cu-form-group margin-top flex">
         <view class="title">节数</view>
-        <radio-group class="block" @change="RadioChange" v-if="!ifDiy">
+        <radio-group class="block" @change="RadioChange">
           <view @click="" class="cu-form-group margin-top">
-            <!-- <view class="title">{{}}节</view> -->
             <view class="title">10节</view>
-            <radio
-              class="red margin-left-sm"
-              :class="pitchNumber == '10' ? 'checked' : ''"
-              :checked="pitchNumber == '10' ? true : false"
-              value="10"
-            >
-            </radio>
           </view>
           <!-- #ifndef MP-ALIPAY -->
-          <view class="cu-form-group">
-            <view class="title">15节</view>
-            <radio
-              class="red margin-left-sm"
-              :class="pitchNumber == '15' ? 'checked' : ''"
-              :checked="pitchNumber == '15' ? true : false"
-              value="15"
-            ></radio>
-          </view>
-          <view class="cu-form-group">
-            <view class="title">25节</view>
-            <view>
-              <!-- <radio class='blue radio' :class="radio == 'C' ? 'checked' : ''"
-                                :checked="radio == 'C' ? true : false" value="C"></radio> -->
-              <radio
-                class="red margin-left-sm"
-                :class="pitchNumber == '25' ? 'checked' : ''"
-                :checked="pitchNumber == '25' ? true : false"
-                value="25"
-              ></radio>
-            </view>
-          </view>
           <!-- #endif -->
         </radio-group>
-        <view class="title" v-else>{{ coachForm.mount }}节</view>
       </view>
     </div>
 
@@ -109,27 +62,21 @@
       <div class="w-full text-black text-lg font-bold m-2 pt-4 pl-2">
         教练信息
       </div>
-
-      <van-cell
-        @click="choosecoach"
-        title="选择教练"
-        value="由系统指定"
-        is-link
-        to="home"
-        v-if="!ifDiy"
-      />
-
       <div
         class="lists-item flex flex-nowrap items-center content-center justify-between p-1 py-3"
       >
         <div class="w-1/6 mx-2">
-          <img class="w-12 h-12 rounded-full" :src="coachForm.avatar" alt="" />
+          <img
+            class="w-12 h-12 rounded-full"
+            src="https://tse2-mm.cn.bing.net/th/id/OIP-C.UjwT5Zhsxxr4S0wmFjSuMAAAAA?w=207&h=207&c=7&r=0&o=5&pid=1.7"
+            alt=""
+          />
         </div>
         <div class="w-5/6 flex pl-2 flex-row items-center justify-between">
           <div class="text-box">
             <div class="title py-2">
               <h1 class="text-lg font-bold">
-                {{ coachForm.name }}
+                陈教练
                 <!-- <text style="font-size: 25px; color:#a54aff ;"
                                     class="cuIcon-female w-10 h-10 text-2xl text-red  margin-right-xs"></text> -->
 
@@ -141,17 +88,17 @@
               </h1>
 
               <p @click="copyPhone" class="text-[#6b7280] pt-2">
-                联系：{{ coachForm.phone }}
+                联系：13432843702
                 <span class="cuIcon-copy"></span>
               </p>
             </div>
           </div>
-          <div class="btn justify-center pr-4 items-center h-full">
+          <!-- <div class="btn justify-center pr-4 items-center h-full">
             <span
               style="font-size: 30px"
               class="cuIcon-roundcheckfill text-blue"
             ></span>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -201,45 +148,25 @@
         </div>
       </div>
     </div>
-
-    <view class="cu-bar bg-white tabbar flex justify-between shop foot">
-      <view class="text-[#e4595c] text-xl font-bold px-8"
-        >￥{{ courseInfo.price }}</view
-      >
-
-      <view class="px-4 flex justify-end">
-        <button @click="pay" class="cu-btn w-28 bg-[#ec6853] round text-white">
-          立即支付
-        </button>
-      </view>
-    </view>
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, ref } from "vue";
+
+import { getOrderDetail } from "@/api/order";
 import { useRouter } from "uni-mini-router";
-const router = useRouter();
-onMounted(() => {
-  if (router.route.value.query) {
-    const query = router.route.value.query;
-    // =query.name
-    courseInfo.title = query.name + "的私教课";
-    courseInfo.price = query.price;
-    coachForm.mount = query.count;
-    ifDiy.value = query.ifDiy;
-    coachForm.avatar = query.img;
-    coachForm.phone = query.phone;
-    coachForm.name = query.name;
-  }
-  //   console.log(router.route.value.query);
+const router: any = useRouter();
+onMounted(async () => {
+  const id = router.route.value.query.id;
+  const data = await getOrderDetail(id);
+  console.log(data);
 });
-const coachForm = reactive({ phone: "", avatar: "", name: "", mount: "" });
-const ifDiy = ref(false);
+
 const pitchNumber = ref("10");
 const packageNo = ref("A"); //套餐类型，A是按课时收费，B是按包月
 const inputName = ref<string>();
 const inputPhone = ref<number>();
-const courseInfo = reactive({
+const courseInfo = ref({
   title: "私教课",
   price: "1990.0",
   time: "2022-05-10 >10:00-12:00",

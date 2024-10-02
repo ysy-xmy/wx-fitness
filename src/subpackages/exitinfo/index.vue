@@ -35,6 +35,9 @@
                     </view>
                 </picker>
             </view>
+
+
+            <!-- 
             <view class="cu-form-group">
                 <view class="title">出生日期</view>
                 <picker mode="date" :value="birthdate" start="2000-01-01" end="2024-09-20" @change="DateChange">
@@ -42,7 +45,47 @@
                         {{ birthdate ? birthdate : '请选择出生日期' }}
                     </view>
                 </picker>
+            </view> -->
+
+            <view class="cu-form-group margin-top">
+                <view class="title">年龄</view>
+                <picker @change="ageChange" :value="ageindex" :range="ageList">
+                    <view class="picker">
+                        {{ ageindex > -1 ? ageList[ageindex] : '请选择年龄' }}
+                    </view>
+                </picker>
             </view>
+
+            <view class="cu-form-group flex justify-space-between">
+                <view class="title">上传企业微信</view>
+                <view class="grid col-4 grid-square flex-sub">
+                    <view class="bg-img" v-for="(item, index) in imgList" :key="index" :data-url="imgList[index]">
+                        <image :src="imgList[index]" mode="aspectFill"></image>
+                        <view class="cu-tag bg-red" @tap.stop="DeteleWXimg" :data-index="index">
+                            <text class='cuIcon-close'></text>
+                        </view>
+                    </view>
+                    <view class="solids" @tap="handleUploadWXimg" v-if="imgList.length < 1">
+                        <text class='cuIcon-cameraadd'></text>
+                    </view>
+                </view>
+            </view>
+
+            <view class="cu-form-group flex justify-space-between">
+                <view class="title">上传体检表</view>
+                <view class="grid col-4 grid-square flex-sub">
+                    <view class="bg-img" v-for="(item, index) in imgList" :key="index" :data-url="imgList[index]">
+                        <image :src="imgList[index]" mode="aspectFill"></image>
+                        <view class="cu-tag bg-red" @tap.stop="DeteleBodyexamination" :data-index="index">
+                            <text class='cuIcon-close'></text>
+                        </view>
+                    </view>
+                    <view class="solids" @tap="handleUploadexamination" v-if="imgList.length < 9">
+                        <text class='cuIcon-cameraadd'></text>
+                    </view>
+                </view>
+            </view>
+
 
 
         </form>
@@ -64,12 +107,71 @@ const sexindex = ref();
 const date = ref('2022-01-01');
 const birthdate = ref()
 const sexs = ref(['男', '女'])
+const imgList = ref([])
+const ageList = ref(['14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '70', '71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '83', '84', '85', '86', '87'])
+
+const handleUploadimg = () => {
+    uni.handleUploadexamination({
+        count: 9, //默认9
+        sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album'], //从相册选择
+        success: (res) => {
+            console.log(res)
+            if (imgList.value.length != 0) {
+                imgList.value = imgList.value.concat(res.tempFilePaths)
+            } else {
+                imgList.value = res.tempFilePaths
+            }
+        }
+    });
+}
+const handleUploadWXimg = () => {
+    uni.chooseImage({
+        count: 1,
+        sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album'], //从相册选择
+        success: (res) => {
+            console.log(res)
+            if (imgList.value.length != 0) {
+                imgList.value = imgList.value.concat(res.tempFilePaths)
+            } else {
+                imgList.value = res.tempFilePaths
+            }
+        }
+    });
+}
 
 
 const sexChange = (e: any) => {
     sexindex.value = e.detail.value;
 }
 
+const DeteleBodyexamination = (e: any) => {
+    uni.showModal({
+        title: '删除',
+        content: '确定要删除这张照片？',
+        cancelText: '再看看',
+        confirmText: '删除',
+        success: res => {
+            if (res.confirm) {
+                imgList.value.splice(e.currentTarget.dataset.index, 1)
+            }
+        }
+    })
+}
+const DeteleWXimg = (e: any) => {
+    uni.showModal({
+        title: '删除',
+        content: '确定要删除这张照片？',
+        cancelText: '再看看',
+        confirmText: '删除',
+        success: res => {
+            if (res.confirm) {
+                imgList.value.splice(e.currentTarget.dataset.index, 1)
+            }
+        }
+    })
+}
 const userInfo = ref({
     avatarUrl: 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0',
     nickName: '微信用户',
