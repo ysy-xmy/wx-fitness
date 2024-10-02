@@ -8,17 +8,7 @@ const whiteList = [
   "home",
   "index",
   "course",
-  "contact",
-  "mycourse",
-  "info",
-  "orderRecord",
-  "indicators",
-  "buyCourse",
-  "coachHome",
-  "studentDetail",
   "diyTable",
-  "searchStu",
-  "orderDetail",
 ];
 
 export function userRouternext(router: Router) {
