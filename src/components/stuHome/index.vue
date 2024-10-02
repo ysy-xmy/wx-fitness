@@ -35,6 +35,7 @@
         class="w-2/3 rounded-md"
         v-model:active="active"
         type="card"
+        @change="change"
       >
         <van-tab title="购买课程" name="buy">
           <tabBuycourse />
@@ -59,6 +60,9 @@ const usetsto = useAppStore();
 let env = import.meta.env.VITE_APP_ENV;
 let api = import.meta.env.VITE_BASE_URL;
 const searchword = ref("buy");
+const change = (e: any) => {
+  active.value = e.detail.name;
+};
 // 跳转路由
 function push() {
   router.push({
@@ -68,9 +72,7 @@ function push() {
 onMounted(() => {
   uni.$on("bot", (val) => {
     console.log(active.value);
-    if (active.value == "buy") {
-      uni.$emit("nextData", true);
-    }
+    uni.$emit("nextData", active.value);
   });
 });
 

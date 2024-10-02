@@ -3,7 +3,7 @@
     :fun="getCourses"
     :dispose="dispose"
     ref="scorllFormRef"
-    :dataSources="list"
+    :datasources="list"
   >
     <template #card>
       <div class="tab-mycourse w-full flex flex-wrap justify-center">
@@ -47,6 +47,11 @@
         </div>
       </div>
     </template>
+    <template #empty>
+      <div class="nodata-card flex flex-col justify-center items-center w-full">
+        <van-empty description="还没有课程哦~，正在加急开设哦~" />
+      </div>
+    </template>
   </scrollFrom>
 </template>
 
@@ -56,7 +61,7 @@ import { useAuthStore } from "@/state/modules/auth";
 import { useRouter } from "uni-mini-router";
 import scrollFrom from "@/components/scrollForm/index.vue";
 import { getCourses } from "@/api/courses/courses";
-const scorllFormRef = ref<any>(null);
+
 const router = useRouter();
 const authStore = useAuthStore();
 type card = {
@@ -68,28 +73,28 @@ type card = {
 //7月8号 周一 2024
 //私教课
 //
+const scorllFormRef = ref<any>(null);
 let list = ref<card[]>([]);
 onMounted(() => {
   uni.showLoading({ title: "数据加载中" });
   uni.$on("nextData", (val) => {
-    scorllFormRef.value.getData();
-    list.value = scorllFormRef.value?.state.list;
+    if (val == "buy") {
+      uni.showLoading();
+      scorllFormRef.value.getData();
+      getListData();
+    }
   });
   getListData();
 });
 const getListData = () => {
-  if (scorllFormRef.value?.state.total == 0) {
+  list.value = scorllFormRef.value?.state.list;
+  if (scorllFormRef.value?.ifChange()) {
+    uni.hideLoading();
     return;
   } else {
-    list.value = scorllFormRef.value?.state.list;
-    if (list.value.length == 0)
-      setTimeout(() => {
-        list.value = scorllFormRef.value?.state.list;
-      }, 1000);
-    else {
-      uni.hideLoading();
-      return;
-    }
+    setTimeout(() => {
+      getListData();
+    }, 500);
   }
 };
 const dispose = (item: any) => {

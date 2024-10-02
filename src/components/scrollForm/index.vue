@@ -1,6 +1,10 @@
 <!-- 下滑表单 -->
 <template>
-  <slot name="card"></slot>
+  <slot
+    name="empty"
+    v-if="state.total == 0 || props.datasources.length == 0"
+  ></slot>
+  <slot name="card" v-else></slot>
 </template>
 <script setup lang="ts">
 import { defineProps, onMounted, reactive } from "vue";
@@ -13,32 +17,34 @@ interface stateType extends dataType {
   init: () => void;
   changeData: () => void;
   list: any[];
-  dataSources: any[];
 }
 onMounted(() => {
   state.init();
 });
 const props = defineProps<{
-  fun: (Size: number, Page: number) => any; //请求方式
+  fun: (Size: string, Page: string) => any; //请求方式
   dispose: (data: dataType) => object; //数据方式
+  datasources: any[];
 }>();
 const state = reactive<stateType>({
   list: [],
   Page: 1,
   Size: 5,
   total: 1,
-  dataSources: [],
   init() {
     this.list = [];
     this.Page = 1;
     state.changeData();
   },
   changeData() {
-    props.fun(this.Size, this.Page).then((res: any) => {
+    let size = String(this.Size);
+    let page = String(this.Page);
+    props.fun(size, page).then((res: any) => {
       res.data.list.forEach((item: any) => {
         this.list.push(props.dispose ? props.dispose(item) : item);
       });
-      console.log(this.dataSources, "this.dataSources");
+      // console.log(this.list, "list");
+      // console.log(props.datasources, "data");
       this.Page++;
     });
   },
@@ -46,6 +52,12 @@ const state = reactive<stateType>({
 const getData = () => {
   state.changeData();
 };
-// const getIf
-defineExpose({ getData, state });
+
+const ifChange = () => {
+  if (state.total == 0) return true;
+  return (
+    state.list.length == props.datasources.length && state.list.length != 0
+  );
+};
+defineExpose({ getData, state, ifChange });
 </script>
