@@ -4,13 +4,12 @@ import { getUserInfo, refreshToken } from '@/api/user'
 import { useAuthStore } from '@/state/modules/auth'
 const authStore = useAuthStore()
 onLaunch(() => {
-    getUserInfo().then(res => {
-        console.log(res)
-        authStore.setUserInfo(res.data)
-        console.log(authStore.getUser())
-    })
-    var token
     if (authStore.isLogin) {
+        getUserInfo().then(res => {
+            console.log(res)
+            authStore.setUserInfo(res.data)
+            console.log(authStore.getUser())
+        })
         refreshToken().then(res => {
             console.log(res)
             if (res.data.length == 0) return
