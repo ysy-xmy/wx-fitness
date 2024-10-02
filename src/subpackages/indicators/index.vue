@@ -15,6 +15,38 @@
       </view>
     </scroll-view>
     <div
+      style="
+        display: flex;
+        width: 100vw;
+        justify-content: space-evenly;
+        margin-top: 10px;
+      "
+    >
+      <picker
+        mode="date"
+        :value="beginTime"
+        @change="DateBeginChange"
+        :end="today"
+        style="background-color: rgba(0, 0, 0, 0.2)"
+      >
+        <view class="picker">
+          {{ beginTime }}
+        </view>
+      </picker>
+      <div>--</div>
+      <picker
+        mode="date"
+        :value="endTime"
+        @change="DateEndChange"
+        :end="today"
+        style="background-color: rgba(0, 0, 0, 0.2)"
+      >
+        <view class="picker">
+          {{ endTime }}
+        </view>
+      </picker>
+    </div>
+    <div
       class="add-card bg-[#f2f6ff] h-52 absolute w-screen pt-8 z-10 bottom-0"
       v-if="typeVal != 1"
     >
@@ -144,7 +176,7 @@
         <span>添 加</span>
       </van-button>
     </div>
-    <echart />
+    <echart :endTime="endTime" :beginTime="beginTime" />
   </div>
 
   <view class="cu-modal bottom-modal" :class="show ? 'show' : ''">
@@ -178,13 +210,12 @@
               <view class="title">日期选择</view>
               <picker
                 mode="date"
-                :value="addData.time"
-                start="2015-09-01"
-                end="2020-09-01"
+                :value="date"
+                :end="today"
                 @change="DateChange"
               >
                 <view class="picker">
-                  {{ addData.time }}
+                  {{ date }}
                 </view>
               </picker>
             </view>
@@ -225,12 +256,13 @@
             <view class="cu-form-group">
               <view class="title">日期</view>
               <picker
-                mode="addData.time"
-                :value="addData.time"
+                mode="date"
+                :value="date"
                 @change="DateChange"
+                :end="today"
               >
                 <view class="picker">
-                  {{ addData.time }}
+                  {{ date }}
                 </view>
               </picker>
             </view>
@@ -251,12 +283,13 @@
             <view class="cu-form-group">
               <view class="title">日期</view>
               <picker
-                mode="addData.time"
-                :value="addData.time"
+                mode="date"
+                :value="date"
                 @change="DateChange"
+                :end="today"
               >
                 <view class="picker">
-                  {{ addData.time }}
+                  {{ date }}
                 </view>
               </picker>
             </view>
@@ -276,13 +309,9 @@
             <div class="mt-4"></div>
             <view class="cu-form-group">
               <view class="title">日期</view>
-              <picker
-                mode="addData.time"
-                :value="addData.time"
-                @change="DateChange"
-              >
+              <picker mode="date" :value="date" @change="DateChange">
                 <view class="picker">
-                  {{ addData.time }}
+                  {{ date }}
                 </view>
               </picker>
             </view>
@@ -303,12 +332,13 @@
             <view class="cu-form-group">
               <view class="title">日期</view>
               <picker
-                mode="addData.time"
-                :value="addData.time"
+                mode="date"
+                :value="date"
                 @change="DateChange"
+                :end="today"
               >
                 <view class="picker">
-                  {{ addData.time }}
+                  {{ date }}
                 </view>
               </picker>
             </view>
@@ -330,14 +360,26 @@
   </view>
 </template>
 <script setup lang="ts">
+import echart from "@/components/lime-echart/lime-echart.vue";
 // 引入echarts
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useAppStore } from "../../state/app";
-import echart from "@/components/echart/try.vue";
+// import echart from "@/components/echart/try.vue";废弃
+import dayjs from "dayjs";
+
+const beginTime = ref(dayjs().subtract(1, "year").format("YYYY-MM-DD"));
+const endTime = ref(dayjs().format("YYYY-MM-DD"));
 const show = ref(false);
 const TabCur = ref(0);
 const weight = ref("");
 // const date = ref('2024-09-01')
+const today = dayjs().format("YYYY-MM-DD"); //今天日期
+const DateBeginChange = (e: any) => {
+  beginTime.value = e.detail.value;
+};
+const DateEndChange = (e: any) => {
+  endTime.value = e.detail.value;
+};
 const appStore = useAppStore();
 const date = ref(appStore.getCurrentDate);
 const DateChange = (e: any) => {
@@ -346,28 +388,26 @@ const DateChange = (e: any) => {
 const TabList = [
   {
     title: "体重",
-    content: "Content1",
+    content: "wight",
   },
   {
     title: "三围",
-    content: "Content2",
+    content: "three",
   },
   {
     title: "体脂率",
-    content: "Content3",
+    content: "body_fat",
   },
   {
     title: "BMI",
-    content: "Content4",
-  },
-  {
-    title: "基础代谢",
-    content: "Content5",
+    content: "bmi",
   },
 ];
 function tabSelect(e: any) {
   const id = e.currentTarget.dataset.id;
   TabCur.value = parseInt(id);
+  temp.value = TabList[TabCur.value]["content"];
+  uni.$emit("change", temp.value);
   typeVal.value = id;
   if (id != 1) {
     dataList = {
@@ -392,8 +432,9 @@ function showModal() {
 function hideModal() {
   show.value = false;
 }
-const typeVal = ref(0);
-const typeList = ["体重", "三维", "体脂率", "BMI", "基础代谢"];
+const typeVal = ref();
+const temp = ref(TabList[TabCur.value]["content"]); //临时储存一下content
+const typeList = ["体重", "三维", "体脂率", "BMI"];
 let dataList = reactive({
   timeYear: 2024,
   timeMonth: 7,
