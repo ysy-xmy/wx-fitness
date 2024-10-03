@@ -2,24 +2,32 @@
     <div :style="{ overflow: modalHidden ? 'auto' : 'hidden', height: '100vh' }"
         class=" main-container bg-[#f9f9f9] min-h-screen w-screen  px-5">
         <div class="bg-white coachlist p-2 ">
-            <div class="lists-item flex flex-nowrap  items-center justify-between p-1">
-                <div class="w-1/6 mr-2">
-                    <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
+
+            <div v-for="item in coachlist" :key="item.ID"
+                class="lists-item flex flex-nowrap  items-center justify-between p-1">
+                <div class=" mr-2">
+                    <img class="w-12 h-12 rounded-full"
+                        :src="item.Avatar ? item.Avatar : 'https://ss0.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2046741117,1411188274&fm=253&gp=0.jpg'"
                         alt="">
                 </div>
                 <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
                     <div class="text-box">
                         <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练 <van-icon name="circle" />
-                                <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
+                            <h1 class="text-lg font-bold py-2"> {{ item.Username }}
+                                <span class="text-xs text-[#6b7280]"></span>
+                                <text v-if="item.Sex === 1" style="font-size: 25px; color: #a54aff"
+                                    class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"></text>
+
+                                <text v-else style="font-size: 25px; color: #16a9fa"
+                                    class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"></text>
                             </h1>
 
-                            <p class="text-[#6b7280]">授课风格：健身房教练3333333333333333333</p>
+                            <p class="text-[#6b7280]">联系：{{ item.Phone }}</p>
                         </div>
 
                     </div>
                     <div class="btn  h-full">
-                        <van-button @click="contact" size="small" round type="primary"><span
+                        <van-button @click="contact(item.WeChatBusinessImg)" size="small" round type="primary"><span
                                 class="text-">联系</span></van-button>
 
 
@@ -27,224 +35,19 @@
 
                 </div>
             </div>
-            <div class="lists-item flex flex-nowrap  items-center justify-between p-1">
-                <div class="w-1/6 mr-2">
-                    <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
-                        alt="">
-                </div>
-                <div class="w-5/6 flex pl-2 flex-row items-center justify-between">
-                    <div class="text-box">
-                        <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练
-                                <text style="font-size: 25px; color:#a54aff ;"
-                                    class="cuIcon-female w-10 h-10 text-2xl text-red  margin-right-xs"></text>
-
-                                <text style="font-size: 25px; color:#16a9fa ;"
-                                    class="cuIcon-male w-10 h-10 text-2xl text-red  margin-right-xs"></text>
-
-                                <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
-                            </h1>
-
-                            <p class="text-[#6b7280]">授课风格：健身房教练3333333333333333333</p>
-                        </div>
-
-                    </div>
-                    <div class="btn  h-full">
-                        <van-button @click="contact" size="small" round type="primary"><span
-                                class="text-">联系</span></van-button>
-
-
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="lists-item flex flex-nowrap  items-center justify-between p-1">
-                <div class="w-1/6 mr-2">
-                    <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
-                        alt="">
-                </div>
-                <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
-                    <div class="text-box">
-                        <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练 <van-icon name="circle" />
-                                <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
-                            </h1>
-
-                            <p class="text-[#6b7280]">授课风格：健身房教练3333333333333333333</p>
-                        </div>
-
-                    </div>
-                    <div class="btn  h-full">
-                        <van-button @click="contact" size="small" round type="primary"><span
-                                class="text-">联系</span></van-button>
-
-
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="lists-item flex flex-nowrap  items-center justify-between p-1">
-                <div class="w-1/6 mr-2">
-                    <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
-                        alt="">
-                </div>
-                <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
-                    <div class="text-box">
-                        <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练 <van-icon name="circle" />
-                                <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
-                            </h1>
-
-                            <p class="text-[#6b7280]">授课风格：健身房教练3333333333333333333</p>
-                        </div>
-
-                    </div>
-                    <div class="btn  h-full">
-                        <van-button @click="contact" size="small" round type="primary"><span
-                                class="text-">联系</span></van-button>
-
-
-                    </div>
-
-                </div>
-            </div>
-            <div class="lists-item flex flex-nowrap  items-center justify-between p-1">
-                <div class="w-1/6 mr-2">
-                    <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
-                        alt="">
-                </div>
-                <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
-                    <div class="text-box">
-                        <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练 <van-icon name="circle" />
-                                <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
-                            </h1>
-
-                            <p class="text-[#6b7280]">授课风格：健身房教练3333333333333333333</p>
-                        </div>
-
-                    </div>
-                    <div class="btn  h-full">
-                        <van-button @click="contact" size="small" round type="primary"><span
-                                class="text-">联系</span></van-button>
-
-
-                    </div>
-
-                </div>
-            </div>
-            <div class="lists-item flex flex-nowrap  items-center justify-between p-1">
-                <div class="w-1/6 mr-2">
-                    <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
-                        alt="">
-                </div>
-                <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
-                    <div class="text-box">
-                        <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练 <van-icon name="circle" />
-                                <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
-                            </h1>
-
-                            <p class="text-[#6b7280]">授课风格：健身房教练3333333333333333333</p>
-                        </div>
-
-                    </div>
-                    <div class="btn  h-full">
-                        <van-button @click="contact" size="small" round type="primary"><span
-                                class="text-">联系</span></van-button>
-
-
-                    </div>
-
-                </div>
-            </div>
-            <div class="lists-item flex flex-nowrap  items-center justify-between p-1">
-                <div class="w-1/6 mr-2">
-                    <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
-                        alt="">
-                </div>
-                <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
-                    <div class="text-box">
-                        <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练 <van-icon name="circle" />
-                                <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
-                            </h1>
-
-                            <p class="text-[#6b7280]">授课风格：健身房教练3333333333333333333</p>
-                        </div>
-
-                    </div>
-                    <div class="btn  h-full">
-                        <van-button @click="contact" size="small" round type="primary"><span
-                                class="text-">联系</span></van-button>
-
-
-                    </div>
-
-                </div>
-            </div>
-            <div class="lists-item flex flex-nowrap  items-center justify-between p-1">
-                <div class="w-1/6 mr-2">
-                    <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
-                        alt="">
-                </div>
-                <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
-                    <div class="text-box">
-                        <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练 <van-icon name="circle" />
-                                <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
-                            </h1>
-
-                            <p class="text-[#6b7280]">授课风格：健身房教练3333333333333333333</p>
-                        </div>
-
-                    </div>
-                    <div class="btn  h-full">
-                        <van-button @click="contact" size="small" round type="primary"><span
-                                class="text-">联系</span></van-button>
-
-
-                    </div>
-
-                </div>
-            </div>
-            <div class="lists-item flex flex-nowrap  items-center justify-between p-1">
-                <div class="w-1/6 mr-2">
-                    <img class="w-16 h-16 rounded-full" src="https://img.icons8.com/color/48/000000/user-male.png"
-                        alt="">
-                </div>
-                <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
-                    <div class="text-box">
-                        <div class="title">
-                            <h1 class="text-lg font-bold py-2"> 陈教练 <van-icon name="circle" />
-                                <span class="text-xs text-[#6b7280]">（最近带课202次）</span>
-                            </h1>
-
-                            <p class="text-[#6b7280]">授课风格：健身房教练3333333333333333333</p>
-                        </div>
-
-                    </div>
-                    <div class="btn  h-full">
-                        <van-button @click="contact" size="small" round type="primary"><span
-                                class="text-">联系</span></van-button>
-
-
-                    </div>
-
-                </div>
-            </div>
-
-
         </div>
         <van-popup lock-scroll="true" @click-overlay="closepopup" :show="modalHidden == false" round
             :style="{ padding: '64px' }">
             <view>
-                <image class="image" src="https://img.icons8.com/color/48/000000/user-male.png" mode='aspectFill'>
+
+                <image :show-menu-by-longpress="true" v-if="wxcodeImg" class="image" :src="wxcodeImg" mode='aspectFill'>
                 </image>
+                <div v-else class="nodata-card flex flex-col justify-center items-center w-full">
+                    <van-empty class="whitespace-nowrap" description="很抱歉该教练还没上传" />
+                </div>
+
             </view>
-            <view class=" w-full justify-center items-center">
+            <view v-if="wxcodeImg" class=" w-full justify-center items-center">
                 <view class="title text-center text-black text-lg font-bold py-2">
                     添加教练微信
                 </view>
@@ -254,27 +57,35 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { getCoachList } from '@/api/coach'
+const coachlist = ref([])
 const modalHidden = ref(true)
-const modalConfirm = () => {
-    console.log('modalConfirm')
-    modalHidden.value = true
-}
+const wxcodeImg = ref('')
 const closepopup = () => {
-    console.log('closepopup')
     modalHidden.value = true
 }
-const modalCandel = () => {
-    console.log('modalCandel')
-    modalHidden.value = true
-}
-
-const contact = () => {
-    console.log('contact')
-
+const contact = (WeChatBusinessImg: string | null) => {
     modalHidden.value = false
 
+    if (WeChatBusinessImg === null) return
+    wxcodeImg.value = WeChatBusinessImg
 }
+const getlist = async () => {
+    const res = await getCoachList()
+    coachlist.value = res.data.data
+}
+
+const init = () => {
+    uni.showLoading({ title: '加载中...', mask: true });
+    getlist().finally(() => {
+        uni.hideLoading()
+    })
+}
+
+onMounted(() => {
+    init()
+})
 </script>
 <style scoped>
 .lists-item {
