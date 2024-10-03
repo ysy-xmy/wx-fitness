@@ -4,7 +4,7 @@
       <img class="w-screen z-0 absolute top-0" src="../../static/wave-bg.png" />
 
       <div class="user-info z-10 p-5 w-full h-32 flex items-center">
-        <view class="cu-avatar round lg" :style="{ backgroundImage: `url(${userAvatar})` }"></view>
+        <view class="cu-avatar round lg" :style="{ backgroundImage: `url(${user.Avatar})` }"></view>
         <div class="flex flex-wrap z-10">
           <div class="text-xl w-full z-10 text-white pl-4">
             {{ user.name }}
@@ -14,7 +14,7 @@
             <text style="font-size: 25px; color: #16a9fa"
               class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"></text>
           </div>
-          <p class="text-sm z-10 text-white pl-4">{{ user.Age }}</p>
+          <p class="text-sm z-10 text-white pl-4">{{ user.Age ? user.Age + '岁' : "未填写" }}</p>
         </div>
       </div>
     </div>
@@ -100,16 +100,15 @@ import { getHWInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 import { useRouter } from "uni-mini-router";
 import { getUserInfo } from "@/api/user";
+import { onShow } from '@dcloudio/uni-app';
 const router = useRouter();
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
-const userAvatar = ref<string>("https://ossweb-img.qq.com/images/lol/img/champion/Taric.png");
 const showTab1 = ref<string>("0");
 const showTab2 = ref<string>("0");
 const roleName = ref<string>("student");
 onMounted(() => {
-  roleName.value = getUserInfo();
-  userAvatar.value = user.Avatar;
+  roleName.value = getUserInfoinit();
   if (roleName.value === "coach") {
     getCourseAndStudentCount().then((res) => {
       showTab1.value = res.data.data.CourseCount.toString();
@@ -117,8 +116,6 @@ onMounted(() => {
     });
 
   } else {
-
-
     getHWInfo().then((res) => {
       showTab1.value = res.data.data.Height.toString();
       showTab2.value = res.data.data.Weight.toString();
@@ -126,8 +123,7 @@ onMounted(() => {
   }
 });
 
-
-const getUserInfo = async () => {
+const getUserInfoinit = async () => {
   const res: any = await getUserInfo()
   return res.data.data.RoleName ? res.data.data.RoleName : "student";
 };

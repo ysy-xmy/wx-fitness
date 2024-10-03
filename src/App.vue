@@ -5,9 +5,6 @@ import { useAuthStore } from '@/state/modules/auth'
 const authStore = useAuthStore()
 onLaunch(() => {
     if (authStore.isLogin) {
-        getUserInfo().then(res => {
-            authStore.setUser(res.data.data)
-        })
         refreshToken().then(res => {
             console.log(res)
             if (res.data.length == 0) return

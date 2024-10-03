@@ -15,7 +15,8 @@
             </view>
             <view class="cu-form-group margin-top">
                 <view class="title">昵称</view>
-                <input placeholder="微信用户" type="nickname" :value="username" @change="onInputChange" />
+                <input class="text-right" placeholder="微信用户" type="nickname" :value="username"
+                    @change="onInputChange" />
             </view>
 
 
@@ -74,7 +75,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'uni-mini-router';
 import { uploadToOSS } from '@/api/oss/ali-oss';
 import http from '@/utils/request';
@@ -83,10 +84,10 @@ import { updateUserInfo } from '@/api/user';
 
 
 const authStore = useAuthStore();
-const user = authStore.getUser;
+const user = computed(() => authStore.getUser);
 const router = useRouter();
 
-const username = ref(user.Username ? user.Username : '微信用户');
+const username = ref(user.value.name ? user.value.name : '微信用户');
 const ageindex = ref<number>(user.Age ? user.Age - 14 : -1);
 const avatarUrl = ref(user.Avatar ? user.Avatar : '../../static/user.png');
 const sexindex = ref<number>(user.Sex ? user.Sex : 0);
@@ -201,14 +202,14 @@ const onChooseAvatar = async (e: any) => {
 const onSave = () => {
     const authStore = useAuthStore();
     const user = authStore.getUser;
-
-    userInfo.value.ID = user.ID;
+    console.log("onSave", user);
+    userInfo.value.ID = user.id;
     userInfo.value.Username = username.value;
     userInfo.value.Sex = sexindex.value;
     userInfo.value.Age = ageList.value[ageindex.value];
     userInfo.value.Avatar = userInfo.value.Avatar;
 
-    console.log(userInfo.value)
+
     updateUserInfo(userInfo.value).then(() => {
         console.log("保存成功");
         user.Username = userInfo.value.Username;
