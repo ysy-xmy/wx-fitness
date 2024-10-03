@@ -9,8 +9,22 @@ import { defineStore } from "pinia";
 
 interface AuthState {
   token?: string;
-  user: object;
+  user: userinfoType | object;
   RoleName: string;
+}
+
+interface userinfoType {
+  Age: number | null;
+  Avatar: string | null;
+  CreateTime: string | null;
+  Enable: boolean;
+  ID: number;
+  LastLoginTime: string | null;
+  OpenID: string;
+  Phone: string | null | number;
+  RoleName?: string | null;
+  Sex: number | null;
+  UserName: string;
 }
 export const useAuthStore = defineStore({
   id: "auth",
