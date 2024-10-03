@@ -73,8 +73,8 @@ const changeType = (active) => {
   const data = {
     Type,
     Count: 1000,
-    startTime: `${props.beginTime} 00:00:00`,
-    endTime: `${props.endTime} 23:59:59`,
+    StartTime: `${props.beginTime} 00:00:00`,
+    EndTime: `${props.endTime} 23:59:59`,
   };
   getBodydata(data).then((res) => {
     console.log(res, "res");

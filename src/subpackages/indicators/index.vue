@@ -388,7 +388,7 @@ const DateChange = (e: any) => {
 const TabList = [
   {
     title: "体重",
-    content: "wight",
+    content: "weight",
   },
   {
     title: "三围",
