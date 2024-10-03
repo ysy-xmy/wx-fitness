@@ -10,6 +10,7 @@
 
         </view>
 
+
         <view class="fixed">
             <cu-custom :isBack="false" bgColor="bg-shadeTop text-white">
 
@@ -44,7 +45,8 @@
                             class="cu-list  pt-3  menu-avatar flex flex-wrap bg-white ">
                             <template v-for="(item2, index2) in actionrouterList[mainCur].children[index1].children"
                                 :key="index2">
-                                <view class=" felx flex-col w-1/2  p-2 px-3  h-36  bg-[#f9fafb]">
+                                <view @click="toDetail(item2)"
+                                    class=" felx flex-col w-1/2  p-2 px-3  h-36  bg-[#f9fafb]">
                                     <img class="w-full h-24 rounded-md  lg"
                                         :src="item2.Imgs ? item2.Imgs[0].Url : 'https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg'" />
                                     <view class="content">
@@ -107,6 +109,8 @@ import { ref, onMounted, nextTick, watch } from 'vue';
 import { getFirstmenulist, getSecByFirst, getActionAll, getActionsBySec } from '@/api/action/action';
 //@ts-ignore
 import type { SourceCategory, TargetCategory, ActionItem, ListItem } from './types.ts'
+import { useRouter } from 'uni-mini-router';
+const router = useRouter();
 const firstmenu = ref<ListItem[]>([
     { name: "A", id: 0, OrderNum: 1, children: [] },
 ]);
@@ -158,7 +162,14 @@ function sortByOrderNumDescending(routers: ListItem[]) {
         children: sortChildren(router.children) // 对每个路由的子项进行排序
     })).sort(sortByOrderIdAndIdDesc);
 }
-
+const toDetail = (item: ActionItem) => {
+    router.push({
+        name: 'actionDetail',
+        params: {
+            itemid: item.id
+        }
+    });
+}
 //处理搜索点击事件
 const handlelocation = (actionid: number | string) => {
     console.log(actionid)
