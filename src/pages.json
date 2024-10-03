@@ -110,6 +110,16 @@
           }
         },
         {
+          "path": "actionDetail/index",
+          "name": "actionDetail",
+          "meta": {
+            "islogin": true
+          },
+          "style": {
+            "navigationBarTitleText": "动作详情"
+          }
+        },
+        {
           "path": "mycourse/index",
           "name": "mycourse",
           "meta": {

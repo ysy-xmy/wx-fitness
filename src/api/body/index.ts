@@ -3,6 +3,7 @@ import type { inputBodyType, addBodyType } from "./types";
 export const getBodydata = (data: inputBodyType) => {
   return request.post("/api/body/getByType", data);
 };
+//增加身体数据
 export const addBodydata = (data: addBodyType) => {
   return request.post("/api/body/add", data);
 };

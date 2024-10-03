@@ -120,77 +120,77 @@ onMounted(() => {
     Percentage,
   };
   //模拟假数据
-  let dddd = [
-    {
-      ID: 1,
-      Type: "outline",
-      PlanTime: "2024-09-28 12:29:09",
-      Percentage: 0,
-      CreatedAt: "0001-01-01T00:00:00Z",
-      Actions: [
-        {
-          ExerciseActionID: 18,
-          ActionName: "由影并",
-          GroupNum: 50,
-          Completed: true,
-          UpdatedAt: "2024-09-29T00:35:34.085+08:00",
-        },
-        {
-          ExerciseActionID: 19,
-          ActionName: "儿包完安米个",
-          GroupNum: 34,
-          Completed: false,
-          UpdatedAt: "2024-09-27T00:25:59.23+08:00",
-        },
-      ],
-    },
-    {
-      ID: 1,
-      Type: "plan",
-      PlanTime: "2024-09-28 12:29:09",
-      Percentage: 0,
-      CreatedAt: "0001-01-01T00:00:00Z",
-      Actions: [
-        {
-          ExerciseActionID: 20,
-          ActionName: "由影并",
-          GroupNum: 50,
-          Completed: true,
-          UpdatedAt: "2024-09-29T00:35:34.085+08:00",
-        },
-        {
-          ExerciseActionID: 29,
-          ActionName: "儿包完安米个",
-          GroupNum: 34,
-          Completed: false,
-          UpdatedAt: "2024-09-27T00:25:59.23+08:00",
-        },
-      ],
-    },
-    {
-      ID: 1,
-      Type: "outline",
-      PlanTime: "2024-09-28 12:29:09",
-      Percentage: 0,
-      CreatedAt: "0001-01-01T00:00:00Z",
-      Actions: [
-        {
-          ExerciseActionID: 21,
-          ActionName: "由影并",
-          GroupNum: 50,
-          Completed: true,
-          UpdatedAt: "2024-09-29T00:35:34.085+08:00",
-        },
-        {
-          ExerciseActionID: 22,
-          ActionName: "儿包完安米个",
-          GroupNum: 34,
-          Completed: false,
-          UpdatedAt: "2024-09-27T00:25:59.23+08:00",
-        },
-      ],
-    },
-  ];
+  // let dddd = [
+  //   {
+  //     ID: 1,
+  //     Type: "outline",
+  //     PlanTime: "2024-09-28 12:29:09",
+  //     Percentage: 0,
+  //     CreatedAt: "0001-01-01T00:00:00Z",
+  //     Actions: [
+  //       {
+  //         ExerciseActionID: 18,
+  //         ActionName: "由影并",
+  //         GroupNum: 50,
+  //         Completed: true,
+  //         UpdatedAt: "2024-09-29T00:35:34.085+08:00",
+  //       },
+  //       {
+  //         ExerciseActionID: 19,
+  //         ActionName: "儿包完安米个",
+  //         GroupNum: 34,
+  //         Completed: false,
+  //         UpdatedAt: "2024-09-27T00:25:59.23+08:00",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     ID: 1,
+  //     Type: "plan",
+  //     PlanTime: "2024-09-28 12:29:09",
+  //     Percentage: 0,
+  //     CreatedAt: "0001-01-01T00:00:00Z",
+  //     Actions: [
+  //       {
+  //         ExerciseActionID: 20,
+  //         ActionName: "由影并",
+  //         GroupNum: 50,
+  //         Completed: true,
+  //         UpdatedAt: "2024-09-27T00:35:34.085+08:00",
+  //       },
+  //       {
+  //         ExerciseActionID: 29,
+  //         ActionName: "儿包完安米个",
+  //         GroupNum: 34,
+  //         Completed: false,
+  //         UpdatedAt: "2024-09-27T00:25:59.23+08:00",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     ID: 1,
+  //     Type: "outline",
+  //     PlanTime: "2024-09-28 12:29:09",
+  //     Percentage: 0,
+  //     CreatedAt: "0001-01-01T00:00:00Z",
+  //     Actions: [
+  //       {
+  //         ExerciseActionID: 21,
+  //         ActionName: "由影并",
+  //         GroupNum: 50,
+  //         Completed: true,
+  //         UpdatedAt: "2024-09-29T00:35:34.085+08:00",
+  //       },
+  //       {
+  //         ExerciseActionID: 22,
+  //         ActionName: "儿包完安米个",
+  //         GroupNum: 34,
+  //         Completed: false,
+  //         UpdatedAt: "2024-09-27T00:25:59.23+08:00",
+  //       },
+  //     ],
+  //   },
+  // ];
   // 获取计划列表
   getplanlist(Number(id)).then((res) => {
     let temp = res.data.data || [];
@@ -213,19 +213,26 @@ onMounted(() => {
         };
         item.Actions.forEach((i) => {
           if (i.Completed) {
+            let day =
+              dayjs(i.UpdatedAt).format("YYYY-MM-DD").split("-")[0] +
+              "_" +
+              dayjs(i.UpdatedAt).format("YYYY-MM-DD").split("-")[1] +
+              "_" +
+              dayjs(i.UpdatedAt).format("YYYY-MM-DD").split("-")[2];
+            console.log(day, "day");
             // 处理完成的任务
-            if (list["finish"][temp["beginTime"]]) {
-              list["finish"][temp["beginTime"]].push({
+            if (list["finish"][day]) {
+              list["finish"][day].push({
                 groupNum: i.GroupNum,
                 name: i.ActionName,
-                time: dayjs(i.UpdatedAt).format("YYYY-MM-DD hh-mm"),
+                time: dayjs(i.UpdatedAt).format("YYYY-MM-DD HH-MM"),
               });
             } else {
-              list["finish"][temp["beginTime"]] = [
+              list["finish"][day] = [
                 {
                   groupNum: i.GroupNum,
                   name: i.ActionName,
-                  time: dayjs(i.UpdatedAt).format("YYYY-MM-DD hh-mm"),
+                  time: dayjs(i.UpdatedAt).format("YYYY-MM-DD HH-MM"),
                 },
               ];
             }
@@ -248,6 +255,7 @@ onMounted(() => {
     planIng.value = list["plan"];
     finish.value = list["finish"];
     outline.value = list["outline"];
+    console.log(finish.value, "finish");
   });
 });
 

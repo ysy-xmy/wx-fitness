@@ -199,14 +199,14 @@
               <view class="title">体重</view>
               <input
                 class="text-right"
-                v-model="addData.weight"
+                v-model="addData.WEIGHT"
                 placeholder="请输入体重(kg)"
                 name="input"
               />
               <span>kg</span>
             </view>
             <div class="mt-4"></div>
-            <view class="cu-form-group">
+            <!-- <view class="cu-form-group">
               <view class="title">日期选择</view>
               <picker
                 mode="date"
@@ -218,7 +218,7 @@
                   {{ date }}
                 </view>
               </picker>
-            </view>
+            </view> -->
           </div>
           <!-- 添加三维 -->
           <div v-if="typeVal == 1">
@@ -226,7 +226,7 @@
               <view class="title">胸围</view>
               <input
                 class="text-right"
-                v-model="addData.Bust"
+                v-model="addData.BUST"
                 placeholder="请输入胸围(cm)"
                 name="input"
               />
@@ -236,7 +236,7 @@
               <view class="title">腰围</view>
               <input
                 class="text-right"
-                v-model="addData.Bust"
+                v-model="addData.WAIST"
                 placeholder="请输入腰围(cm)"
                 name="input"
               />
@@ -246,14 +246,14 @@
               <view class="title">臀围</view>
               <input
                 class="text-right"
-                v-model="addData.Bust"
+                v-model="addData.HIP"
                 placeholder="请输入臀围(cm)"
                 name="input"
               />
               <span>cm</span>
             </view>
             <div class="mt-4"></div>
-            <view class="cu-form-group">
+            <!-- <view class="cu-form-group">
               <view class="title">日期</view>
               <picker
                 mode="date"
@@ -265,7 +265,7 @@
                   {{ date }}
                 </view>
               </picker>
-            </view>
+            </view> -->
           </div>
           <!-- 添加体脂率 -->
           <div v-if="typeVal == 2">
@@ -273,14 +273,14 @@
               <view class="title">体脂率</view>
               <input
                 class="text-right"
-                v-model="addData.bodyFatPercentage"
+                v-model="addData.BODY_FAT"
                 placeholder="请添加体脂率(%)"
                 name="input"
               />
               <span>%</span>
             </view>
             <div class="mt-4"></div>
-            <view class="cu-form-group">
+            <!-- <view class="cu-form-group">
               <view class="title">日期</view>
               <picker
                 mode="date"
@@ -292,7 +292,7 @@
                   {{ date }}
                 </view>
               </picker>
-            </view>
+            </view> -->
           </div>
           <!-- 添加BMI -->
           <div v-if="typeVal == 3">
@@ -300,52 +300,25 @@
               <view class="title">BMI</view>
               <input
                 class="text-right"
-                v-model="weight"
+                v-model="addData.BMI"
                 placeholder="请添加BMI(kg/m²)"
                 name="input"
               />
               <span>kg/m²</span>
             </view>
             <div class="mt-4"></div>
-            <view class="cu-form-group">
+            <!-- <view class="cu-form-group">
               <view class="title">日期</view>
               <picker mode="date" :value="date" @change="DateChange">
                 <view class="picker">
                   {{ date }}
                 </view>
               </picker>
-            </view>
-          </div>
-          <!-- 添加基础代谢 -->
-          <div v-if="typeVal == 4">
-            <view class="cu-form-group margin-top">
-              <view class="title">BMI</view>
-              <input
-                class="text-right"
-                v-model="weight"
-                placeholder="请添加基础代谢"
-                name="input"
-              />
-              <span></span>
-            </view>
-            <div class="mt-4"></div>
-            <view class="cu-form-group">
-              <view class="title">日期</view>
-              <picker
-                mode="date"
-                :value="date"
-                @change="DateChange"
-                :end="today"
-              >
-                <view class="picker">
-                  {{ date }}
-                </view>
-              </picker>
-            </view>
+            </view> -->
           </div>
           <div class="mt-4"></div>
           <van-button
-            @click="showModal"
+            @click="addNewData"
             size="large"
             type="primary"
             round
@@ -364,6 +337,7 @@ import echart from "@/components/lime-echart/lime-echart.vue";
 // 引入echarts
 import { onMounted, reactive, ref } from "vue";
 import { useAppStore } from "../../state/app";
+import { addBodydata } from "@/api/body";
 // import echart from "@/components/echart/try.vue";废弃
 import dayjs from "dayjs";
 
@@ -376,9 +350,11 @@ const weight = ref("");
 const today = dayjs().format("YYYY-MM-DD"); //今天日期
 const DateBeginChange = (e: any) => {
   beginTime.value = e.detail.value;
+  uni.$emit("changeTime", true);
 };
 const DateEndChange = (e: any) => {
   endTime.value = e.detail.value;
+  uni.$emit("changeTime", true);
 };
 const appStore = useAppStore();
 const date = ref(appStore.getCurrentDate);
@@ -432,9 +408,10 @@ function showModal() {
 function hideModal() {
   show.value = false;
 }
-const typeVal = ref();
+const typeVal = ref(0);
 const temp = ref(TabList[TabCur.value]["content"]); //临时储存一下content
 const typeList = ["体重", "三维", "体脂率", "BMI"];
+const enTypeList = ["WEIGHT", "THREE", "BODY_FAT", "BMI"];
 let dataList = reactive({
   timeYear: 2024,
   timeMonth: 7,
@@ -463,13 +440,91 @@ let dimensionalData = reactive({
   beginHips: "105cm", //臀围
 });
 let addData = reactive({
-  time: "",
-  weight: "",
-  Bust: "",
-  Waistline: "",
-  Hips: "",
-  bodyFatPercentage: "",
+  WEIGHT: "",
+  BUST: "",
+  WAIST: "",
+  HIP: "",
+  BODY_FAT: "", //存疑
   BMI: "",
-  basalMetabolism: "",
 });
+const addNewData = async () => {
+  uni.showLoading();
+  if (typeVal.value != 1) {
+    //不是三维
+    let data = {
+      Type: enTypeList[typeVal.value],
+      Value: Number(addData[enTypeList[typeVal.value]]),
+    };
+    addBodydata(data)
+      .then((res) => {
+        uni.hideLoading();
+        if (res.data.code == 200) {
+          uni.showToast({
+            title: "增加成功",
+            icon: "success",
+          });
+          uni.$emit("changeTime", true);
+          show.value = false;
+          addData = {
+            WEIGHT: "",
+            BUST: "",
+            WAIST: "",
+            HIP: "",
+            BODY_FAT: "", //存疑
+            BMI: "",
+          };
+        } else {
+          uni.showToast({
+            title: "增加失败",
+            icon: "error",
+          });
+        }
+      })
+      .catch((err) => {
+        uni.hideLoading();
+        uni.showToast({
+          title: "增加失败",
+          icon: "error",
+        });
+      });
+  } else {
+    let data1 = {
+      Type: "BUST",
+      Value: Number(addData["BUST"]),
+    };
+    let data2 = {
+      Type: "WAIST",
+      Value: Number(addData["WAIST"]),
+    };
+    let data3 = {
+      Type: "HIP",
+      Value: Number(addData["HIP"]),
+    };
+    const r1 = await addBodydata(data1);
+    const r2 = await addBodydata(data2);
+    const r3 = await addBodydata(data3);
+    uni.hideLoading();
+    if (r1.data.code == 200 && r2.data.code == 200 && r3.data.code == 200) {
+      uni.showToast({
+        title: "增加成功",
+        icon: "success",
+      });
+      uni.$emit("changeTime", true);
+      show.value = false;
+      addData = {
+        WEIGHT: "",
+        BUST: "",
+        WAIST: "",
+        HIP: "",
+        BODY_FAT: "", //存疑
+        BMI: "",
+      };
+    } else {
+      uni.showToast({
+        title: "增加失败",
+        icon: "error",
+      });
+    }
+  }
+};
 </script>
