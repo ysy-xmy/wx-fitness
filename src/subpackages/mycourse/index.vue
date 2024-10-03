@@ -108,7 +108,10 @@ onMounted(() => {
   const name = router.route.value.params?.name;
   const desc = router.route.value.params?.desc;
   const Percentage = router.route.value.params?.Percentage;
-  selectCoachClok(id).then((res) => {});
+  selectCoachClok(id).then((res) => {
+    if (res.data.data == "false") checked.value = false;
+    else checked.value = true;
+  });
   // 假设 state 已经在其他地方定义了类型
   state.value = {
     id,
@@ -190,7 +193,8 @@ onMounted(() => {
   ];
   // 获取计划列表
   getplanlist(Number(id)).then((res) => {
-    res.data.data.forEach(
+    let temp = res.data.data || [];
+    temp.forEach(
       (item: {
         ID: any;
         PlanTime: any;

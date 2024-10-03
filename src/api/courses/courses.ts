@@ -68,7 +68,7 @@ export const cancelCoachClok = (id: string) => {
 
 //查看教练是否有权打卡
 export const selectCoachClok = (id: string) => {
-  return request.post(`/api/course/plan/punchInAuthCheck/${id}`);
+  return request.get(`/api/course/plan/punchInAuthCheck/` + id);
 };
 
 //计划动作打卡

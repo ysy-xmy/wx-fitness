@@ -38,7 +38,11 @@
         课程信息
       </div>
 
-      <radio-group class="block" @change="handlePackageNo">
+      <radio-group
+        class="block"
+        @change="handlePackageNo"
+        style="font-size: smaller"
+      >
         <view class="cu-form-group">
           <view class="title">类型</view>
           <view v-if="!ifDiy">
@@ -46,23 +50,41 @@
 
             <radio
               class="red"
-              :class="packageNo == 'A' ? 'checked' : ''"
-              :checked="packageNo == 'A' ? true : false"
+              :class="packageNo == 'lesson' ? 'checked' : ''"
+              :checked="packageNo == 'lesson' ? true : false"
               value="A"
             ></radio>
             <span class="mx-2">包月</span>
 
             <radio
               class="red"
-              :class="packageNo == 'B' ? 'checked' : ''"
-              :checked="packageNo == 'B' ? true : false"
+              :class="packageNo == 'month' ? 'checked' : ''"
+              :checked="packageNo == 'quarter' ? true : false"
+              value="B"
+            ></radio>
+
+            <span class="mx-2">包季</span>
+
+            <radio
+              class="red"
+              :class="packageNo == 'quarter' ? 'checked' : ''"
+              :checked="packageNo == 'quarter' ? true : false"
+              value="B"
+            ></radio>
+
+            <span class="mx-2">包年</span>
+
+            <radio
+              class="red"
+              :class="packageNo == 'year' ? 'checked' : ''"
+              :checked="packageNo == 'year' ? true : false"
               value="B"
             ></radio>
           </view>
           <view v-else><span class="mx-2">按课时收费</span> </view>
         </view>
       </radio-group>
-      <view v-if="packageNo == 'A'" class="cu-form-group margin-top flex">
+      <view v-if="packageNo == 'lesson'" class="cu-form-group margin-top flex">
         <view class="title">节数</view>
         <radio-group class="block" @change="RadioChange" v-if="!ifDiy">
           <view @click="" class="cu-form-group margin-top">
@@ -113,7 +135,7 @@
       <van-cell
         @click="choosecoach"
         title="选择教练"
-        value="由系统指定"
+        :value="coachForm.ifFind ? coachForm.name : '由系统指定'"
         is-link
         to="home"
         v-if="!ifDiy"
@@ -121,6 +143,7 @@
 
       <div
         class="lists-item flex flex-nowrap items-center content-center justify-between p-1 py-3"
+        v-if="coachForm.ifFind"
       >
         <div class="w-1/6 mx-2">
           <img class="w-12 h-12 rounded-full" :src="coachForm.avatar" alt="" />
@@ -130,11 +153,15 @@
             <div class="title py-2">
               <h1 class="text-lg font-bold">
                 {{ coachForm.name }}
-                <!-- <text style="font-size: 25px; color:#a54aff ;"
-                                    class="cuIcon-female w-10 h-10 text-2xl text-red  margin-right-xs"></text> -->
+                <text
+                  style="font-size: 25px; color: #a54aff"
+                  class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"
+                  v-if="coachForm.sex == 1"
+                ></text>
 
                 <text
                   style="font-size: 20px; color: #16a9fa"
+                  v-else
                   class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
                 ></text>
                 <!-- <span class="text-xs text-[#6b7280]">（最近带课202次）</span> -->
@@ -142,7 +169,10 @@
 
               <p @click="copyPhone" class="text-[#6b7280] pt-2">
                 联系：{{ coachForm.phone }}
-                <span class="cuIcon-copy"></span>
+                <span
+                  class="cuIcon-copy"
+                  v-if="coachForm.phone != '暂无联系方式'"
+                ></span>
               </p>
             </div>
           </div>
@@ -218,31 +248,52 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "uni-mini-router";
+import dayjs from "dayjs";
 const router = useRouter();
 onMounted(() => {
+  uni.$on("chooseCoach", (val) => {
+    console.log(val, "选额好了");
+    coachForm.avatar = val.Avatar;
+    coachForm.name = val.Username;
+    coachForm.phone = val.Phome || "暂无联系方式";
+    coachForm.sex = val.Sex;
+    coachForm.ifFind = true;
+  });
   if (router.route.value.query) {
-    const query = router.route.value.query;
-    // =query.name
-    courseInfo.title = decodeURIComponent(query.name) + "的私教课";
-    courseInfo.price = decodeURIComponent(query.price);
-    coachForm.mount = decodeURIComponent(query.count);
-    ifDiy.value = query.ifDiy;
-    coachForm.avatar = decodeURIComponent(query.img);
-    coachForm.phone = decodeURIComponent(query.phone);
-    coachForm.name = decodeURIComponent(query.name);
+    if (router.route.value.query.ifDiy == "true") {
+      const query = router.route.value.query;
+      // =query.name
+      courseInfo.title = decodeURIComponent(query.name) + "的私教课";
+      courseInfo.price = decodeURIComponent(query.price);
+      coachForm.mount = decodeURIComponent(query.count);
+      ifDiy.value = true;
+      coachForm.avatar = decodeURIComponent(query.img);
+      coachForm.phone = decodeURIComponent(query.phone);
+      coachForm.name = decodeURIComponent(query.name);
+    } else {
+      ifDiy.value = false;
+      courseInfo.title = "私教课";
+    }
   }
   //   console.log(router.route.value.query);
 });
-const coachForm = reactive({ phone: "", avatar: "", name: "", mount: "" });
+const coachForm = reactive({
+  phone: "",
+  avatar: "",
+  name: "",
+  mount: "",
+  sex: 0,
+  ifFind: false,
+});
 const ifDiy = ref(false);
 const pitchNumber = ref("10");
-const packageNo = ref("A"); //套餐类型，A是按课时收费，B是按包月
+const packageNo = ref("lesson"); //套餐类型，All是全部显示
 const inputName = ref<string>();
 const inputPhone = ref<number>();
 const courseInfo = reactive({
   title: "私教课",
-  price: "1990.0",
-  time: "2022-05-10 >10:00-12:00",
+  price: "0",
+  time: dayjs().format("YYYY-MM-DD"),
   place: "北京市海淀区西二旗北路10号院",
 });
 

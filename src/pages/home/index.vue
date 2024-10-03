@@ -116,7 +116,6 @@ const onChange = (item: any) => {
 };
 const permission = ref("");
 const lowerBottom = () => {
-  console.log("到底了");
   if (usetsto.active === "index") {
     uni.$emit("bot", true);
   }

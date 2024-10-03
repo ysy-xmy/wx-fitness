@@ -44,7 +44,7 @@ const state = reactive<stateType>({
       console.log(res, "res");
       let temp = [];
       if (res.data.data instanceof Array) temp = res.data.data;
-      else if (res.data.OrderInfos instanceof Array)
+      else if (res.data.data.OrderInfos instanceof Array)
         temp = res.data.data.OrderInfos;
       this.total = res.data.Total || res.data.data.Total || temp.length;
       temp.forEach((item: any) => {
