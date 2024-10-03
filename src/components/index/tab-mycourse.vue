@@ -58,7 +58,14 @@
                 color="#ffffff"
                 size="small"
                 ><span
-                  @click="tomycourse"
+                  @click="
+                    tomycourse(
+                      item.ID,
+                      item.Percentage,
+                      item.Name,
+                      item.Description
+                    )
+                  "
                   class="tracking-widest text-lg w-20 text-[#EC6853]"
                   >&nbsp;打 卡</span
                 >
