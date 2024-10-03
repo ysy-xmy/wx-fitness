@@ -137,6 +137,56 @@ type TreeNode = {
     OrderNum: number;
     children: TreeNode[];
 };
+
+const menuItems = [
+    {
+        "name": "自重",
+        "id": 17,
+        "OrderNum": 74,
+        "children": [
+            {
+                "name": "胸大肌",
+                "id": 14,
+                "OrderNum": 34567,
+                "children": [
+                    {
+                        "CreatedAt": "0001-01-01T00:00:00Z",
+                        "Description": "Description",
+                        "id": 33,
+                        "name": "4545",
+                        "OrderNum": 0,
+                        "SecondCategoryID": 14,
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "始状",
+        "id": 15,
+        "OrderNum": 73,
+        "children": [
+            {
+                "name": "列增始反变增",
+                "id": 12,
+                "OrderNum": 89,
+                "children": [
+                    {
+                        "CreatedAt": "0001-01-01T00:00:00Z",
+                        "Description": "指色少信车石容可计这收质由听人自。六业华连除它得空火心少史难别目员。有光白正张造时她型用片般六装道重引。族县消究表原二取出准律达就。",
+                        "id": 27,
+                        "name": "包起深来增表",
+                        "OrderNum": 45,
+                        "SecondCategoryID": 12,
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    }
+    // 更多菜单项...
+];
 //总目录排序函数
 function sortByOrderNumDescending(routers: ListItem[]) {
     const sortByOrderIdAndIdDesc = (a: ListItem, b: ListItem): number => {
@@ -171,21 +221,38 @@ const toDetail = (item: ActionItem) => {
     });
 }
 //处理搜索点击事件
-const handlelocation = (actionid: number | string) => {
-    console.log(actionid)
-    const { firstCategoryId, secondCategoryId } = findCategoryIds(actionrouterList.value, actionid)
-    console.log(firstCategoryId, secondCategoryId)
-    if (firstCategoryId && secondCategoryId) {
-        mainCur.value = firstCategoryId
-        secMenuSelect(secMenu.value[secondCategoryId - 1], secondCategoryId - 1)
-    } else if (firstCategoryId) {
-        mainCur.value = firstCategoryId
-        secMenuSelect(secMenu.value[0], 0)
-    }
-    searchValue.value = ''
-    fuzzySearch(actionrouterList.value, searchValue.value)
-}
+const handlelocation = (actionid) => {
+    const { firstCategoryId, secondCategoryId } = findCategoryIds(actionrouterList.value, actionid);
+    const fisstindex = findIndexById(actionrouterList.value, firstCategoryId)
+    const secindex = findIndexById(actionrouterList.value, secondCategoryId)
+    const foundItem = findItemAndChildren(actionrouterList.value, secondCategoryId);
 
+    if (foundItem) {
+        console.log('找到的项及其子项:', JSON.stringify(foundItem, null, 2));
+        const secondCate = foundItem
+        tabCur.value = fisstindex;
+        mainCur.value = fisstindex;
+        verticalNavTop.value = (fisstindex - 1) * 50;
+        actionrouterList.value[mainCur.value].children[secindex].active = true
+        toSecmenu(findItemAndChildren(actionrouterList.value, firstCategoryId));
+
+        console.log('二级目录:', secMenu.value)
+        // secMenuSelect(secondCate, secindex)
+    }
+
+
+
+
+    // if (firstCategoryId !== null && secondCategoryId !== null) {
+    //     mainCur.value = firstCategoryId;
+    //     secMenuSelect(secMenu.value[secondCategoryId], secondCategoryId);
+    // } else if (firstCategoryId !== null) {
+    //     mainCur.value = firstCategoryId;
+    //     secMenuSelect(secMenu.value[0], 0);
+    // }
+    searchValue.value = '';
+    fuzzySearch(actionrouterList.value, searchValue.value);
+};
 //接口数据转换
 function transformCategories(source: SourceCategory[]): TargetCategory[] {
     const target: TargetCategory[] = [];
@@ -243,48 +310,33 @@ function transformCategories(source: SourceCategory[]): TargetCategory[] {
 
     return target;
 }
-function findCategoryIds(menuItems, deepestId) {
-    let firstCategoryId = null;
-    let secondCategoryId = null;
-
-    function searchCategory(items) {
-        for (const item of items) {
-            // 检查当前项的 id 是否与最深层的 id 匹配
-            if (item.id === deepestId) {
-                // 如果匹配，则设置二级菜单 id
-                secondCategoryId = item.SecondCategoryID;
-                return true; // 找到匹配项，返回 true
-            }
-            // 如果有子项，则递归搜索
-            if (item.children && item.children.length > 0) {
-                const found = searchCategory(item.children);
-                if (found) {
-                    // 如果已经找到最深层的 id，则检查一级菜单 id
-                    if (secondCategoryId !== null && firstCategoryId === null) {
-                        firstCategoryId = item.id;
+function findCategoryIds(menuItems, actionId) {
+    for (let i = 0; i < menuItems.length; i++) {
+        const firstCategory = menuItems[i];
+        if (firstCategory.children && firstCategory.children.length > 0) {
+            for (let j = 0; j < firstCategory.children.length; j++) {
+                const secondCategory = firstCategory.children[j];
+                if (secondCategory.children && secondCategory.children.length > 0) {
+                    for (let k = 0; k < secondCategory.children.length; k++) {
+                        const action = secondCategory.children[k];
+                        if (action.id === actionId) {
+                            console.log(firstCategory.id, secondCategory.id)
+                            return { firstCategoryId: firstCategory.id, secondCategoryId: secondCategory.id };
+                        }
                     }
-                    return true; // 找到匹配项，返回 true
                 }
             }
         }
-        return false; // 未找到匹配项，返回 false
     }
-
-    // 开始搜索
-    searchCategory(menuItems);
-    const result = searchCategory(menuItems);
-    if (result) {
-        return { firstCategoryId, secondCategoryId }; // 如果 searchCategory 返回了结果，则返回这个结果
-    }
-    return { firstCategoryId, secondCategoryId }; // 如果没有找到，返回当前的类目ID
+    return { firstCategoryId: null, secondCategoryId: null };
 }
-
 //处理二级目录被选中事件
 //需要传入二级及其子项
 const secMenuSelect = (item: ListItem, index: number) => {
     if (item.children.Imgs) return
     actionrouterList.value[mainCur.value].children[index].active = !actionrouterList.value[mainCur.value].children[index].active
-    getActionsBySec(item.id).then(res => {
+    console.log(item.id, index)
+    getActionsBySec(String(item.id)).then(res => {
         //更新对应的二级目录
         actionrouterList.value[mainCur.value].children[index].children = res.data.data.map(item => {
             return {
@@ -326,7 +378,39 @@ const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
     searchResult.value = searchResults;
     return searchResults;
 };
-
+// 递归搜索函数
+function findItemAndChildren(items, id) {
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].id === id) {
+            // 如果找到匹配的项，返回该项及其子项
+            return items[i];
+        }
+        // 如果当前项有子项，则递归搜索
+        if (items[i].children && items[i].children.length > 0) {
+            const result = findItemAndChildren(items[i].children, id);
+            if (result) {
+                return result; // 如果在子项中找到匹配项，返回结果
+            }
+        }
+    }
+    return null; // 如果没有找到，返回null
+}
+// 查找id的索引
+function findIndexById(data, id) {
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].id === id) {
+            return i; // 找到id，返回索引
+        }
+        // 如果当前项有子项，递归地在子项中查找
+        if (data[i].children && data[i].children.length > 0) {
+            const childIndex = findIndexById(data[i].children, id);
+            if (childIndex !== -1) {
+                return childIndex; // 在子项中找到id，返回索引
+            }
+        }
+    }
+    return -1; // 未找到id，返回-1
+}
 
 // 节流函数
 function throttle(func: any, limit: any) {
@@ -373,8 +457,6 @@ onMounted(() => {
     getActionAll().then((res) => {
         const transformedData = transformCategories(res.data.data);
         actionrouterList.value = sortByOrderNumDescending(transformedData);
-        console.log(res.data.data)
-        console.log(actionrouterList.value)
 
     })
     nextTick(() => {
