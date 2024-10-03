@@ -67,7 +67,7 @@
             </scroll-view>
         </view>
 
-        <van-index-bar v-if="searchResult.length > 0" class=" w-screen absolute  z-1000 top-10 bg-[#fafafa]"
+        <van-index-bar v-if="searchResult.length > 0" class=" w-screen absolute  z-1000 top-10 bg-[#f2f2f2] shadow-sm"
             :index-list="indexList">
             <!-- 遍历搜索结果 -->
             <view class="cu-list menu  sm-border card-menu ">
@@ -77,21 +77,19 @@
                 <view v-for="(item, index) in searchResult" :key="index"
                     class=" w-screen flex flex-col items-start content-start">
                     <view @click="handlelocation(item.children.length > 0 ? item.children[0].id : item.id)"
-                        class="content border-none  padding-tb-sm">
-                        <view class="text-black text-center flex justify-between text-lg font-extrabold">
+                        class=" border-none  padding-tb-sm w-full">
+                        <view
+                            class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold">
 
                             <text class="text-black "> 动作： {{ item.name }}</text>
-                            <text class="cuIcon-right text-lg text-blue margin-right-xs mr-3"></text>
+                            <text class="cuIcon-right text-lg text-blue mr-10"></text>
                         </view>
                         <view v-if="item.children && item.children.length > 0" v-for="(item1, index1) in item.children">
-                            <view class="cu-item pl-8">
+                            <view class="cu-item pl-16">
                                 <view class="content">
                                     <view>{{ item1.name }}</view>
                                 </view>
                             </view>
-
-
-
                         </view>
 
                     </view>
@@ -129,7 +127,6 @@ const tabCur = ref(0);
 const mainCur = ref(0);
 const verticalNavTop = ref(0);
 const load = ref(true);
-const listCur = ref(firstmenu.value[0]);
 type TreeNode = {
     name: string;
     id: number;
@@ -272,10 +269,12 @@ function findCategoryIds(menuItems, deepestId) {
 }
 
 //处理二级目录被选中事件
+//需要传入二级及其子项
 const secMenuSelect = (item: ListItem, index: number) => {
     if (item.children.Imgs) return
     actionrouterList.value[mainCur.value].children[index].active = !actionrouterList.value[mainCur.value].children[index].active
     getActionsBySec(item.id).then(res => {
+        //更新对应的二级目录
         actionrouterList.value[mainCur.value].children[index].children = res.data.data.map(item => {
             return {
                 id: item.ID,
@@ -406,7 +405,7 @@ const getSelection = (item: ListItem) => {
     }
 }
 
-
+//更新对应的二级目录secMenu，需要传入一级目录
 const toSecmenu = (item: ListItem) => {
     let list: any[] = []
     if (item.children) {
