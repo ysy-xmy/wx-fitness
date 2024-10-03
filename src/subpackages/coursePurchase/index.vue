@@ -223,13 +223,13 @@ onMounted(() => {
   if (router.route.value.query) {
     const query = router.route.value.query;
     // =query.name
-    courseInfo.title = query.name + "的私教课";
-    courseInfo.price = query.price;
-    coachForm.mount = query.count;
+    courseInfo.title = decodeURIComponent(query.name) + "的私教课";
+    courseInfo.price = decodeURIComponent(query.price);
+    coachForm.mount = decodeURIComponent(query.count);
     ifDiy.value = query.ifDiy;
-    coachForm.avatar = query.img;
-    coachForm.phone = query.phone;
-    coachForm.name = query.name;
+    coachForm.avatar = decodeURIComponent(query.img);
+    coachForm.phone = decodeURIComponent(query.phone);
+    coachForm.name = decodeURIComponent(query.name);
   }
   //   console.log(router.route.value.query);
 });

@@ -42,15 +42,18 @@
         <view class="cu-form-group">
           <view class="title">类型</view>
           <view>
-            <span class="mx-2">按课时收费</span>
+            <span class="mx-2" v-if="packageNo == 'lesson'">按课时收费</span>
+            <span class="mx-2" v-else-if="packageNo == 'month'">包月</span>
+            <span class="mx-2" v-else-if="packageNo == 'quarter'">包季</span>
+            <span class="mx-2" v-else-if="packageNo == 'year'">包年</span>
           </view>
         </view>
       </radio-group>
-      <view v-if="packageNo == 'A'" class="cu-form-group margin-top flex">
+      <view v-if="packageNo == 'lesson'" class="cu-form-group margin-top flex">
         <view class="title">节数</view>
         <radio-group class="block" @change="RadioChange">
           <view @click="" class="cu-form-group margin-top">
-            <view class="title">10节</view>
+            <view class="title">{{ pitchNumber }}节</view>
           </view>
           <!-- #ifndef MP-ALIPAY -->
           <!-- #endif -->
@@ -76,7 +79,7 @@
           <div class="text-box">
             <div class="title py-2">
               <h1 class="text-lg font-bold">
-                陈教练
+                {{ coach.name }}
                 <!-- <text style="font-size: 25px; color:#a54aff ;"
                                     class="cuIcon-female w-10 h-10 text-2xl text-red  margin-right-xs"></text> -->
 
@@ -88,7 +91,7 @@
               </h1>
 
               <p @click="copyPhone" class="text-[#6b7280] pt-2">
-                联系：13432843702
+                联系：{{ coach.phone }}
                 <span class="cuIcon-copy"></span>
               </p>
             </div>
@@ -103,12 +106,12 @@
       </div>
     </div>
 
-    <div class="bg-white mt-3">
+    <!-- <div class="bg-white mt-3">
       <div class="w-full text-black text-lg font-bold m-2 pt-4 pl-2">
         个人信息
       </div>
       <view class="cu-form-group margin-top">
-        <!-- <van-field v-model="inputName" required label="姓名" placeholder="请填写真实姓名" /> -->
+        <van-field v-model="inputName" required label="姓名" placeholder="请填写真实姓名" />删掉
 
         <view class="title">姓名</view>
         <input v-model="inputName" placeholder="请填写真实姓名" name="input" />
@@ -120,9 +123,9 @@
           <view class="cu-tag bg-blue">+86</view>
           <view class="cu-tag line-blue">中国大陆</view>
         </view>
-        <!-- <van-field v-model="inputName" maxlength="11" type="digit" required label="电话" placeholder="请填写联系电话" /> -->
+        <van-field v-model="inputName" maxlength="11" type="digit" required label="电话" placeholder="请填写联系电话" />删掉
       </view>
-    </div>
+    </div> -->
 
     <div class="p-5 course-warning bg-white mt-3">
       <div class="warning-title font-extrabold tracking-widest text-lg">
@@ -155,26 +158,41 @@ import { onMounted, ref } from "vue";
 
 import { getOrderDetail } from "@/api/order";
 import { useRouter } from "uni-mini-router";
-import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 const router: any = useRouter();
 onMounted(async () => {
   const id = router.route.value.query.id;
+  const title = router.route.value.query.title;
+  const type = router.route.value.query.type;
+  const count = router.route.value.query.count;
   const res = await getOrderDetail(id);
-  courseInfo.value = {
-    title,
-    price: res.data.data.Amount,
-    time: new Dayjs(res.data.data.PaymentTime).format("YYYY-MM-DD"),
+  packageNo.value = type;
+  pitchNumber.value = count ? count : "0";
+  coach.value = {
+    name: res.data.data.CoachName,
+    phone: res.data.data.phone,
   };
+  courseInfo.value = {
+    place: "北京市海淀区西二旗北路10号院",
+    title: decodeURIComponent(title),
+    price: res.data.data.Amount,
+    time: dayjs(res.data.data.PaymentTime).format("YYYY-MM-DD"),
+  };
+  console.log(courseInfo.value, "course");
 });
 
-const pitchNumber = ref("10");
-const packageNo = ref("A"); //套餐类型，A是按课时收费，B是按包月
+const pitchNumber = ref("0");
+const packageNo = ref("A"); //套餐类型
 const inputName = ref<string>();
 const inputPhone = ref<number>();
+const coach = ref({
+  phone: "",
+  name: "",
+});
 const courseInfo = ref({
-  title: "私教课",
-  price: "1990.0",
-  time: "2022-05-10 >10:00-12:00",
+  title: "",
+  price: "",
+  time: "",
   place: "北京市海淀区西二旗北路10号院",
 });
 

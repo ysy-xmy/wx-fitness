@@ -56,3 +56,22 @@ export const getCourses = (Size: string, Page: string) => {
 export const getMycourese = (Size: string, Page: string) => {
   return request.get("/api/course/owner-courses");
 };
+
+//授权教练打卡
+export const allowCoachClock = (id: string) => {
+  return request.post(`/api/course/plan/punchIn/allow/${id}`);
+};
+//取消授权教练打卡
+export const cancelCoachClok = (id: string) => {
+  return request.post(`/api/course/plan/punchIn/cancel/${id}`);
+};
+
+//查看教练是否有权打卡
+export const selectCoachClok = (id: string) => {
+  return request.post(`/api/course/plan/punchInAuthCheck/${id}`);
+};
+
+//计划动作打卡
+export const actionClok = (id: string) => {
+  return request.post(`/api/course/plan/punchIn/${id}`);
+};

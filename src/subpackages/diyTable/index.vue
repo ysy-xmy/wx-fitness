@@ -47,11 +47,11 @@ import { onShareAppMessage } from "@dcloudio/uni-app";
 import { useAuthStore } from "@/state/modules/auth";
 const AuthStore = useAuthStore();
 const user = AuthStore.getUser;
-
+console.log(user, "user");
 onShareAppMessage((res) => {
   return {
     title: `${user.name}的课程`,
-    path: `/subpackages/coursePurchase/index?name=${user.nickName}&&phone=${user.phone}&&img=${user.img}&&count=${form.num}&&price=${form.money}&&ifDiy=true`,
+    path: `/subpackages/coursePurchase/index?name=${user.name}&&phone=${user.phone ? user.phone : "暂无联系方式"}&&img=${user.img}&&count=${form.num}&&price=${form.money}&&ifDiy=true`,
   };
 });
 

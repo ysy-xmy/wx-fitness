@@ -44,13 +44,13 @@
     <div class="mycourse-tabs">
       <van-tabs swipeable animated>
         <van-tab title="已完成">
-          <finishedtask :list="list['finish']"></finishedtask>
+          <finishedtask :list="finish"></finishedtask>
         </van-tab>
         <van-tab title="计划表">
-          <plan :list="list['plan']"></plan>
+          <plan :list="planIng"></plan>
         </van-tab>
         <van-tab title="线上任务">
-          <onlinetask :list="list['outline']"></onlinetask>
+          <onlinetask :list="outline"></onlinetask>
         </van-tab>
       </van-tabs>
     </div>
@@ -59,6 +59,11 @@
 <script lang="ts" setup name="mycourse">
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "uni-mini-router";
+import {
+  cancelCoachClok,
+  allowCoachClock,
+  selectCoachClok,
+} from "@/api/courses/courses";
 import { getplanlist } from "@/api/course";
 import dayjs from "dayjs";
 const router = useRouter();
@@ -82,7 +87,9 @@ interface PlanItem {
   begin: string;
   end: string;
 }
-
+const finish = ref({});
+const planIng = ref({});
+const outline = ref({});
 const list = reactive<{
   finish: Record<string, ActionItem[]>;
   plan: Record<string, PlanItem[]>;
@@ -92,15 +99,16 @@ const list = reactive<{
   plan: {},
   outline: {},
 });
-
+const courseId = ref("");
 onMounted(() => {
   // 获取路由参数
   console.log(router.route.value.params);
   const id = router.route.value.params?.id;
+  courseId.value = router.route.value.params?.id;
   const name = router.route.value.params?.name;
   const desc = router.route.value.params?.desc;
   const Percentage = router.route.value.params?.Percentage;
-
+  selectCoachClok(id).then((res) => {});
   // 假设 state 已经在其他地方定义了类型
   state.value = {
     id,
@@ -108,42 +116,112 @@ onMounted(() => {
     desc: decodeURIComponent(desc || ""),
     Percentage,
   };
-
+  //模拟假数据
+  let dddd = [
+    {
+      ID: 1,
+      Type: "outline",
+      PlanTime: "2024-09-28 12:29:09",
+      Percentage: 0,
+      CreatedAt: "0001-01-01T00:00:00Z",
+      Actions: [
+        {
+          ExerciseActionID: 18,
+          ActionName: "由影并",
+          GroupNum: 50,
+          Completed: true,
+          UpdatedAt: "2024-09-29T00:35:34.085+08:00",
+        },
+        {
+          ExerciseActionID: 19,
+          ActionName: "儿包完安米个",
+          GroupNum: 34,
+          Completed: false,
+          UpdatedAt: "2024-09-27T00:25:59.23+08:00",
+        },
+      ],
+    },
+    {
+      ID: 1,
+      Type: "plan",
+      PlanTime: "2024-09-28 12:29:09",
+      Percentage: 0,
+      CreatedAt: "0001-01-01T00:00:00Z",
+      Actions: [
+        {
+          ExerciseActionID: 20,
+          ActionName: "由影并",
+          GroupNum: 50,
+          Completed: true,
+          UpdatedAt: "2024-09-29T00:35:34.085+08:00",
+        },
+        {
+          ExerciseActionID: 29,
+          ActionName: "儿包完安米个",
+          GroupNum: 34,
+          Completed: false,
+          UpdatedAt: "2024-09-27T00:25:59.23+08:00",
+        },
+      ],
+    },
+    {
+      ID: 1,
+      Type: "outline",
+      PlanTime: "2024-09-28 12:29:09",
+      Percentage: 0,
+      CreatedAt: "0001-01-01T00:00:00Z",
+      Actions: [
+        {
+          ExerciseActionID: 21,
+          ActionName: "由影并",
+          GroupNum: 50,
+          Completed: true,
+          UpdatedAt: "2024-09-29T00:35:34.085+08:00",
+        },
+        {
+          ExerciseActionID: 22,
+          ActionName: "儿包完安米个",
+          GroupNum: 34,
+          Completed: false,
+          UpdatedAt: "2024-09-27T00:25:59.23+08:00",
+        },
+      ],
+    },
+  ];
   // 获取计划列表
   getplanlist(Number(id)).then((res) => {
-    res.data.forEach(
+    res.data.data.forEach(
       (item: {
-        id: any;
+        ID: any;
         PlanTime: any;
         CreatedAt: string | number | Date | dayjs.Dayjs | null | undefined;
         Actions: any[];
         Type: string;
       }) => {
         let temp: {
-          ID: number;
+          id: number;
           time: string;
           beginTime: string;
         } = {
-          ID: item.id,
+          id: item.ID,
           time: item.PlanTime,
-          beginTime: dayjs(item.CreatedAt).format("YYYY-MM-DD"),
+          beginTime: "1999",
         };
-
         item.Actions.forEach((i) => {
           if (i.Completed) {
             // 处理完成的任务
             if (list["finish"][temp["beginTime"]]) {
               list["finish"][temp["beginTime"]].push({
-                groupNum: i.groupNum,
+                groupNum: i.GroupNum,
                 name: i.ActionName,
-                time: dayjs(i.UpdatedAt).format("YYYY-MM-DD"),
+                time: dayjs(i.UpdatedAt).format("YYYY-MM-DD hh-mm"),
               });
             } else {
               list["finish"][temp["beginTime"]] = [
                 {
-                  groupNum: i.groupNum,
+                  groupNum: i.GroupNum,
                   name: i.ActionName,
-                  time: dayjs(i.UpdatedAt).format("YYYY-MM-DD"),
+                  time: dayjs(i.UpdatedAt).format("YYYY-MM-DD hh-mm"),
                 },
               ];
             }
@@ -151,18 +229,21 @@ onMounted(() => {
             // 处理未完成的任务，假设 item.Type 是 "plan" 或 "outline"
             const type = item.Type as "plan" | "outline";
             if (list[type]) {
-              list[type].push({
+              list[type][i.ExerciseActionID] = {
                 id: i.ExerciseActionID,
                 name: i.ActionName,
                 groupNum: i.GroupNum,
                 begin: temp["beginTime"],
                 end: dayjs(i.UpdatedAt).format("YYYY-MM-DD"),
-              });
+              };
             }
           }
         });
       }
     );
+    planIng.value = list["plan"];
+    finish.value = list["finish"];
+    outline.value = list["outline"];
   });
 });
 
@@ -174,32 +255,39 @@ import plan from "@/components/mycourse/plan.vue";
 import onlinetask from "@/components/mycourse/onlinetask.vue";
 const value = ref("");
 const checked = ref(false);
-const handleswitch = (newValue) => {
-  if (!checked.value) {
-    uni.showModal({
-      title: "授权教练打卡",
-      content: "是否授权教练打卡？", // 注意：在uni-app中，message属性应该改为content
-      confirmText: "确定", // 注意：在uni-app中，confirmButtonText属性应该改为confirmText
-      cancelText: "取消", // 注意：在uni-app中，cancelButtonText属性应该改为cancelText
-      success: (res) => {
-        if (res.confirm) {
-          console.log("用户点击确定");
-          // 在这里执行用户点击确定的操作
-          checked.value = true;
-          console.log(checked.value);
-        } else if (res.cancel) {
-          console.log("用户点击取消");
-          // 在这里执行用户点击取消的操作
-          checked.value = false;
+const handleswitch = () => {
+  uni.showModal({
+    title: !checked.value ? "授权教练打卡" : "取消授权",
+    content: !checked.value ? "是否授权教练打卡？" : "是否取消授权", // 注意：在uni-app中，message属性应该改为content
+    confirmText: "确定", // 注意：在uni-app中，confirmButtonText属性应该改为confirmText
+    cancelText: "取消", // 注意：在uni-app中，cancelButtonText属性应该改为cancelText
+    success: (res) => {
+      if (res.confirm) {
+        if (!checked.value) {
+          allowCoachClock(courseId.value).then((res) => {
+            uni.showToast({
+              title: "授权成功",
+              icon: "success", //如果要纯文本，不要icon，将值设为'none'
+              duration: 2000, //持续时间为 2秒
+            });
+            checked.value = !checked.value;
+          });
+        } else {
+          cancelCoachClok(courseId.value).then((res) => {
+            uni.showToast({
+              title: "取消授权成功",
+              icon: "success", //如果要纯文本，不要icon，将值设为'none'
+              duration: 2000, //持续时间为 2秒
+            });
+            checked.value = !checked.value;
+          });
         }
-      },
-      fail: (err) => {
-        console.error("showModal 调用失败", err);
-      },
-    });
-  } else {
-    checked.value = false;
-  }
+      }
+    },
+    fail: (err) => {
+      console.error("showModal 调用失败", err);
+    },
+  });
 };
 </script>
 <style scoped></style>
