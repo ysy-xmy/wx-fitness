@@ -109,9 +109,8 @@ const showTab2 = ref<string>("0");
 const roleName = ref<string>("student");
 onMounted(() => {
   roleName.value = getUserInfo();
-  userAvatar.value = user.Avatar || userAvatar.value;
+  userAvatar.value = user.Avatar;
   if (roleName.value === "coach") {
-
     getCourseAndStudentCount().then((res) => {
       showTab1.value = res.data.data.CourseCount.toString();
       showTab2.value = res.data.data.StudentCount.toString();
