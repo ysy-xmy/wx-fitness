@@ -7,11 +7,11 @@
         <view class="cu-avatar round lg" :style="{ backgroundImage: `url(${user.Avatar})` }"></view>
         <div class="flex flex-wrap z-10">
           <div class="text-xl w-full z-10 text-white pl-4">
-            {{ user.name }}
+            {{ user.Username }}
             <text v-if="user.Sex === 1" style="font-size: 25px; color: #a54aff"
               class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"></text>
 
-            <text style="font-size: 25px; color: #16a9fa"
+            <text v-else style="font-size: 25px; color: #16a9fa"
               class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"></text>
           </div>
           <p class="text-sm z-10 text-white pl-4">{{ user.Age ? user.Age + '岁' : "未填写" }}</p>

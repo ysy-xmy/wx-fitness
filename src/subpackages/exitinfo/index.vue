@@ -5,7 +5,7 @@
                 class="flex items-center justify-center p-1 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
                 <img v-if="userInfo.Avatar" :src="userInfo.Avatar" class="w-20 h-20 rounded-full" alt="Avatar">
-                <span v-else class="material-icons md-36">add_a_photo</span>
+                <span v-else class="material-icons md-36 w-20 h-20 rounded-full">上传一张图片</span>
             </button>
         </div>
 
@@ -84,13 +84,13 @@ import { updateUserInfo } from '@/api/user';
 
 
 const authStore = useAuthStore();
-const user = computed(() => authStore.getUser);
+const user = computed(() => authStore.user);
 const router = useRouter();
 
-const username = ref(user.value.name ? user.value.name : '微信用户');
-const ageindex = ref<number>(user.Age ? user.Age - 14 : -1);
-const avatarUrl = ref(user.Avatar ? user.Avatar : '../../static/user.png');
-const sexindex = ref<number>(user.Sex ? user.Sex : 0);
+const username = ref(user.value.Username ? user.value.Username : '微信用户');
+const ageindex = ref<number>(user.value.Age ? user.value.Age - 14 : -1);
+const avatarUrl = ref(user.value.Avatar ? user.value.Avatar : '../../static/user.png');
+const sexindex = ref<number>(user.value.Sex ? user.value.Sex : 0);
 
 const sexs = ref(['男', '女'])
 const imgList = ref([])
@@ -173,13 +173,12 @@ const DeteleWXimg = (e: any) => {
     })
 }
 
-console.log("user", user);
 const userInfo = ref({
-    ID: user.ID ? user.ID : 0,
-    Avatar: user.Avatar ? user.Avatar : 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0',
-    Username: user.Username ? user.Username : '微信用户',
-    Sex: user.Sex ? user.Sex : 0,
-    Age: user.Age ? user.Age : 18,
+    ID: user.value.ID,
+    Avatar: user.value.Avatar,
+    Username: user.value.name,
+    Sex: user.value.Sex,
+    Age: user.value.Age,
 })
 console.log("userInfo", userInfo.value);
 
@@ -203,7 +202,7 @@ const onSave = () => {
     const authStore = useAuthStore();
     const user = authStore.getUser;
     console.log("onSave", user);
-    userInfo.value.ID = user.id;
+    userInfo.value.ID = user.ID;
     userInfo.value.Username = username.value;
     userInfo.value.Sex = sexindex.value;
     userInfo.value.Age = ageList.value[ageindex.value];
