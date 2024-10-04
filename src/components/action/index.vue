@@ -14,6 +14,7 @@
     </view>
 
     <view
+      v-if="ifChoose"
       style="
         width: 100vw;
         height: 30px;
@@ -32,6 +33,7 @@
         </div>
       </view>
     </view>
+
     <view class="fixed">
       <cu-custom :isBack="false" bgColor="bg-shadeTop text-white"> </cu-custom>
     </view>
@@ -100,13 +102,15 @@
                   index1
                 ].children"
                 :key="index2"
+                @click="toDetail(item2)"
               >
-                <!-- @click="toDetail(item2)" -->
+                <!-- @click="toDetail(item2) -->
                 <view
                   class="felx flex-col w-1/2 p-2 px-3 h-36 bg-[#f9fafb]"
                   style="position: relative"
                 >
                   <van-checkbox
+                    v-if="ifChoose"
                     :value="item2.ifcheck"
                     @change="
                       (e: any) => chooseAction(e, item2, mainCur, index1)
@@ -168,6 +172,7 @@
               checked-color="#07c160"
               class="checkbox"
               style="position: absolute"
+              v-if="state.ifChoose"
             />
             <view
               class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold"
@@ -255,7 +260,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch, defineProps } from "vue";
+import { ref, onMounted, nextTick, watch, defineProps, reactive } from "vue";
 import {
   getFirstmenulist,
   getSecByFirst,
@@ -272,9 +277,9 @@ import type {
 import { postPlan } from "@/api/course/index.ts";
 import { useRouter } from "uni-mini-router";
 const props = defineProps<{
-  UserID?: number;
-  CourseID?: string;
-  Type?: string;
+  stuid?: number;
+  courid?: number;
+  type?: string;
 }>();
 const showPopup = ref(false);
 const subitClass = () => {
@@ -400,12 +405,13 @@ function sortByOrderNumDescending(routers: ListItem[]) {
     .sort(sortByOrderIdAndIdDesc);
 }
 const toDetail = (item: ActionItem) => {
-  router.push({
-    name: "actionDetail",
-    params: {
-      itemid: item.id,
-    },
-  });
+  if (state.value.ifChoose)
+    router.push({
+      name: "actionDetail",
+      params: {
+        itemid: item.id,
+      },
+    });
 };
 //处理搜索点击事件
 const handlelocation = (actionid) => {
@@ -622,15 +628,29 @@ function throttle(func: any, limit: any) {
     }
   };
 }
-
+const showIt = () => {
+  ifChoose.value = true;
+};
 watch(
   searchValue,
   throttle(function (newQuery: any) {
     fuzzySearch(actionrouterList.value, newQuery);
   }, 500)
 );
-
+const state = reactive({
+  stuId: -1,
+  courseId: -1,
+  type: "",
+});
+const ifChoose = ref(false);
 onMounted(() => {
+  uni.$on("beginAddClass", (val) => {
+    state.stuId = val.stuID;
+    state.courseId = val.courID;
+    state.type = val.type;
+    ifChoose.value = true;
+    showIt();
+  });
   uni.showLoading({ title: "加载中...", mask: true });
   const newList: ListItem[] = [];
   //先获取一级目录
