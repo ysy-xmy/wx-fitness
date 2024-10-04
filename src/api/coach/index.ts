@@ -14,3 +14,7 @@ export const getCoachStudentinfo = () => {
 export const getCourseAndStudentCount = () => {
   return request.get("/api/coach/courseAndStudentCount");
 };
+
+export const getstudentInfobyId = (id: number) => {
+  return request.get("/api/coach/student/info/" + id);
+};
