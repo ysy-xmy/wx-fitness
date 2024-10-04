@@ -16,7 +16,6 @@ http.interceptors.request.use(
   (config: any) => {
     // 可使用async await 做异步操作
     const token = uni.getStorageSync("token");
-    console.log(token, "token");
     if (token) {
       config.header["Authorization"] = token;
     }
