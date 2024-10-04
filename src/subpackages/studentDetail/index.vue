@@ -2,22 +2,20 @@
   <div class="main flex w-full justify-center flex-col items-center">
     <div class="info mt-5 flex flex-col items-center">
       <div class="avatar">
-        <img class="w-28 h-28 rounded-full"
-          src="https://tse2-mm.cn.bing.net/th/id/OIP-C.UjwT5Zhsxxr4S0wmFjSuMAAAAA?w=207&h=207&c=7&r=0&o=5&pid=1.7"
-          alt="" />
+        <img class="w-28 h-28 rounded-full" :src="stuInfo.Avatar" alt="" />
       </div>
-      <h1 class="my-3 text-2xl text-center font-bold">陈景盛</h1>
-      <span class="text-gray-400 text-sm text-center">20岁</span>
+      <h1 class="my-3 text-2xl text-center font-bold">{{ stuInfo.Username }}</h1>
+      <span class="text-gray-400 text-sm text-center">{{ stuInfo.Age }}岁</span>
     </div>
 
     <div class="info-card flex flex-row items-center mt-1 w-11/12">
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
-        <h2 class="text-xl font-bold">65kg</h2>
-        <span class="text-gray-400 text-sm">Weight</span>
+        <h2 class="text-xl font-bold">{{ stuInfo.Weight }}kg</h2>
+        <span class="text-gray-400 text-sm">体重</span>
       </div>
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
-        <h2 class="text-xl font-bold">165cm</h2>
-        <span class="text-gray-400 text-sm">Height</span>
+        <h2 class="text-xl font-bold">{{ stuInfo.Height }}cm</h2>
+        <span class="text-gray-400 text-sm">身高</span>
       </div>
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
         <h2 class="text-md font-bold underline text-[#F65625]">体检表</h2>
@@ -33,23 +31,19 @@
     </div>
     <div class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4">
       <div class="font-bold">
-        运动基础课<span class="ml-2 font-thin tracking-wider" style="color: #6d819cff; margin-left: 2px">(共10节课 已上6节)</span>
+        私教课<span class="ml-2 font-thin tracking-wider" style="color: #6d819cff; margin-left: 2px">(共10节课 已上6节)</span>
       </div>
       <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
         style="margin-top: 15px" />
     </div>
 
-    <div class="w-11/12 flex h-16 bg-[rgba(248,250,255,1)] justify-between cardBody" v-for="item in dataList"
+    <div class="w-11/12 flex h-16 bg-[rgba(248,250,255,1)] justify-between cardBody" v-for="item in planList"
       :key="item.title">
       <div>
         <p class="title">{{ item.title }}</p>
         <p class="time"><span class="cuIcon-card"></span> {{ item.day }}</p>
       </div>
-      <van-checkbox
-        :value="item.finish"
-        checked-color="#ec6853"
-        @change="changeCheck(item)"
-      ></van-checkbox>
+      <van-checkbox :value="item.finish" checked-color="#ec6853" @change="changeCheck(item)"></van-checkbox>
     </div>
     <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
@@ -60,6 +54,14 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+import { getplanlist } from '@/api/course/index'
+import { getstudentInfobyId } from '@/api/coach/index'
+import { useRouter } from 'uni-mini-router';
+import { onMounted } from "vue";
+//获取路由参数
+const router = useRouter();
+const stuInfo = ref();
+const courseInfo = ref();
 type data = {
   title: string;
   day: string;
@@ -69,7 +71,7 @@ const changeCheck = (item: data) => {
   console.log(item.finish);
   item.finish = !item.finish;
 };
-let dataList = ref([
+let planList = ref([
   {
     title: "杠铃十组",
     day: "6月1日",
@@ -91,6 +93,25 @@ let dataList = ref([
     finish: false,
   },
 ]);
+
+const initData = async () => {
+  uni.showLoading({ title: '加载中...', mask: true });
+
+  if (router.route.value.query) {
+    const query = router.route.value.query;
+    console.log(query)
+    //获取个人信息
+    const res = await getstudentInfobyId(query.studentId);
+    stuInfo.value = res.data.data;
+    //获取课程内容
+    const response = await getplanlist(query.courseId);
+    uni.hideLoading();
+
+  }
+};
+onMounted(() => {
+  initData();
+});
 </script>
 
 <style scoped lang="scss">
