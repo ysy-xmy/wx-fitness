@@ -44,6 +44,7 @@
 import { reactive, ref, onMounted, defineProps } from "vue";
 import * as echarts from "echarts/dist/echarts.esm";
 import { getBodydata } from "@/api/body";
+import dayjs from "dayjs";
 const props = defineProps({
   beginTime: String,
   endTime: String,
@@ -54,7 +55,9 @@ const timeKind = ref("month"); //时间，是日周月
 const kind = ref("bust"); //类型，是要那种
 onMounted(() => {
   uni.$on("changeTime", () => {
-    changeType(temp.value);
+    setTimeout(() => {
+      changeType(temp.value);
+    }, 1);
   });
   uni.$on("changeType", (val) => {
     type.value = val;
@@ -92,7 +95,7 @@ const changeType = (active) => {
   getBodydata(data).then((res) => {
     xAxis.value = [];
     yAxis.value = [];
-
+    changeBotDay();
     if (timeKind.value == "day" || temp.value == "three") {
       getLastValuePerDay(res.data.data, props.beginTime, props.endTime).then(
         () => {
@@ -125,7 +128,6 @@ const position = ref([]);
 const params = ref([]);
 const chart = ref(null); // 获取图表引用
 
-//在除了三维的时候
 const init = () => {
   chart.value.init(echarts, (chartInstance) => {
     const option = {
@@ -150,6 +152,7 @@ const init = () => {
         },
       ],
     };
+    console.log(option);
     chartInstance.setOption(option);
 
     // 监听鼠标悬浮显示的事件
@@ -181,212 +184,299 @@ const init = () => {
 
 const type = ref(0); //和other
 
-// const save = () => {
-//   chart.value.canvasToTempFilePath({
-//     success(res) {
-//       console.log("res::::", res);
-//     },
-//   });
-// };
+//修改展示下方数据
+const changeBotDay = async () => {
+  let res = {};
+  if (temp.value == "three") {
+    //三维
+    const dataBUSTAsc = {
+      Type: "BUST",
+      Count: 1,
+      StartTime: `1999-01-01 00:00:00`,
+      EndTime: `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+      OrderBy: "ASC",
+    };
+    const dataBUSTDesc = {
+      Type: "BUST",
+      Count: 1,
+      StartTime: `1999-01-01 00:00:00`,
+      EndTime: `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+      OrderBy: "DESC",
+    };
+    const dataWAISTAsc = {
+      Type: "WAIST",
+      Count: 1,
+      StartTime: `1999-01-01 00:00:00`,
+      EndTime: `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+      OrderBy: "ASC",
+    };
+    const dataWAISTDesc = {
+      Type: "WAIST",
+      Count: 1,
+      StartTime: `1999-01-01 00:00:00`,
+      EndTime: `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+      OrderBy: "DESC",
+    };
+    const dataHIPAsc = {
+      Type: "HIP",
+      Count: 1,
+      StartTime: `1999-01-01 00:00:00`,
+      EndTime: `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+      OrderBy: "ASC",
+    };
+    const dataHIPDesc = {
+      Type: "HIP",
+      Count: 1,
+      StartTime: `1999-01-01 00:00:00`,
+      EndTime: `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+      OrderBy: "DESC",
+    };
+    const responses = await Promise.all([
+      getBodydata(dataBUSTAsc),
+      getBodydata(dataBUSTDesc),
+      getBodydata(dataWAISTAsc),
+      getBodydata(dataWAISTDesc),
+      getBodydata(dataHIPAsc),
+      getBodydata(dataHIPDesc),
+    ]);
+    const [BUSTAsc, BUSTDesc, WAISTAsc, WAISTDesc, HIPAsc, HIPDesc] = responses;
+    res = {
+      old: {
+        BUST: BUSTDesc.data.data[0].Value,
+        WAIST: WAISTDesc.data.data[0].Value,
+        HIP: HIPDesc.data.data[0].Value,
+        time: dayjs(BUSTAsc.data.data[0].CreatedAt).format("YYYY-MM-DD"), //都是统一录入的时间应该是一样的
+      },
+      new: {
+        BUST: BUSTAsc.data.data[0].Value,
+        WAIST: WAISTAsc.data.data[0].Value,
+        HIP: HIPAsc.data.data[0].Value,
+        time: dayjs(BUSTAsc.data.data[0].CreatedAt).format("YYYY-MM-DD"), //都是统一录入的时间应该是一样的
+      },
+    };
+  } else {
+    const Type = temp.value;
+    // console.log(Type);
+    const dataAsc = {
+      Type,
+      Count: 1,
+      StartTime: `1999-01-01 00:00:00`,
+      EndTime: `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+      OrderBy: "ASC",
+    };
+    const dataDesc = {
+      Type,
+      Count: 1,
+      StartTime: `1999-01-01 00:00:00`,
+      EndTime: `${dayjs().format("YYYY-MM-DD")} 23:59:59`,
+      OrderBy: "DESC",
+    };
+    const responses = await Promise.all([
+      getBodydata(dataAsc),
+      getBodydata(dataDesc),
+    ]);
+    const [ascRes, descRes] = responses;
+    console.log(responses, "res");
+    res = {
+      oldVal: ascRes.data.data[0].Value,
+      oldTime: dayjs(ascRes.data.data[0].CreatedAt).format("YYYY-MM-DD"),
+      newVal: descRes.data.data[0].Value,
+      newTime: dayjs(descRes.data.data[0].CreatedAt).format("YYYY-MM-DD"),
+    };
+  }
+  uni.$emit("changeBotData", res);
+  console.log(res);
+};
 
-// 计算当前日期相对于起始日期是第几个月
-function getRelativeMonth(startDate, currentDate) {
-  const startYear = startDate.getFullYear();
-  const startMonth = startDate.getMonth();
+const lastValue = ref(0);
+// 获取上一次的值，优化为并发请求，减少等待时间
+const getLastVal = async (len) => {
+  const Type = temp.value === "three" ? kind.value : temp.value;
+  const data = {
+    Type,
+    Count: len + 1,
+    StartTime: `1999-01-01 00:00:00`,
+    EndTime: `${props.endTime} 23:59:59`,
+  };
 
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
+  const res = await getBodydata(data);
+  const resData = res.data.data;
+  lastValue.value = resData.length === len ? 0 : resData[0]?.Value || 0;
+};
 
-  // 计算月份差
-  return (currentYear - startYear) * 12 + (currentMonth - startMonth) + 1;
-}
+//数据处理
+const disposeDay = (data) => {
+  const tempObj = {};
+  const res = {};
+  data.forEach((item) => {
+    const day = dayjs(item.CreatedAt).format("YYYY-MM-DD");
+    const time = dayjs(item.CreatedAt).unix();
+    if (!tempObj[day] || tempObj[day].time < time)
+      tempObj[day] = {
+        value: item.Value,
+        time,
+      };
+  });
+  for (let item of Object.keys(tempObj)) res[item] = tempObj[item]["value"];
+  return res;
+};
 
-// 按月计算
-function getLastValuePerMonth(data, startDateString, endDateString) {
-  return new Promise((resolve, reject) => {
-    // 将起始日期和结束日期转换为 Date 对象
-    const startDate = new Date(startDateString);
-    const endDate = new Date(endDateString);
+// 按天计算：移除不必要的操作，并行获取数据和初始化日期
+const getLastValuePerDay = async (data, startDateString, endDateString) => {
+  return new Promise(async (resolve, reject) => {
+    const list = data || [];
+    const dateObj = {};
+    let currentDate = dayjs(startDateString);
+    const endDate = dayjs(endDateString);
 
-    // 用来存储每月的最后一个值
-    const result = {};
+    // 并发获取上次的值和初始化日期范围
+    await Promise.all([
+      getLastVal(data.length), // 获取上一次的值
+      (async () => {
+        while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
+          dateObj[currentDate.format("YYYY-MM-DD")] = 0;
+          currentDate = currentDate.add(1, "day");
+        }
+      })(),
+    ]);
 
-    // 按月分组数据
-    const groupedByMonth = {};
+    const resData = disposeDay(list);
+    const xAxisKeys = Object.keys(dateObj);
 
-    data.forEach((item) => {
-      const currentDate = new Date(item.CreatedAt);
-
-      // 计算当前日期相对于起始日期是第几个月
-      const month = getRelativeMonth(startDate, currentDate);
-
-      // 组合 key，作为唯一标识（如：第1月、第2月）
-      const monthKey = `第${month}月`;
-
-      // 如果当前月的记录已经存在，更新为更晚的记录
-      if (
-        !groupedByMonth[monthKey] ||
-        new Date(groupedByMonth[monthKey].CreatedAt) < currentDate
-      ) {
-        groupedByMonth[monthKey] = item;
+    // 优化填充过程：减少重复计算
+    xAxis.value = xAxisKeys;
+    yAxis.value = xAxisKeys.map((key) => {
+      const value = resData[key] || lastValue.value;
+      if (resData[key]) {
+        lastValue.value = value;
       }
+      return value;
     });
 
-    // 逐月填充结果，如果某月没有数据，使用前一个月的值
-    let lastValue = 0; // 第1月没有数据时默认值为0
-    let currentDate = new Date(startDate); // 从起始日期开始
-
-    while (currentDate <= endDate) {
-      const month = getRelativeMonth(startDate, currentDate); // 计算相对于起始日期是第几个月
-      const monthKey = `第${month}月`;
-
-      if (groupedByMonth[monthKey]) {
-        // 当前月有数据，取当前月的值
-        lastValue = groupedByMonth[monthKey].Value;
-      }
-
-      // 当前月如果没有数据，使用前一个月的值
-      result[monthKey] = lastValue;
-
-      // 将每月的值添加到 yAxis
-      yAxis.value.push(lastValue);
-
-      // 继续到下一个月
-      currentDate.setMonth(currentDate.getMonth() + 1);
-    }
-
-    // xAxis 应该是从第1月到结束日期的顺序
-    xAxis.value = Object.keys(result);
-
-    // 返回结果
     resolve(true);
   });
-}
+};
 
-// 计算当前日期相对于起始日期是第几周
-function getRelativeWeek(startDate, currentDate) {
-  const oneDay = 86400000; // 一天的毫秒数
-  const diffDays = Math.floor((currentDate - startDate) / oneDay); // 计算相差的天数
-  return Math.floor(diffDays / 7) + 1; // 计算是第几周
-}
+//// 数据处理 - 按周计算最后一天的值
+const disposeWeek = (data) => {
+  const tempObj = {};
+  const res = {};
+  data.forEach((item) => {
+    const weekStart = dayjs(item.CreatedAt)
+      .startOf("week")
+      .format("YYYY-MM-DD"); // 获取周开始日期
+    const time = dayjs(item.CreatedAt).unix();
 
-// 按周计算
-function getLastValuePerWeek(data, startDateString, endDateString) {
-  return new Promise((resolve, reject) => {
-    // 将起始日期和结束日期转换为 Date 对象
-    const startDate = new Date(startDateString);
-    const endDate = new Date(endDateString);
+    // 记录每周内最后一天的值
+    if (!tempObj[weekStart] || tempObj[weekStart].time < time) {
+      tempObj[weekStart] = {
+        value: item.Value,
+        time,
+      };
+    }
+  });
 
-    // 用来存储每周的最后一个值
-    const result = {};
+  for (let item of Object.keys(tempObj)) {
+    res[item] = tempObj[item]["value"];
+  }
+  return res;
+};
+// 按周计算：移除不必要的操作，并行获取数据和初始化日期
+const getLastValuePerWeek = async (data, startDateString, endDateString) => {
+  return new Promise(async (resolve, reject) => {
+    const list = data || [];
+    const dateObj = {};
+    let currentDate = dayjs(startDateString);
+    const endDate = dayjs(endDateString);
 
-    // 按周分组数据
-    const groupedByWeek = {};
+    // 并发获取上次的值和初始化日期范围
+    await Promise.all([
+      getLastVal(data.length), // 获取上一次的值
+      (async () => {
+        while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
+          const weekStart = currentDate.startOf("week").format("YYYY-MM-DD");
+          dateObj[weekStart] = 0; // 用周的开始日期作为键
+          currentDate = currentDate.add(1, "week"); // 每次加一周
+        }
+      })(),
+    ]);
 
-    data.forEach((item) => {
-      const currentDate = new Date(item.CreatedAt);
+    const resData = disposeWeek(list);
+    const xAxisKeys = Object.keys(dateObj);
 
-      // 计算当前日期相对于起始日期是第几周
-      const week = getRelativeWeek(startDate, currentDate);
-
-      // 组合 key，作为唯一标识（如：第1周、第2周）
-      const weekKey = `第${week}周`;
-
-      // 如果当前周的记录已经存在，更新为更晚的记录
-      if (
-        !groupedByWeek[weekKey] ||
-        new Date(groupedByWeek[weekKey].CreatedAt) < currentDate
-      ) {
-        groupedByWeek[weekKey] = item;
+    // 优化填充过程：减少重复计算
+    xAxis.value = xAxisKeys;
+    yAxis.value = xAxisKeys.map((key) => {
+      const value = resData[key] || lastValue.value;
+      if (resData[key]) {
+        lastValue.value = value;
       }
+      return value;
     });
 
-    // 逐周填充结果，如果某周没有数据，使用前一周的值
-    let lastValue = 0; // 第1周没有数据时默认值为0
-    const oneWeek = 7 * 86400000; // 一周的毫秒数
-    let currentDate = new Date(startDate); // 从起始日期开始
-
-    while (currentDate <= endDate) {
-      const week = getRelativeWeek(startDate, currentDate); // 计算相对于起始日期是第几周
-      const weekKey = `第${week}周`;
-
-      if (groupedByWeek[weekKey]) {
-        // 当前周有数据，取当前周的值
-        lastValue = groupedByWeek[weekKey].Value;
-      }
-
-      // 当前周如果没有数据，使用前一周的值
-      result[weekKey] = lastValue;
-
-      // 将每周的值添加到 yAxis
-      yAxis.value.push(lastValue);
-
-      // 继续到下一周
-      currentDate = new Date(currentDate.getTime() + oneWeek);
-    }
-
-    // xAxis 应该是从第1周到结束日期的顺序
-    xAxis.value = Object.keys(result);
-
-    // 返回结果
     resolve(true);
   });
-}
+};
 
-// // 计算当前日期相对于起始日期是第几天
-// function getRelativeDay(startDate, currentDate) {
-//   const oneDay = 86400000; // 一天的毫秒数
-//   const diffDays = Math.floor((currentDate - startDate) / oneDay); // 计算相差的天数
-//   return diffDays + 1; // 计算是第几天，最小为1
-// }
+// 数据处理 - 按月计算最后一天的值
+const disposeMonth = (data) => {
+  const tempObj = {};
+  const res = {};
+  data.forEach((item) => {
+    const monthStart = dayjs(item.CreatedAt).startOf("month").format("YYYY-MM"); // 获取月开始日期
+    const time = dayjs(item.CreatedAt).unix();
 
-// 按天计算
-function getLastValuePerDay(data, startDateString, endDateString) {
-  return new Promise((resolve, reject) => {
-    const startDate = new Date(startDateString);
-    const endDate = new Date(endDateString);
-    const result = {};
-    const groupedByDay = {};
+    // 记录每月内最后一天的值
+    if (!tempObj[monthStart] || tempObj[monthStart].time < time) {
+      tempObj[monthStart] = {
+        value: item.Value,
+        time,
+      };
+    }
+  });
 
-    data.forEach((item) => {
-      const currentDate = new Date(item.CreatedAt);
-      const dayDiff = Math.floor(
-        (currentDate - startDate) / (1000 * 60 * 60 * 24)
-      ); // 计算当前日期距离起始日期的天数
-      const dayKey = `第${dayDiff + 1}天`; // 使用天数差来生成键
+  for (let item of Object.keys(tempObj)) {
+    res[item] = tempObj[item]["value"];
+  }
+  return res;
+};
 
-      // 更新为更晚的记录
-      if (
-        !groupedByDay[dayKey] ||
-        new Date(groupedByDay[dayKey].CreatedAt) < currentDate
-      ) {
-        groupedByDay[dayKey] = item;
+// 按月计算：移除不必要的操作，并行获取数据和初始化日期
+const getLastValuePerMonth = async (data, startDateString, endDateString) => {
+  return new Promise(async (resolve, reject) => {
+    const list = data || [];
+    const dateObj = {};
+    let currentDate = dayjs(startDateString);
+    const endDate = dayjs(endDateString);
+
+    // 并发获取上次的值和初始化日期范围
+    await Promise.all([
+      getLastVal(data.length), // 获取上一次的值
+      (async () => {
+        while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
+          const monthStart = currentDate.startOf("month").format("YYYY-MM");
+          dateObj[monthStart] = 0; // 用月的开始日期作为键
+          currentDate = currentDate.add(1, "month"); // 每次加一月
+        }
+      })(),
+    ]);
+
+    const resData = disposeMonth(list);
+    const xAxisKeys = Object.keys(dateObj);
+
+    // 优化填充过程：减少重复计算
+    xAxis.value = xAxisKeys;
+    yAxis.value = xAxisKeys.map((key) => {
+      const value = resData[key] || lastValue.value;
+      if (resData[key]) {
+        lastValue.value = value;
       }
+      return value;
     });
 
-    // 逐天填充结果
-    let lastValue = 0; // 初始为0，代表第一天
-    const totalDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)); // 计算总天数
-
-    for (let i = 0; i <= totalDays; i++) {
-      const dayKey = `第${i + 1}天`;
-      if (i === 0) {
-        // 第一天下的值为0
-        result[dayKey] = 0;
-      } else if (groupedByDay[dayKey]) {
-        lastValue = groupedByDay[dayKey].Value; // 获取当前天的值
-        result[dayKey] = lastValue; // 当前天的值
-      } else {
-        result[dayKey] = lastValue; // 继续使用前一天的值
-      }
-
-      yAxis.value.push(result[dayKey]); // 将值添加到y轴
-      xAxis.value.push(dayKey); // 添加到x轴
-    }
-
-    resolve(result); // 返回结果
+    resolve(true);
   });
-}
+};
 </script>
 
 <style>

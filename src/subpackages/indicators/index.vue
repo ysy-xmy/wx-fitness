@@ -46,6 +46,7 @@
         </view>
       </picker>
     </div>
+    <!-- 其他普通数据 -->
     <div
       class="add-card bg-[#f2f6ff] h-52 absolute w-screen pt-8 z-10 bottom-0"
       v-if="typeVal != 1"
@@ -93,6 +94,7 @@
         <span>添 加</span>
       </van-button>
     </div>
+    <!-- 三维的数据 -->
     <div
       class="add-card bg-[#f2f6ff] h-52 absolute w-screen pt-8 z-10 bottom-0"
       v-else
@@ -348,6 +350,45 @@ const TabCur = ref(0);
 const weight = ref("");
 // const date = ref('2024-09-01')
 const today = dayjs().format("YYYY-MM-DD"); //今天日期
+onMounted(() => {
+  uni.$on("changeBotData", (val) => {
+    if (typeVal.value != 1) {
+      const TO = val.oldTime.split("-");
+      const TN = val.newTime.split("-");
+      dataList.value = {
+        timeYear: TN[0],
+        timeMonth: TN[1],
+        timeDay: TN[2],
+        type: typeList[typeVal.value],
+        data: val.newVal + unitList[typeVal.value],
+        sententce: `初始${typeList[typeVal.value]}`,
+        beginMonth: TO[1],
+        beginDay: TO[2],
+        beginYear: TO[0],
+        beginData: val.oldVal + unitList[typeVal.value],
+        change: `${Number(val.newVal) - Number(val.oldVal)}${unitList[typeVal.value]}`,
+      };
+    } else {
+      const TO = val.old.time.split("-");
+      const TN = val.new.time.split("-");
+      //三维的情况
+      dimensionalData.value = {
+        timeYear: TN[0],
+        timeMonth: TN[1],
+        timeDay: TN[2],
+        timeBust: val.new.BUST, //胸围
+        timeWaistline: val.new.WAIST, //腰围
+        timeHips: val.new.HIP, //臀围
+        beginMonth: TO[1],
+        beginDay: TO[2],
+        beginYear: TO[0],
+        beginBust: val.old.BUST, //胸围
+        beginWaistline: val.old.WAIST, //腰围
+        beginHips: val.old.HIP, //臀围
+      };
+    }
+  });
+});
 const DateBeginChange = (e: any) => {
   beginTime.value = e.detail.value;
   uni.$emit("changeTime", true);
@@ -385,21 +426,7 @@ function tabSelect(e: any) {
   temp.value = TabList[TabCur.value]["content"];
   uni.$emit("change", temp.value);
   typeVal.value = id;
-  if (id != 1) {
-    dataList = {
-      timeYear: 2024,
-      timeMonth: 7,
-      timeDay: 1,
-      type: typeList[typeVal.value],
-      data: "70Kg",
-      sententce: `初始${typeList[typeVal.value]}`,
-      beginMonth: 3,
-      beginDay: 1,
-      beginYear: 2024,
-      beginData: "70kg",
-      change: "-70kg",
-    };
-  }
+
   uni.$emit("changeType", id);
 }
 function showModal() {
@@ -412,39 +439,40 @@ const typeVal = ref(0);
 const temp = ref(TabList[TabCur.value]["content"]); //临时储存一下content
 const typeList = ["体重", "三维", "体脂率", "BMI"];
 const enTypeList = ["WEIGHT", "THREE", "BODY_FAT", "BMI"];
-let dataList = reactive({
-  timeYear: 2024,
-  timeMonth: 7,
-  timeDay: 1,
+const unitList = ["KG", "cm", "%", "kg/m²"];
+let dataList = ref({
+  timeYear: "",
+  timeMonth: "",
+  timeDay: "",
   type: typeList[typeVal.value],
-  data: "70Kg",
+  data: "",
   sententce: `初始${typeList[typeVal.value]}`,
-  beginMonth: 3,
-  beginDay: 1,
-  beginYear: 2024,
-  beginData: "70kg",
-  change: "-70kg",
+  beginMonth: "",
+  beginDay: "",
+  beginYear: "",
+  beginData: "",
+  change: "",
 });
-let dimensionalData = reactive({
-  timeYear: 2024,
-  timeMonth: 7,
-  timeDay: 1,
-  timeBust: "108cm", //胸围
-  timeWaistline: "78cm", //腰围
-  timeHips: "105cm", //臀围
-  beginMonth: 3,
-  beginDay: 1,
-  beginYear: 2024,
-  beginBust: "108cm", //胸围
-  beginWaistline: "78cm", //腰围
-  beginHips: "105cm", //臀围
+let dimensionalData = ref({
+  timeYear: "",
+  timeMonth: "",
+  timeDay: "",
+  timeBust: "", //胸围
+  timeWaistline: "", //腰围
+  timeHips: "", //臀围
+  beginMonth: "",
+  beginDay: "",
+  beginYear: "",
+  beginBust: "", //胸围
+  beginWaistline: "", //腰围
+  beginHips: "", //臀围
 });
 let addData = reactive({
   WEIGHT: "",
   BUST: "",
   WAIST: "",
   HIP: "",
-  BODY_FAT: "", //存疑
+  BODY_FAT: "",
   BMI: "",
 });
 const addNewData = async () => {
@@ -500,11 +528,16 @@ const addNewData = async () => {
       Type: "HIP",
       Value: Number(addData["HIP"]),
     };
-    const r1 = await addBodydata(data1);
-    const r2 = await addBodydata(data2);
-    const r3 = await addBodydata(data3);
+
+    const responses = await Promise.all([
+      addBodydata(data1),
+      addBodydata(data2),
+      addBodydata(data3),
+    ]);
+
     uni.hideLoading();
-    if (r1.data.code == 200 && r2.data.code == 200 && r3.data.code == 200) {
+    const allSuccess = responses.every((res) => res.data.code === 200);
+    if (allSuccess) {
       uni.showToast({
         title: "增加成功",
         icon: "success",
