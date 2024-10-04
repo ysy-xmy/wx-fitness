@@ -17,6 +17,7 @@ type SourceCategory = {
         };
         ActionInfos?: {
             ActionInfos: {
+                ifchecked?:boolean,
                 ID: number;
                 Name: string;
                 SecondCategoryID: number;
