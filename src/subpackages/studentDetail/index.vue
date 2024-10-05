@@ -37,13 +37,25 @@
         style="margin-top: 15px" />
     </div>
 
-    <div class="w-11/12 flex h-16 bg-[rgba(248,250,255,1)] justify-between cardBody" v-for="item in planList"
+    <div class="w-11/12 flex  bg-[rgba(248,250,255,1)] justify-between cardBody" v-for="item in planList"
       :key="item.title">
-      <div>
-        <p class="title">{{ item.title }}</p>
-        <p class="time"><span class="cuIcon-card"></span> {{ item.day }}</p>
+      <div class="action-group  w-full">
+        <div class="flex justify-between items-center w-full">
+          <h2 class="title text-3xl font-extrabold px-2">{{ item.day }}</h2>
+          <span class="cuIcon-unfold"></span>
+        </div>
+        <div class="action-item flex my-1  flex-row w-full justify-between items-center">
+          <p class="ml-6 py-1 ">{{ item.title }}</p>
+          <van-checkbox :value="item.finish" checked-color="#ec6853" @change="changeCheck(item)"></van-checkbox>
+
+        </div>
+        <div class="action-item my-1 flex flex-row w-full justify-between items-center">
+          <p class="ml-6 py-1 ">{{ item.title }}</p>
+          <van-checkbox :value="item.finish" checked-color="#ec6853" @change="changeCheck(item)"></van-checkbox>
+
+        </div>
       </div>
-      <van-checkbox :value="item.finish" checked-color="#ec6853" @change="changeCheck(item)"></van-checkbox>
+
     </div>
     <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
@@ -93,6 +105,9 @@ let planList = ref([
     finish: false,
   },
 ]);
+
+
+const date = ref()
 
 const initData = async () => {
   uni.showLoading({ title: '加载中...', mask: true });
