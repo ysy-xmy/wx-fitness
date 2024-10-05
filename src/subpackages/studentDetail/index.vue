@@ -20,7 +20,10 @@
         <span class="text-gray-400 text-sm">身高</span>
       </div>
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
-        <h2 class="text-md font-bold underline text-[#F65625]" @click="seeBodyForm">
+        <h2
+          class="text-md font-bold underline text-[#F65625]"
+          @click="seeBodyForm"
+        >
           体检表
         </h2>
       </div>
@@ -33,27 +36,56 @@
         </div>
       </div>
     </div>
-    <div class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4">
+    <div
+      class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4"
+    >
       <div class="font-bold">
-        私教课<span class="ml-2 font-thin tracking-wider" style="color: #6d819cff; margin-left: 2px"></span>
+        私教课<span
+          class="ml-2 font-thin tracking-wider"
+          style="color: #6d819cff; margin-left: 2px"
+        ></span>
       </div>
       <!-- <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
         style="margin-top: 15px" /> -->
     </div>
 
-    <div style="align-items: start"
-      class="w-11/12 flex  content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody flex-wrap">
-      <div v-if="planList" v-for="item in planList" :key="item.ID" class="action-group w-full">
+    <div
+      style="align-items: start"
+      class="w-11/12 flex content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody flex-wrap"
+    >
+      <div
+        v-if="planList"
+        v-for="item in planList"
+        :key="item.ID"
+        class="action-group w-full"
+      >
         <div class="flex justify-between items-center w-full">
           <h2 class="text-xl font-extrabold px-2 py-2">{{ item.PlanTime }}</h2>
-          <span v-if="item.show" class="cuIcon-unfold" @click="item.show = !item.show"></span>
-          <span v-else class="cuIcon-fold" @click="item.show = !item.show"></span>
+          <span
+            v-if="item.show"
+            class="cuIcon-unfold"
+            @click="item.show = !item.show"
+          ></span>
+          <span
+            v-else
+            class="cuIcon-fold"
+            @click="item.show = !item.show"
+          ></span>
         </div>
         <div v-if="item.show">
-          <div v-for="item2 in item.Actions" :key="item2.title"
-            class="action-item flex my-1 flex-row w-full justify-between items-center">
-            <p class="ml-6 py-1">{{ item2.ActionName }} {{ item2.GroupNum }}组</p>
-            <van-checkbox :value="item2.Complete" checked-color="#ec6853" @change="changeCheck(item2)"></van-checkbox>
+          <div
+            v-for="item2 in item.Actions"
+            :key="item2.title"
+            class="action-item flex my-1 flex-row w-full justify-between items-center"
+          >
+            <p class="ml-6 py-1">
+              {{ item2.ActionName }} {{ item2.GroupNum }}组
+            </p>
+            <van-checkbox
+              :value="item2.Complete"
+              checked-color="#ec6853"
+              @change="changeCheck(item2)"
+            ></van-checkbox>
           </div>
         </div>
       </div>
@@ -66,17 +98,33 @@
       展示更多 <van-icon name="arrow-down" />
     </div> -->
     <div class="addmore w-11/12" @click="toAddClass">+ 添加课表</div>
-    <van-dialog use-slot title="选择课程类型" :show="showDialog" show-cancel-button @confirm="goChooseAction"
-      @close="onCloseDialog">
+    <van-dialog
+      use-slot
+      title="选择课程类型"
+      :show="showDialog"
+      show-cancel-button
+      @confirm="goChooseAction"
+      @close="onCloseDialog"
+    >
       <van-radio-group v-model="radioType">
         <van-cell-group>
-          <van-cell title="在线任务" value-class="value-class" clickable data-name="ONLINE"
-            @click="() => chooseType('ONLINE')">
+          <van-cell
+            title="在线任务"
+            value-class="value-class"
+            clickable
+            data-name="ONLINE"
+            @click="() => chooseType('ONLINE')"
+          >
             <van-radio name="ONLINE" />
           </van-cell>
-          <van-cell title="线下任务" value-class="value-class" clickable data-name=" OUTLINE"
-            @click="() => chooseType('  OUTLINE')">
-            <van-radio name=" OUTLINE" />
+          <van-cell
+            title="线下任务"
+            value-class="value-class"
+            clickable
+            data-name="OUTLINE"
+            @click="() => chooseType('OUTLINE')"
+          >
+            <van-radio name="OUTLINE" />
           </van-cell>
         </van-cell-group>
       </van-radio-group>
@@ -91,7 +139,7 @@ import { getstudentInfobyId } from "@/api/coach/index";
 import { useRouter } from "uni-mini-router";
 import { onMounted } from "vue";
 import { useAppStore } from "@/state/app";
-import { actionClok } from "@/api/courses/courses"
+import { actionClok } from "@/api/courses/courses";
 const AppStore = useAppStore();
 //获取路由参数
 const router = useRouter();
@@ -150,7 +198,6 @@ const changeCheck = (item: data) => {
   uni.showLoading({ title: "打卡中...", mask: true });
   actionClok(item.ID).then((res) => {
     if (res.data.code === 200) {
-
       item.Complete = true;
       uni.hideLoading();
       uni.showToast({
@@ -166,7 +213,6 @@ const changeCheck = (item: data) => {
   });
   // console.log(params, "修改计划状态");
   // const response = await changePlanStatus(params);
-
 };
 let planList = ref();
 
@@ -175,13 +221,13 @@ const initData = async () => {
   uni.showLoading({ title: "加载中...", mask: true });
 
   if (query.value) {
-    const query = router.route.value.query;
-    CoachPunchInAuth.value = query.CoachPunchInAuth;
+    // const query = router.route.value.query;
+    CoachPunchInAuth.value = query.value.CoachPunchInAuth;
     //获取个人信息
-    const res = await getstudentInfobyId(query.studentId);
+    const res = await getstudentInfobyId(query.value.studentId);
     stuInfo.value = res.data.data;
     //获取课程内容
-    const response = await getplanlist(query.courseId);
+    const response = await getplanlist(query.value.courseId);
     console.log(response.data.data, "课程内容");
     if (response.data.data === null || !response.data.data)
       return uni.hideLoading();
@@ -212,6 +258,10 @@ function formatDateString(dateStr: string) {
 onMounted(() => {
   query.value = router.route.value.query;
   initData();
+  uni.$on("getNew", () => {
+    console.log(query.value, "q");
+    initData();
+  });
 });
 </script>
 
@@ -282,4 +332,5 @@ onMounted(() => {
 //     top: 0;
 //     left: 0;
 //   }
-// }</style>
+// }
+</style>

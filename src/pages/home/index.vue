@@ -136,10 +136,10 @@ onMounted(() => {
   console.log(AuthStore.getUser, "user");
   if (router.route.value.query.isChoose) {
     ifChoose.value = true;
-    stuid.value = router.route.value.query.stuid;
-    courid.value = router.route.value.query.courid;
-    type.value = router.route.value.query.type;
-    sourName.value = router.route.value.query.name;
+    stuid.value = decodeURIComponent(router.route.value.query.stuid);
+    courid.value = decodeURIComponent(router.route.value.query.courid);
+    type.value = decodeURIComponent(router.route.value.query.type);
+    sourName.value = decodeURIComponent(router.route.value.query.name);
   } else {
     ifChoose.value = false;
   }

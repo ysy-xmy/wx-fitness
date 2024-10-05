@@ -87,3 +87,8 @@ export const uploadimg = (file: any) => {
     });
   });
 };
+
+//计算购买价格
+export const getPrice = (data: any) => {
+  return request.get("/api/pay/culAmount", { params: data });
+};
