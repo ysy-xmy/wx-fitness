@@ -10,7 +10,12 @@
         <CoachHome v-else />
       </div>
       <div v-show="usetsto.active === 'action'" class="action-page">
-        <Action />
+        <Action
+          :if-choose="ifChoose"
+          :stuid="stuid"
+          :courid="courid"
+          :type="type"
+        />
       </div>
       <div v-show="usetsto.active === 'mine'" class="mine-page">
         <Mine />
@@ -109,10 +114,12 @@ import { onMounted, ref } from "vue";
 import { getUserInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 import { updateUserInfo } from "../login/wx_session";
+import router from "@/router";
 const usetsto = useAppStore();
 const AuthStore = useAuthStore();
 const onChange = (item: any) => {
   usetsto.setactive(item.detail);
+  ifChoose.value = false;
 };
 const permission = ref("");
 const lowerBottom = () => {
@@ -120,8 +127,20 @@ const lowerBottom = () => {
     uni.$emit("bot", true);
   }
 };
+const ifChoose = ref(false);
+const stuid = ref(-1);
+const courid = ref(-1);
+const type = ref("");
 onMounted(() => {
   console.log(AuthStore.getUser, "user");
+  if (router.route.value.query.isChoose) {
+    ifChoose.value = true;
+    stuid.value = router.route.value.query.stuid;
+    courid.value = router.route.value.query.courid;
+    type.value = router.route.value.query.type;
+  } else {
+    ifChoose.value = false;
+  }
   if (AuthStore.getUser) {
     getUserInfo().then((res) => {
       permission.value = res.data.data.RoleName;
