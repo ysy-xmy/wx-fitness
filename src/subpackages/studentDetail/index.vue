@@ -43,56 +43,58 @@
         私教课<span
           class="ml-2 font-thin tracking-wider"
           style="color: #6d819cff; margin-left: 2px"
-          >(共10节课 已上6节)</span
-        >
+        ></span>
       </div>
-      <van-circle
-        class="mr-4"
-        stroke-width="4"
-        size="45"
-        layer-color="#ebedf0"
-        color="#ec6853"
-        value="70"
-        text="70%"
-        style="margin-top: 15px"
-      />
+      <!-- <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
+        style="margin-top: 15px" /> -->
     </div>
 
     <div
-      class="w-11/12 flex bg-[rgba(248,250,255,1)] justify-between cardBody"
-      v-for="item in planList"
-      :key="item.title"
+      style="align-items: start"
+      class="w-11/12 flex min-h-36 content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody"
     >
-      <div class="action-group w-full">
+      <div
+        v-if="planList"
+        v-for="item in planList"
+        :key="item.ID"
+        class="action-group w-full"
+      >
         <div class="flex justify-between items-center w-full">
-          <h2 class="title text-3xl font-extrabold px-2">{{ item.day }}</h2>
-          <span class="cuIcon-unfold"></span>
+          <h2 class="text-xl font-extrabold px-2">{{ item.PlanTime }}</h2>
+          <span
+            v-if="item.show"
+            class="cuIcon-unfold"
+            @click="item.show = !item.show"
+          ></span>
+          <span
+            v-else
+            class="cuIcon-fold"
+            @click="item.show = !item.show"
+          ></span>
         </div>
-        <div
-          class="action-item flex my-1 flex-row w-full justify-between items-center"
-        >
-          <p class="ml-6 py-1">{{ item.title }}</p>
-          <van-checkbox
-            :value="item.finish"
-            checked-color="#ec6853"
-            @change="changeCheck(item)"
-          ></van-checkbox>
-        </div>
-        <div
-          class="action-item my-1 flex flex-row w-full justify-between items-center"
-        >
-          <p class="ml-6 py-1">{{ item.title }}</p>
-          <van-checkbox
-            :value="item.finish"
-            checked-color="#ec6853"
-            @change="changeCheck(item)"
-          ></van-checkbox>
+        <div v-if="item.show">
+          <div
+            v-for="item2 in item.Actions"
+            :key="item2.title"
+            class="action-item flex my-1 flex-row w-full justify-between items-center"
+          >
+            <p class="ml-6 py-1">{{ item2.ActionName }}</p>
+            <van-checkbox
+              :value="item.finish"
+              checked-color="#ec6853"
+              @change="changeCheck(item2)"
+            ></van-checkbox>
+          </div>
         </div>
       </div>
+      <div v-else>
+        <van-empty class="h-28" description="该课程暂无计划" />
+      </div>
     </div>
-    <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
+    <div clss></div>
+    <!-- <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
-    </div>
+    </div> -->
     <div class="addmore w-11/12" @click="toAddClass">+ 添加课表</div>
     <van-dialog
       use-slot
@@ -182,29 +184,23 @@ const changeCheck = (item: data) => {
   console.log(item.finish);
   item.finish = !item.finish;
 };
-let planList = ref([
+let planList = ref();
+
+const dayList = ref([
   {
-    title: "杠铃十组",
     day: "6月1日",
-    finish: true,
+    show: false,
   },
   {
-    title: "杠铃十组",
     day: "6月1日",
-    finish: false,
+    show: false,
   },
   {
-    title: "杠铃十组",
     day: "6月1日",
-    finish: false,
-  },
-  {
-    title: "杠铃十组",
-    day: "6月1日",
-    finish: false,
+    show: false,
   },
 ]);
-const query = ref({});
+const query = ref();
 const initData = async () => {
   uni.showLoading({ title: "加载中...", mask: true });
 
@@ -215,10 +211,33 @@ const initData = async () => {
     stuInfo.value = res.data.data;
     //获取课程内容
     const response = await getplanlist(query.courseId);
+    console.log(response.data.data, "课程内容");
+    if (response.data.data === null || !response.data.data)
+      return uni.hideLoading();
+    planList.value = response.data.data.map((item: any) => {
+      return {
+        ...item,
+        PlanTime: formatDateString(item.PlanTime),
 
+        show: false,
+      };
+    });
     uni.hideLoading();
   }
 };
+//格式化日期
+function formatDateString(dateStr: string) {
+  // 解析日期字符串
+  const date = new Date(dateStr);
+
+  // 获取月份和日期
+  const month = date.getMonth() + 1; // getMonth() 返回的月份是从0开始的，所以要加1
+  const day = date.getDate();
+
+  // 返回格式化的字符串
+  return `${month}月${day}`;
+}
+
 onMounted(() => {
   query.value = router.route.value.query;
   initData();
