@@ -13,13 +13,96 @@
         height: 30px;
         margin: 5px 0;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         padding-right: 20px;
+<<<<<<< HEAD
       ">
             <view class="cu-item" @click="showPopup = true">
                 <div class="cuIcon-apps" style="position: relative; width: 30px; font-size: 30px; height: 30px">
                     <view class="cu-tag badge">{{ chooseList.length }}</view>
                 </div>
+=======
+      "
+    >
+      <div
+        style="
+          height: 30px;
+          line-height: 30px;
+          margin-left: 30px;
+          margin-left: 30px;
+        "
+      >
+        正在为{{ props.name }}的课程选课
+      </div>
+      <view class="cu-item" @click="showPopup = true">
+        <div
+          class="cuIcon-apps"
+          style="position: relative; width: 30px; font-size: 30px; height: 30px"
+        >
+          <view class="cu-tag badge">{{ chooseList.length }}</view>
+        </div>
+      </view>
+    </view>
+
+    <view class="fixed">
+      <cu-custom :isBack="false" bgColor="bg-shadeTop text-white"> </cu-custom>
+    </view>
+
+    <view class="VerticalBox bg-white">
+      <scroll-view
+        class="bg-[#f7f8fc] rounded-md VerticalNav nav"
+        scroll-y
+        scroll-with-animation
+        :scroll-top="verticalNavTop"
+        style="height: calc(100vh - 375upx)"
+      >
+        <view
+          style="background-color: #f7f8fc"
+          class="cu-item bg-[#f7f8fc] truncate ..."
+          :class="index == tabCur ? 'text-[#ec6853] cur' : ''"
+          v-for="(item, index) in actionrouterList"
+          :key="index"
+          @tap="TabSelect"
+          :data-id="index"
+        >
+          {{ item.name }}
+        </view>
+      </scroll-view>
+      <scroll-view
+        scroll-y
+        scroll-with-animation
+        style="height: calc(100vh - 375upx); background-color: white"
+        :scroll-into-view="'main-' + mainCur"
+        @scroll="VerticalMain"
+      >
+        <div v-if="secMenu.length > 0">
+          <view
+            class="padding-top"
+            v-for="(item1, index1) in secMenu"
+            :key="index1"
+            :id="'main-' + index1"
+          >
+            <view
+              @click="secMenuSelect(item1, index1)"
+              class="cu-bar text-black font-extrabold solid-bottom bg-white"
+            >
+              <view
+                style="font-size: 45rpx"
+                class="text-2xl action truncate ..."
+              >
+                <text class="cuIcon-title"></text> {{ item1.name }}
+              </view>
+              <div class="curight-icon mr-5">
+                <van-icon
+                  v-show="actionrouterList[mainCur].children[index1].active"
+                  name="arrow-down"
+                />
+                <van-icon
+                  v-show="!actionrouterList[mainCur].children[index1].active"
+                  name="arrow-up"
+                />
+              </div>
+>>>>>>> 14473e05bc021282090691ff3818b0d9c6e5b2b2
             </view>
         </view>
 
@@ -178,10 +261,18 @@ import { postPlan } from "@/api/course/index.ts";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 const props = defineProps<{
+<<<<<<< HEAD
     stuid?: number;
     courid?: number;
     type?: string;
     ifChoose?: boolean;
+=======
+  stuid?: number;
+  courid?: number;
+  type?: string;
+  ifChoose?: boolean;
+  name?: string;
+>>>>>>> 14473e05bc021282090691ff3818b0d9c6e5b2b2
 }>();
 const showPopup = ref(false);
 const subitClass = () => {

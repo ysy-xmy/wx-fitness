@@ -158,6 +158,16 @@
           "style": {
             "navigationBarTitleText": "订单详情"
           }
+        },
+        {
+          "path": "bodyFormDetail/index",
+          "name": "bodyFormDetail",
+          "meta": {
+            "islogin": false
+          },
+          "style": {
+            "navigationBarTitleText": "查看体检表"
+          }
         }
       ]
     }

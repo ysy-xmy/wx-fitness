@@ -20,7 +20,12 @@
         <span class="text-gray-400 text-sm">身高</span>
       </div>
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
-        <h2 class="text-md font-bold underline text-[#F65625]">体检表</h2>
+        <h2
+          class="text-md font-bold underline text-[#F65625]"
+          @click="seeBodyForm"
+        >
+          体检表
+        </h2>
       </div>
     </div>
 
@@ -31,53 +36,93 @@
         </div>
       </div>
     </div>
-    <div class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4">
+    <div
+      class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4"
+    >
       <div class="font-bold">
-        私教课<span class="ml-2 font-thin tracking-wider" style="color: #6d819cff; margin-left: 2px"></span>
+        私教课<span
+          class="ml-2 font-thin tracking-wider"
+          style="color: #6d819cff; margin-left: 2px"
+        ></span>
       </div>
       <!-- <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
         style="margin-top: 15px" /> -->
     </div>
 
-    <div style="align-items: start;"
-      class="w-11/12 flex min-h-36 content-start items-start   bg-[rgba(248,250,255,1)] justify-center cardBody">
-      <div v-if="planList" v-for="item in planList" :key="item.ID" class="action-group  w-full">
+    <div
+      style="align-items: start"
+      class="w-11/12 flex min-h-36 content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody"
+    >
+      <div
+        v-if="planList"
+        v-for="item in planList"
+        :key="item.ID"
+        class="action-group w-full"
+      >
         <div class="flex justify-between items-center w-full">
-          <h2 class=" text-xl font-extrabold px-2">{{ item.PlanTime }}</h2>
-          <span v-if="item.show" class="cuIcon-unfold" @click="item.show = !item.show"></span>
-          <span v-else class="cuIcon-fold" @click="item.show = !item.show"></span>
+          <h2 class="text-xl font-extrabold px-2">{{ item.PlanTime }}</h2>
+          <span
+            v-if="item.show"
+            class="cuIcon-unfold"
+            @click="item.show = !item.show"
+          ></span>
+          <span
+            v-else
+            class="cuIcon-fold"
+            @click="item.show = !item.show"
+          ></span>
         </div>
         <div v-if="item.show">
-          <div v-for="item2 in item.Actions" :key="item2.title"
-            class=" action-item flex my-1  flex-row w-full justify-between items-center">
-            <p class="ml-6 py-1 ">{{ item2.ActionName }}</p>
-            <van-checkbox :value="item.finish" checked-color="#ec6853" @change="changeCheck(item2)"></van-checkbox>
-
+          <div
+            v-for="item2 in item.Actions"
+            :key="item2.title"
+            class="action-item flex my-1 flex-row w-full justify-between items-center"
+          >
+            <p class="ml-6 py-1">{{ item2.ActionName }}</p>
+            <van-checkbox
+              :value="item.finish"
+              checked-color="#ec6853"
+              @change="changeCheck(item2)"
+            ></van-checkbox>
           </div>
         </div>
       </div>
       <div v-else>
         <van-empty class="h-28" description="该课程暂无计划" />
-
       </div>
-
     </div>
     <div clss></div>
     <!-- <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
     </div> -->
     <div class="addmore w-11/12" @click="toAddClass">+ 添加课表</div>
-    <van-dialog use-slot title="选择课程类型" :show="showDialog" show-cancel-button @confirm="goChooseAction"
-      @close="onCloseDialog">
+    <van-dialog
+      use-slot
+      title="选择课程类型"
+      :show="showDialog"
+      show-cancel-button
+      @confirm="goChooseAction"
+      @close="onCloseDialog"
+    >
       <van-radio-group v-model="radioType">
         <van-cell-group>
-          <van-cell title="在线任务" value-class="value-class" clickable data-name="OUTLINE"
-            @click="() => chooseType('OUTLINE')">
-            <van-radio name="OUTLINE" />
+          <van-cell
+            title="在线任务"
+            value-class="value-class"
+            clickable
+            data-name="ONLINE"
+            @click="() => chooseType('ONLINE')"
+          >
+            <van-radio name="ONLINE" />
           </van-cell>
-          <van-cell title="课程计划" value-class="value-class" clickable data-name="planIng"
-            @click="() => chooseType('planIng')">
-            <van-radio name="planIng" />
+          <van-cell
+            title="线下任务"
+            value-class="value-class"
+            clickable
+            data-name=" OUTLINE"
+            @click="() => chooseType('  OUTLINE')"
+          >
+            <van-radio name=" OUTLINE" />
           </van-cell>
         </van-cell-group>
       </van-radio-group>
@@ -99,6 +144,12 @@ const stuInfo = ref();
 const radioType = ref("");
 const courseInfo = ref();
 const showDialog = ref(false); //显示弹窗
+const seeBodyForm = () => {
+  const imgData = JSON.stringify(stuInfo.value.BodyCheckImg);
+  router.push({
+    path: `/subpackages/bodyFormDetail/index?img=${imgData}&&name=${stuInfo.value.Username}`, // 对 JSON 字符串进行编码
+  });
+};
 const toAddClass = () => {
   //去添加课程
   showDialog.value = true;
@@ -120,7 +171,7 @@ const goChooseAction = () => {
   } else {
     AppStore.setactive("action");
     router.push({
-      path: `/pages/home/index?isChoose=true&&stuid=${query.value.studentId}&&courid=${query.value.courseId}&&type=${radioType.value}`,
+      path: `/pages/home/index?isChoose=true&&stuid=${query.value.studentId}&&courid=${query.value.courseId}&&type=${radioType.value}&&name=${stuInfo.value.Username}`,
     });
   }
 };
@@ -147,9 +198,9 @@ const dayList = ref([
   {
     day: "6月1日",
     show: false,
-  }
-])
-const query = ref()
+  },
+]);
+const query = ref();
 const initData = async () => {
   uni.showLoading({ title: "加载中...", mask: true });
 
@@ -161,7 +212,8 @@ const initData = async () => {
     //获取课程内容
     const response = await getplanlist(query.courseId);
     console.log(response.data.data, "课程内容");
-    if (response.data.data === null || !response.data.data) return uni.hideLoading();;
+    if (response.data.data === null || !response.data.data)
+      return uni.hideLoading();
     planList.value = response.data.data.map((item: any) => {
       return {
         ...item,
@@ -170,8 +222,7 @@ const initData = async () => {
         show: false,
       };
     });
-    uni.hideLoading()
-
+    uni.hideLoading();
   }
 };
 //格式化日期
@@ -260,4 +311,5 @@ onMounted(() => {
 //     top: 0;
 //     left: 0;
 //   }
-// }</style>
+// }
+</style>

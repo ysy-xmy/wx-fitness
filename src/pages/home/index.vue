@@ -15,6 +15,7 @@
           :stuid="stuid"
           :courid="courid"
           :type="type"
+          :name="sourName"
         />
       </div>
       <div v-show="usetsto.active === 'mine'" class="mine-page">
@@ -131,6 +132,7 @@ const ifChoose = ref(false);
 const stuid = ref(-1);
 const courid = ref(-1);
 const type = ref("");
+const sourName = ref("");
 onMounted(() => {
   console.log(AuthStore.getUser, "user");
   if (router.route.value.query.isChoose) {
@@ -138,6 +140,7 @@ onMounted(() => {
     stuid.value = router.route.value.query.stuid;
     courid.value = router.route.value.query.courid;
     type.value = router.route.value.query.type;
+    sourName.value = router.route.value.query.name;
   } else {
     ifChoose.value = false;
   }
