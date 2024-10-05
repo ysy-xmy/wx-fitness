@@ -31,29 +31,14 @@
         </div>
       </div>
     </div>
-    <div
-      class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4"
-    >
+    <div class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4">
       <div class="font-bold">
-        私教课<span
-          class="ml-2 font-thin tracking-wider"
-          style="color: #6d819cff; margin-left: 2px"
-          >(共10节课 已上6节)</span
-        >
+        私教课<span class="ml-2 font-thin tracking-wider" style="color: #6d819cff; margin-left: 2px">(共10节课 已上6节)</span>
       </div>
-      <van-circle
-        class="mr-4"
-        stroke-width="4"
-        size="45"
-        layer-color="#ebedf0"
-        color="#ec6853"
-        value="70"
-        text="70%"
-        style="margin-top: 15px"
-      />
+      <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
+        style="margin-top: 15px" />
     </div>
 
-<<<<<<< HEAD
     <div class="w-11/12 flex  bg-[rgba(248,250,255,1)] justify-between cardBody" v-for="item in planList"
       :key="item.title">
       <div class="action-group  w-full">
@@ -73,53 +58,21 @@
         </div>
       </div>
 
-=======
-    <div
-      class="w-11/12 flex h-16 bg-[rgba(248,250,255,1)] justify-between cardBody"
-      v-for="item in planList"
-      :key="item.title"
-    >
-      <div>
-        <p class="title">{{ item.title }}</p>
-        <p class="time"><span class="cuIcon-card"></span> {{ item.day }}</p>
-      </div>
-      <van-checkbox
-        :value="item.finish"
-        checked-color="#ec6853"
-        @change="changeCheck(item)"
-      ></van-checkbox>
->>>>>>> f2a1a9abb772040e937db8cdd55a06c09692a76a
     </div>
     <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
     </div>
     <div class="addmore w-11/12" @click="toAddClass">+ 添加课表</div>
-    <van-dialog
-      use-slot
-      title="选择课程类型"
-      :show="showDialog"
-      show-cancel-button
-      @confirm="goChooseAction"
-      @close="onCloseDialog"
-    >
+    <van-dialog use-slot title="选择课程类型" :show="showDialog" show-cancel-button @confirm="goChooseAction"
+      @close="onCloseDialog">
       <van-radio-group v-model="radioType">
         <van-cell-group>
-          <van-cell
-            title="在线任务"
-            value-class="value-class"
-            clickable
-            data-name="OUTLINE"
-            @click="() => chooseType('OUTLINE')"
-          >
+          <van-cell title="在线任务" value-class="value-class" clickable data-name="OUTLINE"
+            @click="() => chooseType('OUTLINE')">
             <van-radio name="OUTLINE" />
           </van-cell>
-          <van-cell
-            title="课程计划"
-            value-class="value-class"
-            clickable
-            data-name="planIng"
-            @click="() => chooseType('planIng')"
-          >
+          <van-cell title="课程计划" value-class="value-class" clickable data-name="planIng"
+            @click="() => chooseType('planIng')">
             <van-radio name="planIng" />
           </van-cell>
         </van-cell-group>
@@ -198,14 +151,7 @@ let planList = ref([
     finish: false,
   },
 ]);
-<<<<<<< HEAD
-
-
-const date = ref()
-
-=======
 const query = ref({});
->>>>>>> f2a1a9abb772040e937db8cdd55a06c09692a76a
 const initData = async () => {
   uni.showLoading({ title: "加载中...", mask: true });
 
@@ -292,5 +238,4 @@ onMounted(() => {
 //     top: 0;
 //     left: 0;
 //   }
-// }
-</style>
+// }</style>
