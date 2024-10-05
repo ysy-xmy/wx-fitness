@@ -9,100 +9,25 @@
         </view>
 
         <view v-if="props.ifChoose" style="
-        width: 100vw;
-        height: 30px;
-        margin: 5px 0;
-        display: flex;
-        justify-content: space-between;
-        padding-right: 20px;
-<<<<<<< HEAD
-      ">
+          width: 100vw;
+          height: 30px;
+          margin: 5px 0;
+          display: flex;
+          justify-content: space-between;
+          padding-right: 20px;
+        ">
+            <div style="
+            height: 30px;
+            line-height: 30px;
+            margin-left: 30px;
+            margin-left: 30px;
+          ">
+                正在为{{ props.name }}的课程选课
+            </div>
             <view class="cu-item" @click="showPopup = true">
                 <div class="cuIcon-apps" style="position: relative; width: 30px; font-size: 30px; height: 30px">
                     <view class="cu-tag badge">{{ chooseList.length }}</view>
                 </div>
-=======
-      "
-    >
-      <div
-        style="
-          height: 30px;
-          line-height: 30px;
-          margin-left: 30px;
-          margin-left: 30px;
-        "
-      >
-        正在为{{ props.name }}的课程选课
-      </div>
-      <view class="cu-item" @click="showPopup = true">
-        <div
-          class="cuIcon-apps"
-          style="position: relative; width: 30px; font-size: 30px; height: 30px"
-        >
-          <view class="cu-tag badge">{{ chooseList.length }}</view>
-        </div>
-      </view>
-    </view>
-
-    <view class="fixed">
-      <cu-custom :isBack="false" bgColor="bg-shadeTop text-white"> </cu-custom>
-    </view>
-
-    <view class="VerticalBox bg-white">
-      <scroll-view
-        class="bg-[#f7f8fc] rounded-md VerticalNav nav"
-        scroll-y
-        scroll-with-animation
-        :scroll-top="verticalNavTop"
-        style="height: calc(100vh - 375upx)"
-      >
-        <view
-          style="background-color: #f7f8fc"
-          class="cu-item bg-[#f7f8fc] truncate ..."
-          :class="index == tabCur ? 'text-[#ec6853] cur' : ''"
-          v-for="(item, index) in actionrouterList"
-          :key="index"
-          @tap="TabSelect"
-          :data-id="index"
-        >
-          {{ item.name }}
-        </view>
-      </scroll-view>
-      <scroll-view
-        scroll-y
-        scroll-with-animation
-        style="height: calc(100vh - 375upx); background-color: white"
-        :scroll-into-view="'main-' + mainCur"
-        @scroll="VerticalMain"
-      >
-        <div v-if="secMenu.length > 0">
-          <view
-            class="padding-top"
-            v-for="(item1, index1) in secMenu"
-            :key="index1"
-            :id="'main-' + index1"
-          >
-            <view
-              @click="secMenuSelect(item1, index1)"
-              class="cu-bar text-black font-extrabold solid-bottom bg-white"
-            >
-              <view
-                style="font-size: 45rpx"
-                class="text-2xl action truncate ..."
-              >
-                <text class="cuIcon-title"></text> {{ item1.name }}
-              </view>
-              <div class="curight-icon mr-5">
-                <van-icon
-                  v-show="actionrouterList[mainCur].children[index1].active"
-                  name="arrow-down"
-                />
-                <van-icon
-                  v-show="!actionrouterList[mainCur].children[index1].active"
-                  name="arrow-up"
-                />
-              </div>
->>>>>>> 14473e05bc021282090691ff3818b0d9c6e5b2b2
             </view>
         </view>
 
@@ -143,9 +68,9 @@
                                 <view class="felx flex-col w-1/2 p-2 px-3 h-36 bg-[#f9fafb]" style="position: relative">
                                     <van-checkbox v-if="ifChoose" :value="item2.ifcheck" @change="(e: any) => chooseAction(e, item2, mainCur, index1)
                     " checked-color="#f60422" style="position: absolute; right: 1px; top: 1px; z-index: 5" />
-                                    <img @click.prevent="toDetail(item2)" class="w-full h-24 rounded-md lg" :src="item2.Imgs
-                    ? item2.Imgs[0].Url
-                    : 'https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg'
+                                    <img @click="toDetail(item2)" class="w-full h-24 rounded-md lg" :src="item2.Imgs
+                        ? item2.Imgs[0].Url
+                        : 'https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg'
                     " />
                                     <view class="content">
                                         <view class="text-black text-center text-lg font-extrabold">{{ item2.name }}
@@ -198,12 +123,12 @@
         <van-popup custom-style="max-height: 500px;" :show="showPopup" position="bottom" overlay="false"
             @close="onCloseopup">
             <div style="
-          margin-top: 5px;
-          width: 100vw;
-          display: flex;
-          justify-content: flex-end;
-          padding-right: 10px;
-        ">
+            margin-top: 5px;
+            width: 100vw;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 10px;
+          ">
                 <van-icon name="close" size="30px" @click="onCloseopup" />
             </div>
             <div style="max-height: 460px; margin: 15px auto; overflow-y: auto">
@@ -213,16 +138,16 @@
                 <div v-for="item in chooseList">
                     <div style="width: 100vw; padding: 0 20px">
                         <div class="card" style="
-                height: 50px;
-                line-height: 50px;
-                display: flex;
-                justify-content: space-between;
-                padding: 0 20px;
-                align-items: center;
-                background-color: rgba(255, 255, 255, 0.4);
-                border-bottom: 1px solid gray;
-                border-radius: 5px;
-              ">
+                  height: 50px;
+                  line-height: 50px;
+                  display: flex;
+                  justify-content: space-between;
+                  padding: 0 20px;
+                  align-items: center;
+                  background-color: rgba(255, 255, 255, 0.4);
+                  border-bottom: 1px solid gray;
+                  border-radius: 5px;
+                ">
                             <div class="title">{{ item.name }}</div>
                             <van-stepper :value="item.num" integer min="0" step="1" />
                         </div>
@@ -230,12 +155,12 @@
                 </div>
             </div>
             <div style="
-          margin-top: 5px;
-          width: 100vw;
-          display: flex;
-          justify-content: flex-end;
-          padding-right: 30px;
-        ">
+            margin-top: 5px;
+            width: 100vw;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 30px;
+          ">
                 <van-button type="info" size="normal" round @click="subitClass">提交</van-button>
             </div>
         </van-popup>
@@ -261,18 +186,11 @@ import { postPlan } from "@/api/course/index.ts";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 const props = defineProps<{
-<<<<<<< HEAD
     stuid?: number;
     courid?: number;
     type?: string;
     ifChoose?: boolean;
-=======
-  stuid?: number;
-  courid?: number;
-  type?: string;
-  ifChoose?: boolean;
-  name?: string;
->>>>>>> 14473e05bc021282090691ff3818b0d9c6e5b2b2
+    name?: string;
 }>();
 const showPopup = ref(false);
 const subitClass = () => {
@@ -426,17 +344,13 @@ function sortByOrderNumDescending(routers: ListItem[]) {
         .sort(sortByOrderIdAndIdDesc);
 }
 const toDetail = (item: ActionItem) => {
-    if (!props.ifChoose) {
+    if (!props.ifChoose)
         router.push({
             name: "actionDetail",
             params: {
                 itemid: item.id,
             },
         });
-    }
-
-
-
 };
 //处理搜索点击事件
 const handlelocation = (actionid) => {
