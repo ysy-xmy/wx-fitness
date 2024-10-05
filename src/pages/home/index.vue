@@ -114,7 +114,6 @@ import CoachHome from "@/components/coachHome/index.vue";
 import { onMounted, ref } from "vue";
 import { getUserInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
-import { updateUserInfo } from "../login/wx_session";
 import router from "@/router";
 const usetsto = useAppStore();
 const AuthStore = useAuthStore();

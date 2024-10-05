@@ -77,16 +77,16 @@ VantComponent({
                     .select('#van-circle')
                     .node()
                     .exec((res) => {
-                        const canvas = res[0].node;
-                        const ctx = canvas.getContext(type);
-                        if (!this.inited) {
-                            this.inited = true;
-                            canvas.width = size * dpr;
-                            canvas.height = size * dpr;
-                            ctx.scale(dpr, dpr);
-                        }
-                        resolve(adaptor(ctx));
-                    });
+                    const canvas = res[0].node;
+                    const ctx = canvas.getContext(type);
+                    if (!this.inited) {
+                        this.inited = true;
+                        canvas.width = size * dpr;
+                        canvas.height = size * dpr;
+                        ctx.scale(dpr, dpr);
+                    }
+                    resolve(adaptor(ctx));
+                });
             });
         },
         setHoverColor() {

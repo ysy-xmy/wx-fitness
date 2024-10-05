@@ -46,8 +46,8 @@
         <van-tab title="已完成">
           <finishedtask :list="finish"></finishedtask>
         </van-tab>
-        <van-tab title="计划表">
-          <plan :list="planIng"></plan>
+        <van-tab title="线下计划">
+          <plan :list="online"></plan>
         </van-tab>
         <van-tab title="线上任务">
           <onlinetask :list="outline"></onlinetask>
@@ -88,22 +88,28 @@ interface PlanItem {
   end: string;
 }
 const finish = ref({});
-const planIng = ref({});
+const online = ref({});
 const outline = ref({});
 const list = reactive<{
   finish: Record<string, ActionItem[]>;
-  plan: Record<string, PlanItem[]>;
+  online: Record<string, PlanItem[]>;
   outline: Record<string, any>; // outline 这里假设类型
 }>({
   finish: {},
-  plan: {},
+  online: {},
   outline: {},
 });
+const iddd = ref(0);
 const courseId = ref("");
 onMounted(() => {
+  uni.$on("refreshAction", () => {
+    console.log("刷新");
+    getPlan();
+  });
   // 获取路由参数
   console.log(router.route.value.params);
   const id = router.route.value.params?.id;
+  iddd.value = router.route.value.params?.id; //直接堆了
   courseId.value = router.route.value.params?.id;
   const name = router.route.value.params?.name;
   const desc = router.route.value.params?.desc;
@@ -119,6 +125,7 @@ onMounted(() => {
     desc: decodeURIComponent(desc || ""),
     Percentage,
   };
+  getPlan();
   //模拟假数据
   // let dddd = [
   //   {
@@ -192,7 +199,9 @@ onMounted(() => {
   //   },
   // ];
   // 获取计划列表
-  getplanlist(Number(id)).then((res) => {
+});
+const getPlan = () => {
+  getplanlist(Number(iddd.value)).then((res) => {
     let temp = res.data.data || [];
     temp.forEach(
       (item: {
@@ -237,10 +246,13 @@ onMounted(() => {
               ];
             }
           } else {
+            console.log(item, "未完成");
             // 处理未完成的任务，假设 item.Type 是 "plan" 或 "outline"
-            const type = item.Type as "plan" | "outline";
+            const type = item.Type as "online" | "outline";
             if (list[type]) {
-              list[type][i.ExerciseActionID] = {
+              const day = item.ID;
+              if (!list[type][day]) list[type][day] = {};
+              list[type][day][i.ExerciseActionID] = {
                 id: i.ExerciseActionID,
                 name: i.ActionName,
                 groupNum: i.GroupNum,
@@ -252,13 +264,12 @@ onMounted(() => {
         });
       }
     );
-    planIng.value = list["plan"];
+    console.log(list, "list");
+    online.value = list["online"];
     finish.value = list["finish"];
     outline.value = list["outline"];
-    console.log(finish.value, "finish");
   });
-});
-
+};
 //@ts-ignore
 import finishedtask from "@/components/mycourse/finishedtask.vue";
 //@ts-ignore

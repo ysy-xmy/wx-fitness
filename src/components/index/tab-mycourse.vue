@@ -97,7 +97,7 @@ import scrollFrom from "@/components/scrollForm/index.vue";
 import { useRouter } from "uni-mini-router";
 import { getMycourese } from "@/api/courses/courses";
 import { onMounted, reactive, ref } from "vue";
-import { getOrderlist } from "@/api/order";
+import { getOrderlist } from "@/subpackages/apis/order";
 const props = defineProps<{
   change: () => void;
 }>();

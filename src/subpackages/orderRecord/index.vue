@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import scrollFrom from "@/components/scrollForm/index.vue";
 import { ref, onMounted } from "vue";
-import { getOrderlist } from "@/api/order";
+import { getOrderlist } from "@/subpackages/apis/order";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 const router = useRouter();

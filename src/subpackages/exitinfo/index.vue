@@ -152,7 +152,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
 import { useRouter } from "uni-mini-router";
-import { uploadimg } from "@/api/oss/ali-oss";
+import { uploadimg } from "../apis/api";
 import { useAuthStore } from "@/state/modules/auth";
 import { updateUserInfo, getUserInfo } from "@/api/user";
 
