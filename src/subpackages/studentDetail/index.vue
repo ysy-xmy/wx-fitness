@@ -20,7 +20,12 @@
         <span class="text-gray-400 text-sm">身高</span>
       </div>
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
-        <h2 class="text-md font-bold underline text-[#F65625]">体检表</h2>
+        <h2
+          class="text-md font-bold underline text-[#F65625]"
+          @click="seeBodyForm"
+        >
+          体检表
+        </h2>
       </div>
     </div>
 
@@ -31,49 +36,91 @@
         </div>
       </div>
     </div>
-    <div class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4">
+    <div
+      class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4"
+    >
       <div class="font-bold">
-        私教课<span class="ml-2 font-thin tracking-wider" style="color: #6d819cff; margin-left: 2px">(共10节课 已上6节)</span>
+        私教课<span
+          class="ml-2 font-thin tracking-wider"
+          style="color: #6d819cff; margin-left: 2px"
+          >(共10节课 已上6节)</span
+        >
       </div>
-      <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
-        style="margin-top: 15px" />
+      <van-circle
+        class="mr-4"
+        stroke-width="4"
+        size="45"
+        layer-color="#ebedf0"
+        color="#ec6853"
+        value="70"
+        text="70%"
+        style="margin-top: 15px"
+      />
     </div>
 
-    <div class="w-11/12 flex  bg-[rgba(248,250,255,1)] justify-between cardBody" v-for="item in planList"
-      :key="item.title">
-      <div class="action-group  w-full">
+    <div
+      class="w-11/12 flex bg-[rgba(248,250,255,1)] justify-between cardBody"
+      v-for="item in planList"
+      :key="item.title"
+    >
+      <div class="action-group w-full">
         <div class="flex justify-between items-center w-full">
           <h2 class="title text-3xl font-extrabold px-2">{{ item.day }}</h2>
           <span class="cuIcon-unfold"></span>
         </div>
-        <div class="action-item flex my-1  flex-row w-full justify-between items-center">
-          <p class="ml-6 py-1 ">{{ item.title }}</p>
-          <van-checkbox :value="item.finish" checked-color="#ec6853" @change="changeCheck(item)"></van-checkbox>
-
+        <div
+          class="action-item flex my-1 flex-row w-full justify-between items-center"
+        >
+          <p class="ml-6 py-1">{{ item.title }}</p>
+          <van-checkbox
+            :value="item.finish"
+            checked-color="#ec6853"
+            @change="changeCheck(item)"
+          ></van-checkbox>
         </div>
-        <div class="action-item my-1 flex flex-row w-full justify-between items-center">
-          <p class="ml-6 py-1 ">{{ item.title }}</p>
-          <van-checkbox :value="item.finish" checked-color="#ec6853" @change="changeCheck(item)"></van-checkbox>
-
+        <div
+          class="action-item my-1 flex flex-row w-full justify-between items-center"
+        >
+          <p class="ml-6 py-1">{{ item.title }}</p>
+          <van-checkbox
+            :value="item.finish"
+            checked-color="#ec6853"
+            @change="changeCheck(item)"
+          ></van-checkbox>
         </div>
       </div>
-
     </div>
     <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
     </div>
     <div class="addmore w-11/12" @click="toAddClass">+ 添加课表</div>
-    <van-dialog use-slot title="选择课程类型" :show="showDialog" show-cancel-button @confirm="goChooseAction"
-      @close="onCloseDialog">
+    <van-dialog
+      use-slot
+      title="选择课程类型"
+      :show="showDialog"
+      show-cancel-button
+      @confirm="goChooseAction"
+      @close="onCloseDialog"
+    >
       <van-radio-group v-model="radioType">
         <van-cell-group>
-          <van-cell title="在线任务" value-class="value-class" clickable data-name="OUTLINE"
-            @click="() => chooseType('OUTLINE')">
-            <van-radio name="OUTLINE" />
+          <van-cell
+            title="在线任务"
+            value-class="value-class"
+            clickable
+            data-name="ONLINE"
+            @click="() => chooseType('ONLINE')"
+          >
+            <van-radio name="ONLINE" />
           </van-cell>
-          <van-cell title="课程计划" value-class="value-class" clickable data-name="planIng"
-            @click="() => chooseType('planIng')">
-            <van-radio name="planIng" />
+          <van-cell
+            title="线下任务"
+            value-class="value-class"
+            clickable
+            data-name=" OUTLINE"
+            @click="() => chooseType('  OUTLINE')"
+          >
+            <van-radio name=" OUTLINE" />
           </van-cell>
         </van-cell-group>
       </van-radio-group>
@@ -95,6 +142,12 @@ const stuInfo = ref();
 const radioType = ref("");
 const courseInfo = ref();
 const showDialog = ref(false); //显示弹窗
+const seeBodyForm = () => {
+  const imgData = JSON.stringify(stuInfo.value.BodyCheckImg);
+  router.push({
+    path: `/subpackages/bodyFormDetail/index?img=${imgData}&&name=${stuInfo.value.Username}`, // 对 JSON 字符串进行编码
+  });
+};
 const toAddClass = () => {
   //去添加课程
   showDialog.value = true;
@@ -116,7 +169,7 @@ const goChooseAction = () => {
   } else {
     AppStore.setactive("action");
     router.push({
-      path: `/pages/home/index?isChoose=true&&stuid=${query.value.studentId}&&courid=${query.value.courseId}&&type=${radioType.value}`,
+      path: `/pages/home/index?isChoose=true&&stuid=${query.value.studentId}&&courid=${query.value.courseId}&&type=${radioType.value}&&name=${stuInfo.value.Username}`,
     });
   }
 };
@@ -162,6 +215,7 @@ const initData = async () => {
     stuInfo.value = res.data.data;
     //获取课程内容
     const response = await getplanlist(query.courseId);
+
     uni.hideLoading();
   }
 };
@@ -238,4 +292,5 @@ onMounted(() => {
 //     top: 0;
 //     left: 0;
 //   }
-// }</style>
+// }
+</style>

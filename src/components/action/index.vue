@@ -20,10 +20,20 @@
         height: 30px;
         margin: 5px 0;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         padding-right: 20px;
       "
     >
+      <div
+        style="
+          height: 30px;
+          line-height: 30px;
+          margin-left: 30px;
+          margin-left: 30px;
+        "
+      >
+        正在为{{ props.name }}的课程选课
+      </div>
       <view class="cu-item" @click="showPopup = true">
         <div
           class="cuIcon-apps"
@@ -275,6 +285,7 @@ const props = defineProps<{
   courid?: number;
   type?: string;
   ifChoose?: boolean;
+  name?: string;
 }>();
 const showPopup = ref(false);
 const subitClass = () => {
