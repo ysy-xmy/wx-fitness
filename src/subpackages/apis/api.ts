@@ -69,6 +69,9 @@ export const uploadimg = (file: any) => {
         "x-oss-security-token": data.SecurityToken,
       },
       success: (uploadRes) => {
+        console.log(
+          "https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/" + key
+        );
         resolve(
           "https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/" + key
         );
