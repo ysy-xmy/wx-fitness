@@ -31,8 +31,8 @@
                 <div class="btn h-full flex flex-row items-center">
                   <van-circle class="mr-4 text-sm" stroke-width="4" size="50" layer-color="#ebedf0" color="#ec6853"
                     :value="item.Percentage" :text="item.Percentage + '%'" />
-                  <van-button @click="todetail(item.UserID, item.ID)" color="#fd7d46" size="small" round type="primary"
-                    class="tracking-wide"><span>查看</span></van-button>
+                  <van-button @click="todetail(item.UserID, item.ID, item.CoachPunchInAuth)" color="#fd7d46"
+                    size="small" round type="primary" class="tracking-wide"><span>查看</span></van-button>
                 </div>
               </div>
             </div>
@@ -94,13 +94,14 @@ const getListData = () => {
 const dispose = (item: any) => {
   return item;
 };
-const todetail = (stuid: any, courseId: any) => {
+const todetail = (stuid: any, courseId: any, CoachPunchInAuth: any) => {
   console.log("查看");
   router.push({
     name: "studentDetail",
     params: {
       studentId: stuid,
-      courseId: courseId
+      courseId: courseId,
+      CoachPunchInAuth: CoachPunchInAuth
     }
   });
 };
