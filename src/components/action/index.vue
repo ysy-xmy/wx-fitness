@@ -14,7 +14,7 @@
     </view>
 
     <view
-      v-if="ifChoose"
+      v-if="props.ifChoose"
       style="
         width: 100vw;
         height: 30px;
@@ -167,13 +167,6 @@
             "
             class="border-none padding-tb-sm w-full"
           >
-            <van-checkbox
-              :value="true"
-              checked-color="#07c160"
-              class="checkbox"
-              style="position: absolute"
-              v-if="state.ifChoose"
-            />
             <view
               class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold"
             >
@@ -276,22 +269,52 @@ import type {
 } from "./types.ts";
 import { postPlan } from "@/api/course/index.ts";
 import { useRouter } from "uni-mini-router";
+import dayjs from "dayjs";
 const props = defineProps<{
   stuid?: number;
   courid?: number;
   type?: string;
+  ifChoose?: boolean;
 }>();
 const showPopup = ref(false);
 const subitClass = () => {
   //发布课程
   let temp = chooseList.value;
-  temp = temp.filter((item) => item.num != 0);
+  temp = temp.filter((item) => item.num == 0);
   if (temp.length == 0) {
     uni.showToast({
       title: "当前没有动作",
       icon: "error",
     });
   } else {
+    let classes = [];
+    chooseList.value.forEach((item) => {
+      classes.push({
+        ExerciseActionID: item.id,
+        ActionName: item.name,
+        GroupNum: item.num,
+      });
+    });
+    let data = {
+      UserID: props.stuid,
+      CourseID: props.courid,
+      Type: props.type,
+      PlanTime: dayjs().format("YYYY-MM-DD hh-mm"),
+      Actions: classes,
+    };
+    postPlan(data)
+      .then((res) => {
+        uni.showToast({
+          title: "添加成功！",
+        });
+        router.back();
+      })
+      .catch((err) => {
+        uni.showToast({
+          title: "添加失败！",
+          icon: "error",
+        });
+      });
   }
 };
 const onCloseopup = () => {
@@ -390,7 +413,7 @@ function sortByOrderNumDescending(routers: ListItem[]) {
     return items
       .map((item) => ({
         ...item,
-        ifcheck: false,
+        ifcheck: chooseList.value.find((it) => it.id == item.id) ? true : false,
         children: sortChildren(item.children), // 递归排序子项
       }))
       .sort(sortByOrderIdAndIdDesc);
@@ -405,7 +428,7 @@ function sortByOrderNumDescending(routers: ListItem[]) {
     .sort(sortByOrderIdAndIdDesc);
 }
 const toDetail = (item: ActionItem) => {
-  if (state.value.ifChoose)
+  if (!props.ifChoose)
     router.push({
       name: "actionDetail",
       params: {
@@ -628,9 +651,7 @@ function throttle(func: any, limit: any) {
     }
   };
 }
-const showIt = () => {
-  ifChoose.value = true;
-};
+
 watch(
   searchValue,
   throttle(function (newQuery: any) {
@@ -642,14 +663,11 @@ const state = reactive({
   courseId: -1,
   type: "",
 });
-const ifChoose = ref(false);
 onMounted(() => {
   uni.$on("beginAddClass", (val) => {
     state.stuId = val.stuID;
     state.courseId = val.courID;
     state.type = val.type;
-    ifChoose.value = true;
-    showIt();
   });
   uni.showLoading({ title: "加载中...", mask: true });
   const newList: ListItem[] = [];

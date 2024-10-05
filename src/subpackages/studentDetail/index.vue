@@ -140,14 +140,9 @@ const goChooseAction = () => {
     });
   } else {
     AppStore.setactive("action");
-    uni.$emit("beginAddClass", {
-      stuID: query.value.studentId,
-      courID: query.value.courseId,
-      type: radioType.value,
+    router.push({
+      path: `/pages/home/index?isChoose=true&&stuid=${query.value.studentId}&&courid=${query.value.courseId}&&type=${radioType.value}`,
     });
-    setTimeout(() => {
-      router.push({ name: "home" });
-    }, 1000);
   }
 };
 type data = {

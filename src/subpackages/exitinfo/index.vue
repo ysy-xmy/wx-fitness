@@ -61,7 +61,11 @@
             :key="index"
             :data-url="wximg[index]"
           >
-            <image :src="wximg[index]" mode="aspectFill"></image>
+            <image
+              :src="wximg[index]"
+              mode="aspectFill"
+              @click="preview(index, wximg)"
+            ></image>
             <view
               class="cu-tag bg-red"
               @tap.stop="DeteleWXimg"
@@ -75,7 +79,40 @@
           </view>
         </view>
       </view>
-
+      <view
+        class="cu-form-group flex justify-space-between"
+        v-if="user.RoleName === 'coach'"
+      >
+        <view class="title">上传教练资格证</view>
+        <view class="grid col-4 grid-square flex-sub">
+          <view
+            class="bg-img"
+            v-for="(item, index) in coachcert"
+            :key="index"
+            :data-url="coachcert[index]"
+          >
+            <image
+              :src="coachcert[index]"
+              mode="aspectFill"
+              @click="preview(index, coachcert)"
+            ></image>
+            <view
+              class="cu-tag bg-red"
+              @tap.stop="Detelecoachcert"
+              :data-index="index"
+            >
+              <text class="cuIcon-close"></text>
+            </view>
+          </view>
+          <view
+            class="solids"
+            @tap="handleUploadcoachcert"
+            v-if="coachcert.length < 1"
+          >
+            <text class="cuIcon-cameraadd"></text>
+          </view>
+        </view>
+      </view>
       <view class="cu-form-group flex justify-space-between">
         <view class="title">上传体检表</view>
         <view class="grid col-4 grid-square flex-sub">
@@ -85,7 +122,11 @@
             :key="index"
             :data-url="imgList[index]"
           >
-            <image :src="imgList[index]" mode="aspectFill"></image>
+            <image
+              :src="imgList[index]"
+              mode="aspectFill"
+              @click="preview(index, imgList)"
+            ></image>
             <view
               class="cu-tag bg-red"
               @tap.stop="DeteleBodyexamination"
@@ -118,14 +159,30 @@ import { updateUserInfo, getUserInfo } from "@/api/user";
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
 onMounted(async () => {
+  uni.showLoading();
   const res = await getUserInfo();
   username.value = res.data.data.Username;
   ageindex.value = Number(res.data.data.Age) - 14 || 0;
   avatarUrl.value = res.data.data.Avatar || "../../static/user.png";
   sexindex.value = res.data.data.Sex || 0;
   userId.value = res.data.data.ID;
+  wximg.value = res.data.data.WeChatBusinessImg
+    ? [res.data.data.WeChatBusinessImg]
+    : [];
+  coachcert.value = res.data.data.CoachCert ? [res.data.data.CoachCert] : [];
+  imgList.value = res.data.data.BodyCheckTable;
+  uni.hideLoading();
 });
+const preview = (index: number, list: string[]) => {
+  uni.previewImage({
+    current: index,
+    urls: list,
+    loop: true,
+    indicator: "number",
+  });
+};
 const username = ref("微信用户");
+const coachcert = ref([]);
 const ageindex = ref<number>(0);
 const avatarUrl = ref("../../static/user.png");
 const sexindex = ref<number>(0);
@@ -174,7 +231,23 @@ const handleUploadWXimg = () => {
     },
   });
 };
-
+//上传教练资格证
+const handleUploadcoachcert = () => {
+  uni.chooseImage({
+    count: 1, //默认9
+    sizeType: ["original", "compressed"], //可以指定是原图还是压缩图，默认二者都有
+    sourceType: ["album"], //从相册选择
+    success: (res) => {
+      console.log(res.tempFilePaths);
+      res.tempFilePaths.forEach((item) => {
+        console.log(item);
+        uploadimg(item).then((res) => {
+          coachcert.value = [res];
+        });
+      });
+    },
+  });
+};
 const onInputChange = (e: any) => {
   username.value = e.detail.value;
 };
@@ -208,6 +281,19 @@ const DeteleWXimg = (e: any) => {
     success: (res) => {
       if (res.confirm) {
         wximg.value = [];
+      }
+    },
+  });
+};
+const Detelecoachcert = (e: any) => {
+  uni.showModal({
+    title: "删除",
+    content: "确定要删除这张照片？",
+    cancelText: "再看看",
+    confirmText: "删除",
+    success: (res) => {
+      if (res.confirm) {
+        coachcert.value = [];
       }
     },
   });
@@ -262,15 +348,27 @@ const onChooseAvatar = async (e: any) => {
 const onSave = () => {
   const authStore = useAuthStore();
   const user = authStore.getUser;
-  let data = {
-    ID: userId.value,
-    Username: username.value,
-    Sex: sexindex.value,
-    Age: ageList.value[ageindex.value],
-    Avatar: userInfo.value.Avatar,
-    BodyCheckTable: imgList.value,
-  };
-  if (user.RoleName === "coach") data["WeChatBusinessImg"] = wximg[0] || "";
+  let data = {};
+  if (user.RoleName === "coach")
+    data = {
+      ID: userId.value,
+      Username: username.value,
+      Sex: sexindex.value,
+      Age: ageList.value[ageindex.value],
+      Avatar: userInfo.value.Avatar,
+      BodyCheckTable: imgList.value,
+      CoachCert: coachcert.value[0] || "",
+      WeChatBusinessImg: wximg.value[0] || "",
+    };
+  else
+    data = {
+      ID: userId.value,
+      Username: username.value,
+      Sex: sexindex.value,
+      Age: ageList.value[ageindex.value],
+      Avatar: userInfo.value.Avatar,
+      BodyCheckTable: imgList.value,
+    };
   uni.showLoading({ title: "修改中", mask: true });
   updateUserInfo(data)
     .then(() => {
