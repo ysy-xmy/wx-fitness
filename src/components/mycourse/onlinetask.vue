@@ -29,7 +29,7 @@
             >
               <div class="btn-item w-full mb-1">
                 <van-button
-                  @click="handlefinish(props.list[key].id)"
+                  @click="handlefinish(props.list[key].cardID)"
                   round
                   type="warning"
                   ><span class="text-white text-lg">打卡</span></van-button

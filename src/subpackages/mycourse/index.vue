@@ -250,10 +250,12 @@ const getPlan = () => {
             // 处理未完成的任务，假设 item.Type 是 "plan" 或 "outline"
             const type = item.Type as "online" | "outline";
             if (list[type]) {
-              const day = item.ID;
+              // const day = item.ID; //如果用id
+              const day = dayjs(i.UpdatedAt).format("YYYY-MM-DD"); //如果用时间
               if (!list[type][day]) list[type][day] = {};
               list[type][day][i.ExerciseActionID] = {
                 id: i.ExerciseActionID,
+                cardID: i.ID, //用来打卡的ID
                 name: i.ActionName,
                 groupNum: i.GroupNum,
                 begin: temp["beginTime"],
