@@ -69,8 +69,8 @@
                                     <van-checkbox v-if="ifChoose" :value="item2.ifcheck" @change="(e: any) => chooseAction(e, item2, mainCur, index1)
                     " checked-color="#f60422" style="position: absolute; right: 1px; top: 1px; z-index: 5" />
                                     <img @click="toDetail(item2)" class="w-full h-24 rounded-md lg" :src="item2.Imgs
-                        ? item2.Imgs[0].Url
-                        : 'https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg'
+                    ? item2.Imgs[0].Url
+                    : 'https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241007/1728284282969.png'
                     " />
                                     <view class="content">
                                         <view class="text-black text-center text-lg font-extrabold">{{ item2.name }}
@@ -105,7 +105,7 @@
                     " class="border-none padding-tb-sm w-full">
                         <view
                             class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold">
-                            <text class="text-black"> 动作： {{ item.name }}</text>
+                            <text class="text-black"> 索引至： {{ item.name }}</text>
                             <text class="cuIcon-right text-lg text-blue mr-10"></text>
                         </view>
                         <view v-if="item.children && item.children.length > 0" v-for="(item1, index1) in item.children">
@@ -263,56 +263,6 @@ type TreeNode = {
     children: TreeNode[];
 };
 
-const menuItems = [
-    {
-        name: "自重",
-        id: 17,
-        OrderNum: 74,
-        children: [
-            {
-                name: "胸大肌",
-                id: 14,
-                OrderNum: 34567,
-                children: [
-                    {
-                        CreatedAt: "0001-01-01T00:00:00Z",
-                        Description: "Description",
-                        id: 33,
-                        name: "4545",
-                        OrderNum: 0,
-                        SecondCategoryID: 14,
-                        children: [],
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        name: "始状",
-        id: 15,
-        OrderNum: 73,
-        children: [
-            {
-                name: "列增始反变增",
-                id: 12,
-                OrderNum: 89,
-                children: [
-                    {
-                        CreatedAt: "0001-01-01T00:00:00Z",
-                        Description:
-                            "指色少信车石容可计这收质由听人自。六业华连除它得空火心少史难别目员。有光白正张造时她型用片般六装道重引。族县消究表原二取出准律达就。",
-                        id: 27,
-                        name: "包起深来增表",
-                        OrderNum: 45,
-                        SecondCategoryID: 12,
-                        children: [],
-                    },
-                ],
-            },
-        ],
-    },
-    // 更多菜单项...
-];
 //总目录排序函数
 function sortByOrderNumDescending(routers: ListItem[]) {
     const sortByOrderIdAndIdDesc = (a: ListItem, b: ListItem): number => {
@@ -354,12 +304,16 @@ const toDetail = (item: ActionItem) => {
 };
 //处理搜索点击事件
 const handlelocation = (actionid) => {
+
     const { firstCategoryId, secondCategoryId } = findCategoryIds(
         actionrouterList.value,
         actionid
     );
     const fisstindex = findIndexById(actionrouterList.value, firstCategoryId);
+
     const secindex = findIndexById(actionrouterList.value, secondCategoryId);
+    console.log("fisstindex:", fisstindex);
+    console.log("secindex:", secindex);
     const foundItem = findItemAndChildren(
         actionrouterList.value,
         secondCategoryId
@@ -470,10 +424,11 @@ function findCategoryIds(menuItems, actionId) {
 //处理二级目录被选中事件
 //需要传入二级及其子项
 const secMenuSelect = (item: ListItem, index: number) => {
-    if (item.children.Imgs) return;
+
     actionrouterList.value[mainCur.value].children[index].active =
         !actionrouterList.value[mainCur.value].children[index].active;
-    console.log(item.id, index);
+    if (actionrouterList.value[mainCur.value].children[index].children[0].Imgs) return;
+
     getActionsBySec(String(item.id)).then((res) => {
         //更新对应的二级目录
         actionrouterList.value[mainCur.value].children[index].children =
@@ -500,17 +455,25 @@ const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
     }
     const searchResults: TreeNode[] = [];
 
-    const searchNode = (node: TreeNode) => {
-        // 确保node.name存在并且是一个字符串
-        if (
-            typeof node.name === "string" &&
-            node.name.toLowerCase().includes(searchQuery.toLowerCase())
-        ) {
-            searchResults.push(node);
-        }
-        // 如果有子节点，递归搜索每个子节点
-        if (node.children && node.children.length > 0) {
-            node.children.forEach((child) => searchNode(child));
+    const searchNode = (node: TreeNode, isTopLevel: boolean = true) => {
+        // 如果是顶层节点，则跳过搜索
+        if (isTopLevel) {
+            // 但仍需递归搜索子节点
+            if (node.children && node.children.length > 0) {
+                node.children.forEach((child) => searchNode(child, false));
+            }
+        } else {
+            // 确保node.name存在并且是一个字符串
+            if (
+                typeof node.name === "string" &&
+                node.name.toLowerCase().includes(searchQuery.toLowerCase())
+            ) {
+                searchResults.push(node);
+            }
+            // 如果有子节点，递归搜索每个子节点
+            if (node.children && node.children.length > 0) {
+                node.children.forEach((child) => searchNode(child, false));
+            }
         }
     };
 
@@ -520,6 +483,7 @@ const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
     searchResult.value = searchResults;
     return searchResults;
 };
+
 // 递归搜索函数
 function findItemAndChildren(items, id) {
     for (let i = 0; i < items.length; i++) {
@@ -572,7 +536,7 @@ watch(
     searchValue,
     throttle(function (newQuery: any) {
         fuzzySearch(actionrouterList.value, newQuery);
-    }, 500)
+    }, 200)
 );
 const state = reactive({
     stuId: -1,
