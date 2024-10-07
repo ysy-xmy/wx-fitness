@@ -52,7 +52,7 @@
         <div v-if="item.show">
           <div v-for="item2 in item.Actions" :key="item2.title"
             class="action-item flex my-1 flex-row w-full justify-between items-center">
-            <p class="ml-6 py-1">{{ item2.ActionName }} {{ item2.GroupNum }}组</p>
+            <p class="ml-6 py-1">{{ item2.ActionName }} x {{ item2.GroupNum }}组</p>
             <van-checkbox :value="item2.Complete" checked-color="#ec6853" @change="changeCheck(item2)"></van-checkbox>
           </div>
         </div>
