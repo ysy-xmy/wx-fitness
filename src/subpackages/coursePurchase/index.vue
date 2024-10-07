@@ -45,49 +45,58 @@
       >
         <view class="cu-form-group">
           <view class="title">类型</view>
-          <view v-if="!ifDiy">
-            <span class="mx-2">按课时收费</span>
+          <view
+            v-if="!ifDiy"
+            style="display: flex; flex-wrap: wrap; width: 60%"
+          >
+            <div>
+              <span class="mx-2">按课时收费</span>
+              <radio
+                class="red"
+                :class="packageNo == 'LESSON' ? 'checked' : ''"
+                :checked="packageNo == 'LESSON' ? true : false"
+                value="LESSON"
+              ></radio>
+            </div>
+            <div>
+              <span class="mx-2">包月</span>
 
-            <radio
-              class="red"
-              :class="packageNo == 'lesson' ? 'checked' : ''"
-              :checked="packageNo == 'lesson' ? true : false"
-              value="A"
-            ></radio>
-            <span class="mx-2">包月</span>
+              <radio
+                class="red"
+                :class="packageNo == 'MONTH' ? 'checked' : ''"
+                :checked="packageNo == 'MONTH' ? true : false"
+                value="MONTH"
+              ></radio>
+            </div>
+            <div>
+              <span class="mx-2">包季</span>
 
-            <radio
-              class="red"
-              :class="packageNo == 'month' ? 'checked' : ''"
-              :checked="packageNo == 'quarter' ? true : false"
-              value="B"
-            ></radio>
+              <radio
+                class="red"
+                :class="packageNo == 'QUARTER' ? 'checked' : ''"
+                :checked="packageNo == 'QUARTER' ? true : false"
+                value="QUARTER"
+              ></radio>
+            </div>
 
-            <span class="mx-2">包季</span>
+            <div>
+              <span class="mx-2">包年</span>
 
-            <radio
-              class="red"
-              :class="packageNo == 'quarter' ? 'checked' : ''"
-              :checked="packageNo == 'quarter' ? true : false"
-              value="B"
-            ></radio>
-
-            <span class="mx-2">包年</span>
-
-            <radio
-              class="red"
-              :class="packageNo == 'year' ? 'checked' : ''"
-              :checked="packageNo == 'year' ? true : false"
-              value="B"
-            ></radio>
+              <radio
+                class="red"
+                :class="packageNo == 'YEAR' ? 'checked' : ''"
+                :checked="packageNo == 'YEAR' ? true : false"
+                value="YEAR"
+              ></radio>
+            </div>
           </view>
           <view v-else><span class="mx-2">按课时收费</span> </view>
         </view>
       </radio-group>
-      <view v-if="packageNo == 'lesson'" class="cu-form-group margin-top flex">
+      <view v-if="packageNo == 'LESSON'" class="cu-form-group margin-top flex">
         <view class="title">节数</view>
         <radio-group class="block" @change="RadioChange" v-if="!ifDiy">
-          <view @click="" class="cu-form-group margin-top">
+          <view class="cu-form-group margin-top">
             <!-- <view class="title">{{}}节</view> -->
             <view class="title">10节</view>
             <radio
@@ -246,18 +255,45 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch, computed } from "vue";
+import { getPrice } from "../apis/api";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 const router = useRouter();
+type data = {
+  CoachID: number;
+  CourseType: string;
+  LessonCount?: number;
+};
+const computedPrice = () => {
+  //计算价格在这
+  if (!ifDiy.value) {
+    if (coachForm.id != "") {
+      uni.showLoading({
+        title: "计算价格中~",
+      });
+      let data: data = {
+        CoachID: Number(coachForm.id),
+        CourseType: packageNo.value,
+      };
+      if (packageNo.value == "LESSON")
+        data["LessonCount"] = Number(pitchNumber.value);
+      getPrice(data).then((res) => {
+        courseInfo.price = res.data.data.Amount;
+        uni.hideLoading;
+      });
+    }
+  }
+};
 onMounted(() => {
   uni.$on("chooseCoach", (val) => {
-    console.log(val, "选额好了");
+    coachForm.id = val.ID;
     coachForm.avatar = val.Avatar;
     coachForm.name = val.Username;
     coachForm.phone = val.Phome || "暂无联系方式";
     coachForm.sex = val.Sex;
     coachForm.ifFind = true;
+    computedPrice();
   });
   if (router.route.value.query) {
     if (router.route.value.query.ifDiy == "true") {
@@ -278,6 +314,7 @@ onMounted(() => {
   //   console.log(router.route.value.query);
 });
 const coachForm = reactive({
+  id: "",
   phone: "",
   avatar: "",
   name: "",
@@ -287,7 +324,7 @@ const coachForm = reactive({
 });
 const ifDiy = ref(false);
 const pitchNumber = ref("10");
-const packageNo = ref("lesson"); //套餐类型，All是全部显示
+const packageNo = ref("LESSON"); //套餐类型，
 const inputName = ref<string>();
 const inputPhone = ref<number>();
 const courseInfo = reactive({
@@ -318,6 +355,7 @@ const toLocation = () => {
     scale: 18, // 地图缩放级别，范围5-18
   });
 };
+
 const pay = () => {
   if (inputName.value && inputPhone.value) {
     uni.showToast({
@@ -345,9 +383,12 @@ const copyPhone = () => {
 const handlePackageNo = (e: any) => {
   console.log(packageNo.value);
   packageNo.value = e.detail.value;
+  computedPrice();
 };
 const RadioChange = (e: any) => {
   console.log(e.detail);
+  pitchNumber.value = e.detail.val;
+  computedPrice();
 };
 </script>
 <style>
