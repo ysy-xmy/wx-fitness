@@ -212,12 +212,13 @@ const subitClass = () => {
             });
         });
         let data = {
-            UserID: props.stuid,
-            CourseID: props.courid,
+            UserID: Number(props.stuid),
+            CourseID: Number(props.courid),
             Type: props.type,
-            PlanTime: dayjs().format("YYYY-MM-DD hh-mm"),
+            PlanTime: getCurrentDateTime(),
             Actions: classes,
         };
+        console.log("提交课程数据:", data);
         postPlan(data)
             .then((res) => {
                 uni.showToast({
@@ -233,6 +234,21 @@ const subitClass = () => {
             });
     }
 };
+function getCurrentDateTime() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // 月份是从0开始的
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+
+
 const onCloseopup = () => {
     showPopup.value = false;
 };
