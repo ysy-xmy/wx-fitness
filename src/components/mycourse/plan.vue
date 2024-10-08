@@ -55,7 +55,7 @@
             </div>
             <div
               class="line-item justify-center flex w-1/4"
-              @click="seeDetail(props.list[key].id)"
+              @click="seeDetail(props.list[k][key].cardID)"
             >
               <span
                 class="text-[#0c96f2] text-xs w-full text-center pb-2 underline text-center"

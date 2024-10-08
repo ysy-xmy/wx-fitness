@@ -144,7 +144,7 @@
       <van-cell
         @click="choosecoach"
         title="选择教练"
-        :value="coachForm.ifFind ? coachForm.name : '由系统指定'"
+        :value="coachForm.ifFind ? coachForm.name : '请选择教练'"
         is-link
         to="home"
         v-if="!ifDiy"
@@ -259,6 +259,7 @@ import { onMounted, reactive, ref, watch, computed } from "vue";
 import { getPrice } from "../apis/api";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
+import { buyCourse } from "../apis/pay/index";
 const router = useRouter();
 type data = {
   CoachID: number;
@@ -266,6 +267,7 @@ type data = {
   LessonCount?: number;
 };
 const computedPrice = () => {
+  console.log(pitchNumber.value, "num");
   //计算价格在这
   if (!ifDiy.value) {
     if (coachForm.id != "") {
@@ -276,11 +278,15 @@ const computedPrice = () => {
         CoachID: Number(coachForm.id),
         CourseType: packageNo.value,
       };
-      if (packageNo.value == "LESSON")
+      if (packageNo.value == "LESSON" && pitchNumber.value)
         data["LessonCount"] = Number(pitchNumber.value);
+      if (packageNo.value == "LESSON" && !pitchNumber.value) {
+        uni.hideLoading();
+        return;
+      }
       getPrice(data).then((res) => {
         courseInfo.price = res.data.data.Amount;
-        uni.hideLoading;
+        uni.hideLoading();
       });
     }
   }
@@ -358,10 +364,33 @@ const toLocation = () => {
 
 const pay = () => {
   if (inputName.value && inputPhone.value) {
-    uni.showToast({
-      title: "支付成功",
-      icon: "none",
-    });
+    let data = {
+      CoachID: coachForm.id,
+      CourseType: packageNo.value,
+      PaymentType: "WECHAT",
+      PaymentFor: "OTHER",
+      PaymentTo: "OTHER",
+      Remark: "",
+      UserPhone: inputName.value,
+      UserRealName: inputPhone.value,
+      Amount: Number(courseInfo.price),
+    };
+    if (packageNo.value == "LESSON") {
+      data["LessonCount"] = Number(pitchNumber.value);
+    }
+    buyCourse(data)
+      .then((res) => {
+        uni.showToast({
+          title: "购买成功",
+          icon: "success",
+        });
+      })
+      .catch((err) => {
+        uni.showToast({
+          title: "购买失败",
+          icon: "error",
+        });
+      });
   } else {
     uni.showToast({
       title: "请填写真实姓名和联系电话",
@@ -386,8 +415,7 @@ const handlePackageNo = (e: any) => {
   computedPrice();
 };
 const RadioChange = (e: any) => {
-  console.log(e.detail);
-  pitchNumber.value = e.detail.val;
+  pitchNumber.value = e.detail.value;
   computedPrice();
 };
 </script>

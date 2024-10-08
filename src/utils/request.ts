@@ -51,10 +51,10 @@ http.interceptors.response.use(
 
     console.log(errMsg);
 
-    uni.showToast({
-      title: errMsg,
-      duration: 2000,
-    });
+    // uni.showToast({
+    //   title: errMsg,
+    //   duration: 2000,
+    // });
     return Promise.resolve(error);
   }
 );

@@ -11,6 +11,7 @@ interface AuthState {
   token?: string;
   user: userinfoType | object;
   RoleName: string;
+  classID?: string | number;
 }
 
 interface userinfoType {
@@ -32,8 +33,12 @@ export const useAuthStore = defineStore({
     token: uni.getStorageSync("token"), //
     user: Object, // user 类型为对象而不是数组
     RoleName: "", // 角色名称
+    classID: "", //教练端才有的课程ID
   }),
   getters: {
+    getClass(): string | undefined | number {
+      return this.classID;
+    },
     isLogin(): boolean {
       return this.token.length > 0; // 判断 token 是否存在
     },
@@ -45,9 +50,12 @@ export const useAuthStore = defineStore({
     },
     getRoleName(): string {
       return this.RoleName;
-    }
+    },
   },
   actions: {
+    setClassId(id: string | undefined | number) {
+      this.classID = id;
+    },
     setToken(token: string) {
       this.token = token;
     },
@@ -62,6 +70,6 @@ export const useAuthStore = defineStore({
     },
     setRoleName(RoleName: string) {
       this.RoleName = RoleName;
-    }
+    },
   },
 });

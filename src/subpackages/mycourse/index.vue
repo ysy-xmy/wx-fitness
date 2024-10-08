@@ -90,7 +90,7 @@ interface PlanItem {
 const finish = ref({});
 const online = ref({});
 const outline = ref({});
-const list = reactive<{
+let list = reactive<{
   finish: Record<string, ActionItem[]>;
   online: Record<string, PlanItem[]>;
   outline: Record<string, any>; // outline 这里假设类型
@@ -115,7 +115,7 @@ onMounted(() => {
   const desc = router.route.value.params?.desc;
   const Percentage = router.route.value.params?.Percentage;
   selectCoachClok(id).then((res) => {
-    if (res.data.data == "false") checked.value = false;
+    if (res.data.data == false) checked.value = false;
     else checked.value = true;
   });
   // 假设 state 已经在其他地方定义了类型
@@ -201,6 +201,11 @@ onMounted(() => {
   // 获取计划列表
 });
 const getPlan = () => {
+  list = {
+    finish: {},
+    online: {},
+    outline: {},
+  };
   getplanlist(Number(iddd.value)).then((res) => {
     let temp = res.data.data || [];
     temp.forEach(
@@ -221,7 +226,7 @@ const getPlan = () => {
           beginTime: "1999",
         };
         item.Actions.forEach((i) => {
-          if (i.Completed) {
+          if (i.Complete) {
             let day =
               dayjs(i.UpdatedAt).format("YYYY-MM-DD").split("-")[0] +
               "_" +
@@ -242,6 +247,7 @@ const getPlan = () => {
                   groupNum: i.GroupNum,
                   name: i.ActionName,
                   time: dayjs(i.UpdatedAt).format("YYYY-MM-DD HH-MM"),
+                  id: i.ID,
                 },
               ];
             }

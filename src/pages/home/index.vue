@@ -6,8 +6,8 @@
   >
     <div class="viewcontent">
       <div v-show="usetsto.active === 'index'" class="index-page">
-        <Index v-if="permission == 'student'" />
-        <CoachHome v-else />
+        <CoachHome v-if="permission == 'coach'" />
+        <Index v-else />
       </div>
       <div v-show="usetsto.active === 'action'" class="action-page">
         <Action
@@ -114,6 +114,7 @@ import CoachHome from "@/components/coachHome/index.vue";
 import { onMounted, ref } from "vue";
 import { getUserInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
+import { getCoachClass } from "@/api/courses/courses";
 import router from "@/router";
 const usetsto = useAppStore();
 const AuthStore = useAuthStore();
@@ -154,6 +155,15 @@ onMounted(() => {
         img: res.data.data.Avatar,
         RoleName: res.data.data.RoleName,
       });
+      if (res.data.data.RoleName == "coach") {
+        getCoachClass(res.data.data.ID)
+          .then((res) => {
+            AuthStore.setClassId(res.data.data.ID);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     });
   }
 });

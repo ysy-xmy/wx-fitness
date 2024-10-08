@@ -1,14 +1,18 @@
 <template>
   <div class="finished-tast w-full min-h-screen flex justify-center mt-5">
     <div class="w-full lists-item mt-3 px-5">
-      <div class="nodata-card flex flex-col justify-center items-center w-full"
-        v-if="Object.keys(props.list).length == 0">
+      <div
+        class="nodata-card flex flex-col justify-center items-center w-full"
+        v-if="Object.keys(props.list).length == 0"
+      >
         <van-empty description="暂无任务" />
       </div>
 
       <div v-else v-for="k in Object.keys(props.list)">
-        <div class="card rounded-lg bg-white flex flex-wrap justify-between items-center py-8 p-5 shadow-lg"
-          v-for="key in Object.keys(props.list[k])">
+        <div
+          class="card rounded-lg bg-white flex flex-wrap justify-between items-center py-8 p-5 shadow-lg"
+          v-for="key in Object.keys(props.list[k])"
+        >
           <div class="card-left w-3/4">
             <div class="card-title mb-2s">
               <h1 class="font-bold text-lg tracking-wide">
@@ -20,13 +24,18 @@
             <!-- <div class="card-desc text-sm text-gray-600 py-1">这里写一些备注</div> -->
           </div>
           <div class="card-right w-1/4">
-            <div class="card-btn w-full flex flex-wrap content-center items-center justify-center">
+            <div
+              class="card-btn w-full flex flex-wrap content-center items-center justify-center"
+            >
               <div class="btn-item w-full mb-1">
-                <van-button @click="handlefinish(props.list[key].cardID)" round type="warning"><span
-                    class="text-white text-lg">打卡</span></van-button>
+                <van-button
+                  @click="handlefinish(props.list[k][key].cardID)"
+                  round
+                  type="warning"
+                  ><span class="text-white text-lg">打卡</span></van-button
+                >
               </div>
-              <div class="btn-item w-full mb-1">
-              </div>
+              <div class="btn-item w-full mb-1"></div>
             </div>
           </div>
           <div class="card-line w-full flex-nowrap flex mt-2 justify-start">
@@ -51,8 +60,12 @@
                             查看教程
                         </span>
                     </div> -->
-            <a @click="seeDetail(props.list[k][key].id)" type="warning" class="underline text-blue-500 ">查看教程</a>
-
+            <a
+              @click="seeDetail(props.list[k][key].id)"
+              type="warning"
+              class="underline text-blue-500"
+              >查看教程</a
+            >
           </div>
         </div>
       </div>
@@ -74,6 +87,7 @@ const seeDetail = (id) => {
   });
 };
 const handlefinish = (id: any) => {
+  console.log(id);
   console.log("finish");
   // Notify({ type: 'success', message: '通知内容' });
   uni.showModal({
@@ -81,6 +95,7 @@ const handlefinish = (id: any) => {
     content: "是否进行打卡？", // 注意：在uni-app中，message属性应该改为content
     confirmText: "确定", // 注意：在uni-app中，confirmButtonText属性应该改为confirmText
     cancelText: "取消", // 注意：在uni-app中，cancelButtonText属性应该改为cancelText
+
     success: (res) => {
       if (res.confirm) {
         // 在这里执行用户点击确定的操作

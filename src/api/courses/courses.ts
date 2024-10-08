@@ -75,3 +75,8 @@ export const selectCoachClok = (id: string) => {
 export const actionClok = (id: string) => {
   return request.post(`/api/course/plan/punchIn/${id}`);
 };
+
+//查看教练课程ID
+export const getCoachClass = (id: string) => {
+  return request.get(`/api/coach/getCourseInfo/${id}`);
+};
