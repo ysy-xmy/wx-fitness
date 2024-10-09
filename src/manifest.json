@@ -53,13 +53,14 @@
         "appid" : "wxf047078380fdfcd5",
         "setting" : {
             "urlCheck" : false,
-            "minified" : true
+            "minified" : true,
+            "es6" : true
         },
         "usingComponents" : true,
-		"optimization" : {
-			"subPackages" : true
-		},
-		"lazyCodeLoading":"requiredComponents"
+        "optimization" : {
+            "subPackages" : true
+        },
+        "lazyCodeLoading" : "requiredComponents"
     },
     "mp-alipay" : {
         "usingComponents" : true

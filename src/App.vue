@@ -19,6 +19,6 @@ onHide(() => {});
 </script>
 <style>
 @import url("./style/index.css");
-@import "../colorui/main.css";
-@import "../colorui/icon.css";
+@import "../src/subpackages/colorui/main.css";
+@import "../src/subpackages/colorui/icon.css";
 </style>
