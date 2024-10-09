@@ -41,9 +41,7 @@
             type="warning"
             color="#ffffff"
             size="small"
-            ><span class="text-lg tracking-widest text-[#EC6853]"
-              >&nbsp;查 看</span
-            >
+            ><span class="text-lg tracking-widest text-[#EC6853]">查 看</span>
           </van-button>
           <van-button
             class="custom-class ml-2"
@@ -61,7 +59,7 @@
                 )
               "
               class="tracking-widest text-lg w-20 text-[#EC6853]"
-              >&nbsp;打 卡</span
+              >打 卡</span
             >
           </van-button>
         </div>

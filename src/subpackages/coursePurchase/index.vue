@@ -380,10 +380,16 @@ const pay = () => {
     }
     buyCourse(data)
       .then((res) => {
-        uni.showToast({
-          title: "购买成功",
-          icon: "success",
-        });
+        if (res.data.code == 200)
+          uni.showToast({
+            title: "购买成功",
+            icon: "success",
+          });
+        else
+          uni.showToast({
+            title: res.data.msg,
+            icon: "error",
+          });
       })
       .catch((err) => {
         uni.showToast({

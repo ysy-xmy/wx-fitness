@@ -115,7 +115,8 @@ import { onMounted, ref } from "vue";
 import { getUserInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 import { getCoachClass } from "@/api/courses/courses";
-import router from "@/router";
+import { useRouter } from "uni-mini-router";
+const router = useRouter();
 const usetsto = useAppStore();
 const AuthStore = useAuthStore();
 const onChange = (item: any) => {
@@ -134,7 +135,6 @@ const courid = ref(-1);
 const type = ref("");
 const sourName = ref("");
 onMounted(() => {
-  console.log(AuthStore.getUser, "user");
   if (router.route.value.query.isChoose) {
     ifChoose.value = true;
     stuid.value = decodeURIComponent(router.route.value.query.stuid);
