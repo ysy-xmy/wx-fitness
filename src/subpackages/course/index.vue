@@ -139,10 +139,11 @@
 </template>
 <script lang="ts" setup name="course">
 import { useRouter } from "uni-mini-router";
+
 const router = useRouter();
 
 const contact = () => {
-  router.push({ name: "contact" });
+  router.push({ path: "/subpackages/coachcontact/index?ifChoose=false" });
 };
 
 const buyCourse = () => {

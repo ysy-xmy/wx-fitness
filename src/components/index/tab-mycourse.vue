@@ -143,10 +143,10 @@ const dispose = (item: any) => {
   return item;
 };
 let list = ref<any[]>([]);
-onMounted(() => {
-  uni.showLoading({ title: "数据加载中" });
+const getList = () => {
   getMycourese()
     .then((res) => {
+      list.value = [];
       const temp = res.data.data || [];
       temp.forEach((item: any) => {
         list.value.push(dispose(item));
@@ -161,6 +161,13 @@ onMounted(() => {
         icon: "error",
       });
     });
+};
+onMounted(() => {
+  uni.showLoading({ title: "数据加载中" });
+  getList();
+  uni.$on("alreadyBuy", () => {
+    getList();
+  });
   // uni.$on("nextData", (val) => {
   //   if (val == "my") {
   //     console.log("my");

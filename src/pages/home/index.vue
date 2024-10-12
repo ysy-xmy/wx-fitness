@@ -145,26 +145,32 @@ onMounted(() => {
     ifChoose.value = false;
   }
   if (AuthStore.getUser) {
-    getUserInfo().then((res) => {
-      permission.value = res.data.data.RoleName;
-      AuthStore.setUser({
-        name: res.data.data.Username || "微信用户",
-        id: res.data.data.ID,
-        phone: res.data.data.phone,
-        Sex: res.data.data.Sex || 0,
-        img: res.data.data.Avatar,
-        RoleName: res.data.data.RoleName,
+    uni.showLoading();
+    getUserInfo()
+      .then((res) => {
+        uni.hideLoading();
+        permission.value = res.data.data.RoleName;
+        AuthStore.setUser({
+          name: res.data.data.Username || "微信用户",
+          id: res.data.data.ID,
+          phone: res.data.data.phone,
+          Sex: res.data.data.Sex || 0,
+          img: res.data.data.Avatar,
+          RoleName: res.data.data.RoleName,
+        });
+        if (res.data.data.RoleName == "coach") {
+          getCoachClass(res.data.data.ID)
+            .then((res) => {
+              AuthStore.setClassId(res.data.data.ID);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      })
+      .catch((err) => {
+        uni.hideLoading();
       });
-      if (res.data.data.RoleName == "coach") {
-        getCoachClass(res.data.data.ID)
-          .then((res) => {
-            AuthStore.setClassId(res.data.data.ID);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    });
   }
 });
 </script>

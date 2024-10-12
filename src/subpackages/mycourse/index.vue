@@ -47,10 +47,10 @@
           <finishedtask :list="finish"></finishedtask>
         </van-tab>
         <van-tab title="线下计划">
-          <plan :list="online"></plan>
+          <plan :list="outline"></plan>
         </van-tab>
         <van-tab title="线上任务">
-          <onlinetask :list="outline"></onlinetask>
+          <onlinetask :list="online"></onlinetask>
         </van-tab>
       </van-tabs>
     </div>

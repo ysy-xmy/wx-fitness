@@ -342,12 +342,10 @@ const courseInfo = reactive({
 
 const choosecoach = () => {
   router.push({
-    name: "contact",
-    params: {
-      type: "coach",
-    },
+    path: "/subpackages/coachcontact/index?ifChoose=true",
   });
 };
+
 const latitude = 21.2353;
 const longitude = 110.4195;
 const addr = "常态健身俱乐部";
@@ -380,12 +378,18 @@ const pay = () => {
     }
     buyCourse(data)
       .then((res) => {
-        if (res.data.code == 200)
+        if (res.data.code == 200) {
+          uni.$emit("alreadyBuy");
           uni.showToast({
             title: "购买成功",
             icon: "success",
           });
-        else
+          setTimeout(() => {
+            router.push({
+              name: "home",
+            });
+          }, 2000);
+        } else
           uni.showToast({
             title: res.data.msg,
             icon: "error",
