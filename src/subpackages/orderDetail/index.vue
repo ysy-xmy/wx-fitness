@@ -156,7 +156,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 
-import { getOrderDetail } from "@/api/order";
+import { getOrderDetail } from "@/subpackages/apis/order";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 const router: any = useRouter();

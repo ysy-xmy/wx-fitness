@@ -7,59 +7,69 @@
       >
         <van-empty description="暂无任务" />
       </div>
-      <div
-        class="card rounded-lg bg-white flex flex-wrap justify-between items-center py-8 p-5 shadow-lg"
-        v-else
-        v-for="key in Object.keys(props.list)"
-      >
-        <div class="card-left w-3/4">
-          <div class="card-title mb-2s">
-            <h1 class="font-bold text-lg tracking-wide">
-              {{ props.list[key].name }}+{{ props.list[key].groupNum }}组
-            </h1>
-          </div>
 
-          <!-- <div class="card-desc text-sm text-gray-600 py-1">这里写一些备注</div> -->
-        </div>
-        <div class="card-right w-1/4">
-          <div
-            class="card-btn w-full flex flex-wrap content-center items-center justify-center"
-          >
-            <div class="btn-item w-full mb-1">
-              <van-button
-                @click="handlefinish(props.list[key].id)"
-                round
-                type="warning"
-                ><span class="text-white text-lg">查 看</span></van-button
-              >
+      <div v-else v-for="k in Object.keys(props.list)">
+        <div
+          class="card rounded-lg bg-white flex flex-wrap justify-between items-center py-8 p-5 shadow-lg"
+          v-for="key in Object.keys(props.list[k])"
+        >
+          <div class="card-left w-3/4">
+            <div class="card-title mb-2s">
+              <h1 class="font-bold text-lg tracking-wide">
+                {{ props.list[k][key].name }}
+                {{ props.list[k][key].groupNum }}组
+              </h1>
+            </div>
+
+            <!-- <div class="card-desc text-sm text-gray-600 py-1">这里写一些备注</div> -->
+          </div>
+          <div class="card-right w-1/4">
+            <div
+              class="card-btn w-full flex flex-wrap content-center items-center justify-center"
+            >
+              <div class="btn-item w-full mb-1">
+                <van-button
+                  @click="handlefinish(props.list[key].id)"
+                  round
+                  type="warning"
+                  ><span class="text-white text-lg">打卡</span></van-button
+                >
+              </div>
+              <div class="btn-item w-full mb-1">
+                <van-button
+                  @click="seeDetail(props.list[k][key].id)"
+                  round
+                  type="warning"
+                  ><span class="text-white text-lg">教程</span></van-button
+                >
+              </div>
             </div>
           </div>
-        </div>
-        <div class="card-line w-full flex-nowrap flex mt-2 justify-start">
-          <div class="w-3/4 justify-start flex flex-nowrap">
-            <div class="dec-item">
-              <div class="icon">
-                <van-icon name="todo-list-o" size="25" />
+          <div class="card-line w-full flex-nowrap flex mt-2 justify-start">
+            <div class="w-3/4 justify-start flex flex-nowrap">
+              <div class="dec-item">
+                <div class="icon">
+                  <van-icon name="todo-list-o" size="25" />
+                </div>
+                <div class="line-title text-sm text-gray-600">
+                  {{ props.list[k][key].end }}
+                </div>
               </div>
-              <div class="line-title text-sm text-gray-600">
-                {{ props.list[key].begin }}
-              </div>
-            </div>
-            <!-- <div class="dec-item">
+              <!-- <div class="dec-item">
               <div class="icon">
                 <van-icon name="clock-o" size="25" />
               </div>
               <div class="line-title text-sm text-gray-600">2022-01-01</div>
             </div> -->
-          </div>
-          <!-- <div class="line-item justify-center flex w-1/4 w-full ">
+            </div>
+            <!-- <div class="line-item justify-center flex w-1/4 w-full ">
                         <span class="text-[#0c96f2] text-xs w-full text-center pb-2 underline text-center ">
                             查看教程
                         </span>
                     </div> -->
+          </div>
         </div>
       </div>
-
       <van-notify id="van-notify" />
     </div>
   </div>
@@ -67,10 +77,16 @@
 <script setup lang="ts">
 import { ref, defineProps } from "vue";
 import { actionClok } from "@/api/courses/courses";
+import { useRouter } from "uni-mini-router";
+const router = useRouter();
 const props = defineProps<{
   list: any;
 }>();
-
+const seeDetail = (id) => {
+  router.push({
+    path: `/subpackages/actionDetail/index?itemid=${id}`,
+  });
+};
 const handlefinish = (id: any) => {
   console.log("finish");
   // Notify({ type: 'success', message: '通知内容' });
@@ -90,6 +106,7 @@ const handlefinish = (id: any) => {
               duration: 2000, // 提示框停留时间，单位毫秒
               mask: false, // 是否显示透明蒙层，防止触摸穿透，默认：false
             });
+            uni.$emit("refreshAction", true);
           })
           .catch((err) => {
             uni.showToast({
@@ -118,7 +135,7 @@ const handlefinish = (id: any) => {
 <style scoped>
 .btn-item {
   display: flex;
-
+  width: 400px;
   justify-content: center;
 }
 

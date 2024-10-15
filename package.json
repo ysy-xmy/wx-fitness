@@ -68,6 +68,7 @@
         "uni-read-pages-vite": "^0.0.6",
         "uniapp-nutui": "^0.1.8",
         "vant": "^2.13.2",
+        "vant-weapp": "^0.5.29",
         "vue": "^3.2.45",
         "vue-i18n": "^9.1.9"
     },

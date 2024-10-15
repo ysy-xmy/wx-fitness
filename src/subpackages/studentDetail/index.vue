@@ -2,25 +2,30 @@
   <div class="main flex w-full justify-center flex-col items-center">
     <div class="info mt-5 flex flex-col items-center">
       <div class="avatar">
-        <img class="w-28 h-28 rounded-full"
-          src="https://tse2-mm.cn.bing.net/th/id/OIP-C.UjwT5Zhsxxr4S0wmFjSuMAAAAA?w=207&h=207&c=7&r=0&o=5&pid=1.7"
-          alt="" />
+        <img class="w-28 h-28 rounded-full" :src="stuInfo.Avatar" alt="" />
       </div>
-      <h1 class="my-3 text-2xl text-center font-bold">陈景盛</h1>
-      <span class="text-gray-400 text-sm text-center">20岁</span>
+      <h1 class="my-3 text-2xl text-center font-bold">
+        {{ stuInfo.Username }}
+      </h1>
+      <span class="text-gray-400 text-sm text-center">{{ stuInfo.Age }}岁</span>
     </div>
 
     <div class="info-card flex flex-row items-center mt-1 w-11/12">
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
-        <h2 class="text-xl font-bold">65kg</h2>
-        <span class="text-gray-400 text-sm">Weight</span>
+        <h2 class="text-xl font-bold">{{ stuInfo.Weight }}kg</h2>
+        <span class="text-gray-400 text-sm">体重</span>
       </div>
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
-        <h2 class="text-xl font-bold">165cm</h2>
-        <span class="text-gray-400 text-sm">Height</span>
+        <h2 class="text-xl font-bold">{{ stuInfo.Height }}cm</h2>
+        <span class="text-gray-400 text-sm">身高</span>
       </div>
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
-        <h2 class="text-md font-bold underline text-[#F65625]">体检表</h2>
+        <h2
+          class="text-md font-bold underline text-[#F65625]"
+          @click="seeBodyForm"
+        >
+          体检表
+        </h2>
       </div>
     </div>
 
@@ -31,35 +36,145 @@
         </div>
       </div>
     </div>
-    <div class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4">
+    <div
+      class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4"
+    >
       <div class="font-bold">
-        运动基础课<span class="ml-2 font-thin tracking-wider" style="color: #6d819cff; margin-left: 2px">(共10节课 已上6节)</span>
+        私教课<span
+          class="ml-2 font-thin tracking-wider"
+          style="color: #6d819cff; margin-left: 2px"
+        ></span>
       </div>
-      <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
-        style="margin-top: 15px" />
+      <!-- <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
+        style="margin-top: 15px" /> -->
     </div>
 
-    <div class="w-11/12 flex h-16 bg-[rgba(248,250,255,1)] justify-between cardBody" v-for="item in dataList"
-      :key="item.title">
-      <div>
-        <p class="title">{{ item.title }}</p>
-        <p class="time"><span class="cuIcon-card"></span> {{ item.day }}</p>
+    <div
+      style="align-items: start"
+      class="w-11/12 flex min-h-36 content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody"
+    >
+      <div
+        v-if="planList"
+        v-for="item in planList"
+        :key="item.ID"
+        class="action-group w-full"
+      >
+        <div class="flex justify-between items-center w-full">
+          <h2 class="text-xl font-extrabold px-2">{{ item.PlanTime }}</h2>
+          <span
+            v-if="item.show"
+            class="cuIcon-unfold"
+            @click="item.show = !item.show"
+          ></span>
+          <span
+            v-else
+            class="cuIcon-fold"
+            @click="item.show = !item.show"
+          ></span>
+        </div>
+        <div v-if="item.show">
+          <div
+            v-for="item2 in item.Actions"
+            :key="item2.title"
+            class="action-item flex my-1 flex-row w-full justify-between items-center"
+          >
+            <p class="ml-6 py-1">{{ item2.ActionName }}</p>
+            <van-checkbox
+              :value="item.finish"
+              checked-color="#ec6853"
+              @change="changeCheck(item2)"
+            ></van-checkbox>
+          </div>
+        </div>
       </div>
-      <van-checkbox
-        :value="item.finish"
-        checked-color="#ec6853"
-        @change="changeCheck(item)"
-      ></van-checkbox>
+      <div v-else>
+        <van-empty class="h-28" description="该课程暂无计划" />
+      </div>
     </div>
-    <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
+    <div clss></div>
+    <!-- <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
-    </div>
-    <div class="addmore w-11/12">+ 添加课表</div>
+    </div> -->
+    <div class="addmore w-11/12" @click="toAddClass">+ 添加课表</div>
+    <van-dialog
+      use-slot
+      title="选择课程类型"
+      :show="showDialog"
+      show-cancel-button
+      @confirm="goChooseAction"
+      @close="onCloseDialog"
+    >
+      <van-radio-group v-model="radioType">
+        <van-cell-group>
+          <van-cell
+            title="在线任务"
+            value-class="value-class"
+            clickable
+            data-name="ONLINE"
+            @click="() => chooseType('ONLINE')"
+          >
+            <van-radio name="ONLINE" />
+          </van-cell>
+          <van-cell
+            title="线下任务"
+            value-class="value-class"
+            clickable
+            data-name=" OUTLINE"
+            @click="() => chooseType('  OUTLINE')"
+          >
+            <van-radio name=" OUTLINE" />
+          </van-cell>
+        </van-cell-group>
+      </van-radio-group>
+    </van-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+import { getplanlist } from "@/api/course/index";
+import { getstudentInfobyId } from "@/api/coach/index";
+import { useRouter } from "uni-mini-router";
+import { onMounted } from "vue";
+import { useAppStore } from "@/state/app";
+const AppStore = useAppStore();
+//获取路由参数
+const router = useRouter();
+const stuInfo = ref();
+const radioType = ref("");
+const courseInfo = ref();
+const showDialog = ref(false); //显示弹窗
+const seeBodyForm = () => {
+  const imgData = JSON.stringify(stuInfo.value.BodyCheckImg);
+  router.push({
+    path: `/subpackages/bodyFormDetail/index?img=${imgData}&&name=${stuInfo.value.Username}`, // 对 JSON 字符串进行编码
+  });
+};
+const toAddClass = () => {
+  //去添加课程
+  showDialog.value = true;
+};
+const onCloseDialog = () => {
+  showDialog.value = false;
+  radioType.value = "";
+};
+const chooseType = (val: string) => {
+  //选择课程类型
+  radioType.value = val;
+};
+const goChooseAction = () => {
+  if (radioType.value == "") {
+    uni.showToast({
+      title: "请选择课程类型",
+      icon: "error",
+    });
+  } else {
+    AppStore.setactive("action");
+    router.push({
+      path: `/pages/home/index?isChoose=true&&stuid=${query.value.studentId}&&courid=${query.value.courseId}&&type=${radioType.value}&&name=${stuInfo.value.Username}`,
+    });
+  }
+};
 type data = {
   title: string;
   day: string;
@@ -69,28 +184,64 @@ const changeCheck = (item: data) => {
   console.log(item.finish);
   item.finish = !item.finish;
 };
-let dataList = ref([
+let planList = ref();
+
+const dayList = ref([
   {
-    title: "杠铃十组",
     day: "6月1日",
-    finish: true,
+    show: false,
   },
   {
-    title: "杠铃十组",
     day: "6月1日",
-    finish: false,
+    show: false,
   },
   {
-    title: "杠铃十组",
     day: "6月1日",
-    finish: false,
-  },
-  {
-    title: "杠铃十组",
-    day: "6月1日",
-    finish: false,
+    show: false,
   },
 ]);
+const query = ref();
+const initData = async () => {
+  uni.showLoading({ title: "加载中...", mask: true });
+
+  if (query.value) {
+    const query = router.route.value.query;
+    //获取个人信息
+    const res = await getstudentInfobyId(query.studentId);
+    stuInfo.value = res.data.data;
+    //获取课程内容
+    const response = await getplanlist(query.courseId);
+    console.log(response.data.data, "课程内容");
+    if (response.data.data === null || !response.data.data)
+      return uni.hideLoading();
+    planList.value = response.data.data.map((item: any) => {
+      return {
+        ...item,
+        PlanTime: formatDateString(item.PlanTime),
+
+        show: false,
+      };
+    });
+    uni.hideLoading();
+  }
+};
+//格式化日期
+function formatDateString(dateStr: string) {
+  // 解析日期字符串
+  const date = new Date(dateStr);
+
+  // 获取月份和日期
+  const month = date.getMonth() + 1; // getMonth() 返回的月份是从0开始的，所以要加1
+  const day = date.getDate();
+
+  // 返回格式化的字符串
+  return `${month}月${day}`;
+}
+
+onMounted(() => {
+  query.value = router.route.value.query;
+  initData();
+});
 </script>
 
 <style scoped lang="scss">
@@ -99,7 +250,6 @@ let dataList = ref([
   vertical-align: middle;
   border-radius: 5px;
   border-bottom: 0.5px solid #e5e5e5;
-
 }
 
 .cardBody {
@@ -161,4 +311,5 @@ let dataList = ref([
 //     top: 0;
 //     left: 0;
 //   }
-// }</style>
+// }
+</style>

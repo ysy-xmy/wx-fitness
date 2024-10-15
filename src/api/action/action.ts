@@ -19,3 +19,8 @@ export const getActionsBySec = (SecID: string) => {
 export const getActionAll = () => {
     return request.get('/api/action/getAll')
 }
+
+export const getActionById = (id: string) => {
+    id = id.toString()
+    return request.get('/api/action/action/detail/' + id)
+}

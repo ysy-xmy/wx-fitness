@@ -1,67 +1,43 @@
 <template>
-  <scrollFrom
-    :fun="getCoachStudentinfo"
-    :dispose="dispose"
-    ref="scorllFormRef"
-    :datasources="list"
-  >
+  <scrollFrom :fun="getCoachStudentinfo" :dispose="dispose" ref="scorllFormRef" :datasources="list">
     <template #card>
       <div class="main">
-        <div class="font-bold text-10 mt-2 ml-2">我 的 学 员</div>
-        <div class="bg-white coachlist p-2">
-          <div
-            class="lists-item flex flex-nowrap items-center justify-between p-1"
-          >
-            <div class="w-14 h-14 mr-2">
-              <img
-                class="w-14 h-14 rounded-full"
-                src="https://tse2-mm.cn.bing.net/th/id/OIP-C.UjwT5Zhsxxr4S0wmFjSuMAAAAA?w=207&h=207&c=7&r=0&o=5&pid=1.7"
-                alt=""
-              />
-            </div>
-            <div class="w-5/6 flex pl-2 flex-row items-center justify-between">
-              <div class="text-box">
-                <div class="title">
-                  <h1 class="text-lg font-bold py-2">
-                    陈教练
-                    <text
-                      style="font-size: 25px; color: #a54aff"
-                      class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"
-                    ></text>
+        <div class="font-bold text-10 mt-2 ml-2">进 行 的 课 程</div>
+        <template v-for="(item, index) in list">
 
-                    <text
-                      style="font-size: 25px; color: #16a9fa"
-                      class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
-                    ></text>
-                  </h1>
-
-                  <p class="text-[#6b7280] text-[12px]">运动基本课 10节</p>
-                </div>
+          <div class="bg-white coachlist p-2">
+            <div class="lists-item flex flex-nowrap items-center justify-between p-1">
+              <div class="w-14 h-14 mr-2">
+                <img class="w-14 h-14 rounded-full"
+                  :src="item.Avatar ? item.Avatar : 'https://img.yzcdn.cn/vant/user-inactive.png'" alt="" />
               </div>
+              <div class="w-5/6 flex pl-2 flex-row items-center justify-between">
+                <div class="text-box">
+                  <div class="title">
+                    <h1 class="text-lg font-bold py-2">
+                      {{ item.Username }}
+                      <text v-if="item.Sex" style="font-size: 25px; color: #a54aff"
+                        class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"></text>
 
-              <div class="btn h-full flex flex-row items-center">
-                <van-circle
-                  class="mr-4"
-                  stroke-width="4"
-                  size="45"
-                  layer-color="#ebedf0"
-                  color="#ec6853"
-                  value="20"
-                  text="20%"
-                />
-                <van-button
-                  @click="todetail"
-                  color="#fd7d46"
-                  size="small"
-                  round
-                  type="primary"
-                  class="tracking-wide"
-                  ><span>查看</span></van-button
-                >
+                      <text v-else style="font-size: 25px; color: #16a9fa"
+                        class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"></text>
+                    </h1>
+
+                    <p class="text-[#6b7280] text-[12px]">私教课 {{ handleCourseType(item.CourseType) }} {{
+    item.LessonCount ? item.LessonCount + '节' : '' }}</p>
+                  </div>
+                </div>
+
+                <div class="btn h-full flex flex-row items-center">
+                  <van-circle class="mr-4 text-sm" stroke-width="4" size="50" layer-color="#ebedf0" color="#ec6853"
+                    :value="item.Percentage" :text="item.Percentage + '%'" />
+                  <van-button @click="todetail(item.UserID, item.ID)" color="#fd7d46" size="small" round type="primary"
+                    class="tracking-wide"><span>查看</span></van-button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </template>
       </div>
     </template>
     <template #empty>
@@ -90,6 +66,20 @@ onMounted(() => {
   });
   getListData();
 });
+const handleCourseType = (type: any,) => {
+  switch (type) {
+    case 'month':
+      return "包月";
+    case 'quarter':
+      return "包季";
+    case 'year':
+      return "包年";
+    case 'lesson':
+      return "";
+    default:
+      return "";
+  }
+};
 const getListData = () => {
   list.value = scorllFormRef.value?.state.list;
   if (scorllFormRef.value?.ifChange()) {
@@ -104,10 +94,14 @@ const getListData = () => {
 const dispose = (item: any) => {
   return item;
 };
-const todetail = () => {
+const todetail = (stuid: any, courseId: any) => {
   console.log("查看");
   router.push({
     name: "studentDetail",
+    params: {
+      studentId: stuid,
+      courseId: courseId
+    }
   });
 };
 </script>
