@@ -29,20 +29,13 @@
             >
               <div class="btn-item w-full mb-1">
                 <van-button
-                  @click="handlefinish(props.list[key].id)"
+                  @click="handlefinish(props.list[k][key].cardID)"
                   round
                   type="warning"
                   ><span class="text-white text-lg">打卡</span></van-button
                 >
               </div>
-              <div class="btn-item w-full mb-1">
-                <van-button
-                  @click="seeDetail(props.list[k][key].id)"
-                  round
-                  type="warning"
-                  ><span class="text-white text-lg">教程</span></van-button
-                >
-              </div>
+              <div class="btn-item w-full mb-1"></div>
             </div>
           </div>
           <div class="card-line w-full flex-nowrap flex mt-2 justify-start">
@@ -67,6 +60,12 @@
                             查看教程
                         </span>
                     </div> -->
+            <a
+              @click="seeDetail(props.list[k][key].id)"
+              type="warning"
+              class="underline text-blue-500"
+              >查看教程</a
+            >
           </div>
         </div>
       </div>
@@ -88,6 +87,7 @@ const seeDetail = (id) => {
   });
 };
 const handlefinish = (id: any) => {
+  console.log(id);
   console.log("finish");
   // Notify({ type: 'success', message: '通知内容' });
   uni.showModal({
@@ -95,6 +95,7 @@ const handlefinish = (id: any) => {
     content: "是否进行打卡？", // 注意：在uni-app中，message属性应该改为content
     confirmText: "确定", // 注意：在uni-app中，confirmButtonText属性应该改为confirmText
     cancelText: "取消", // 注意：在uni-app中，cancelButtonText属性应该改为cancelText
+
     success: (res) => {
       if (res.confirm) {
         // 在这里执行用户点击确定的操作

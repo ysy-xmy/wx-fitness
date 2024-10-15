@@ -6,8 +6,8 @@
   >
     <div class="viewcontent">
       <div v-show="usetsto.active === 'index'" class="index-page">
-        <Index v-if="permission == 'student'" />
-        <CoachHome v-else />
+        <CoachHome v-if="permission == 'coach'" />
+        <Index v-else />
       </div>
       <div v-show="usetsto.active === 'action'" class="action-page">
         <Action
@@ -114,7 +114,9 @@ import CoachHome from "@/components/coachHome/index.vue";
 import { onMounted, ref } from "vue";
 import { getUserInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
-import router from "@/router";
+import { getCoachClass } from "@/api/courses/courses";
+import { useRouter } from "uni-mini-router";
+const router = useRouter();
 const usetsto = useAppStore();
 const AuthStore = useAuthStore();
 const onChange = (item: any) => {
@@ -133,28 +135,42 @@ const courid = ref(-1);
 const type = ref("");
 const sourName = ref("");
 onMounted(() => {
-  console.log(AuthStore.getUser, "user");
   if (router.route.value.query.isChoose) {
     ifChoose.value = true;
-    stuid.value = router.route.value.query.stuid;
-    courid.value = router.route.value.query.courid;
-    type.value = router.route.value.query.type;
-    sourName.value = router.route.value.query.name;
+    stuid.value = decodeURIComponent(router.route.value.query.stuid);
+    courid.value = decodeURIComponent(router.route.value.query.courid);
+    type.value = decodeURIComponent(router.route.value.query.type);
+    sourName.value = decodeURIComponent(router.route.value.query.name);
   } else {
     ifChoose.value = false;
   }
   if (AuthStore.getUser) {
-    getUserInfo().then((res) => {
-      permission.value = res.data.data.RoleName;
-      AuthStore.setUser({
-        name: res.data.data.Username || "微信用户",
-        id: res.data.data.ID,
-        phone: res.data.data.phone,
-        Sex: res.data.data.Sex || 0,
-        img: res.data.data.Avatar,
-        RoleName: res.data.data.RoleName,
+    uni.showLoading();
+    getUserInfo()
+      .then((res) => {
+        uni.hideLoading();
+        permission.value = res.data.data.RoleName;
+        AuthStore.setUser({
+          name: res.data.data.Username || "微信用户",
+          id: res.data.data.ID,
+          phone: res.data.data.phone,
+          Sex: res.data.data.Sex || 0,
+          img: res.data.data.Avatar,
+          RoleName: res.data.data.RoleName,
+        });
+        if (res.data.data.RoleName == "coach") {
+          getCoachClass(res.data.data.ID)
+            .then((res) => {
+              AuthStore.setClassId(res.data.data.ID);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      })
+      .catch((err) => {
+        uni.hideLoading();
       });
-    });
   }
 });
 </script>

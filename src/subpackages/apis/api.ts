@@ -69,6 +69,9 @@ export const uploadimg = (file: any) => {
         "x-oss-security-token": data.SecurityToken,
       },
       success: (uploadRes) => {
+        console.log(
+          "https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/" + key
+        );
         resolve(
           "https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/" + key
         );
@@ -83,4 +86,9 @@ export const uploadimg = (file: any) => {
       },
     });
   });
+};
+
+//计算购买价格
+export const getPrice = (data: any) => {
+  return request.post("/api/pay/culAmount", data);
 };

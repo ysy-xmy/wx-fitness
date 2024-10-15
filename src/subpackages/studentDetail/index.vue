@@ -51,7 +51,7 @@
 
     <div
       style="align-items: start"
-      class="w-11/12 flex min-h-36 content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody"
+      class="w-11/12 flex content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody flex-wrap"
     >
       <div
         v-if="planList"
@@ -60,7 +60,7 @@
         class="action-group w-full"
       >
         <div class="flex justify-between items-center w-full">
-          <h2 class="text-xl font-extrabold px-2">{{ item.PlanTime }}</h2>
+          <h2 class="text-xl font-extrabold px-2 py-2">{{ item.PlanTime }}</h2>
           <span
             v-if="item.show"
             class="cuIcon-unfold"
@@ -78,9 +78,11 @@
             :key="item2.title"
             class="action-item flex my-1 flex-row w-full justify-between items-center"
           >
-            <p class="ml-6 py-1">{{ item2.ActionName }}</p>
+            <p class="ml-6 py-1">
+              {{ item2.ActionName }} x {{ item2.GroupNum }}组
+            </p>
             <van-checkbox
-              :value="item.finish"
+              :value="item2.Complete"
               checked-color="#ec6853"
               @change="changeCheck(item2)"
             ></van-checkbox>
@@ -119,10 +121,10 @@
             title="线下任务"
             value-class="value-class"
             clickable
-            data-name=" OUTLINE"
-            @click="() => chooseType('  OUTLINE')"
+            data-name="OUTLINE"
+            @click="() => chooseType('OUTLINE')"
           >
-            <van-radio name=" OUTLINE" />
+            <van-radio name="OUTLINE" />
           </van-cell>
         </van-cell-group>
       </van-radio-group>
@@ -137,6 +139,7 @@ import { getstudentInfobyId } from "@/api/coach/index";
 import { useRouter } from "uni-mini-router";
 import { onMounted } from "vue";
 import { useAppStore } from "@/state/app";
+import { actionClok } from "@/api/courses/courses";
 const AppStore = useAppStore();
 //获取路由参数
 const router = useRouter();
@@ -144,6 +147,7 @@ const stuInfo = ref();
 const radioType = ref("");
 const courseInfo = ref();
 const showDialog = ref(false); //显示弹窗
+const CoachPunchInAuth = ref(false); //是否授权
 const seeBodyForm = () => {
   const imgData = JSON.stringify(stuInfo.value.BodyCheckImg);
   router.push({
@@ -181,36 +185,48 @@ type data = {
   finish: boolean;
 };
 const changeCheck = (item: data) => {
-  console.log(item.finish);
-  item.finish = !item.finish;
+  if (item.Complete) return;
+  //判断是否已经授权，如果没有授权，提示
+  if (!CoachPunchInAuth.value) {
+    uni.showToast({
+      title: "请先授权",
+      icon: "none",
+    });
+    return;
+  }
+  //修改计划状态
+  uni.showLoading({ title: "打卡中...", mask: true });
+  actionClok(item.ID).then((res) => {
+    if (res.data.code === 200) {
+      item.Complete = true;
+      uni.hideLoading();
+      uni.showToast({
+        title: "打卡成功",
+        icon: "success",
+      });
+    } else {
+      uni.showToast({
+        title: "打卡失败",
+        icon: "none",
+      });
+    }
+  });
+  // console.log(params, "修改计划状态");
+  // const response = await changePlanStatus(params);
 };
 let planList = ref();
 
-const dayList = ref([
-  {
-    day: "6月1日",
-    show: false,
-  },
-  {
-    day: "6月1日",
-    show: false,
-  },
-  {
-    day: "6月1日",
-    show: false,
-  },
-]);
 const query = ref();
 const initData = async () => {
-  uni.showLoading({ title: "加载中...", mask: true });
-
   if (query.value) {
-    const query = router.route.value.query;
+    uni.showLoading({ title: "加载中...", mask: true });
+    // const query = router.route.value.query;
+    CoachPunchInAuth.value = query.value.CoachPunchInAuth;
     //获取个人信息
-    const res = await getstudentInfobyId(query.studentId);
+    const res = await getstudentInfobyId(query.value.studentId);
     stuInfo.value = res.data.data;
     //获取课程内容
-    const response = await getplanlist(query.courseId);
+    const response = await getplanlist(query.value.courseId);
     console.log(response.data.data, "课程内容");
     if (response.data.data === null || !response.data.data)
       return uni.hideLoading();
@@ -241,6 +257,9 @@ function formatDateString(dateStr: string) {
 onMounted(() => {
   query.value = router.route.value.query;
   initData();
+  uni.$on("getNew", () => {
+    initData();
+  });
 });
 </script>
 

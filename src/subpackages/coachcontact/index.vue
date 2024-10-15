@@ -43,7 +43,7 @@
             </div>
           </div>
           <div class="flex h-full">
-            <div class="btn h-full mr-2">
+            <div class="btn h-full mr-2" v-if="ifChoose=='true'">
               <van-button
                 @click="choose(item)"
                 size="small"
@@ -52,7 +52,7 @@
                 ><span class="text-">选择</span></van-button
               >
             </div>
-            <div class="btn h-full">
+            <div class="btn h-full" v-else>
               <van-button
                 @click="contact(item.WeChatBusinessImg)"
                 size="small"
@@ -103,12 +103,24 @@
 import { onMounted, ref } from "vue";
 import { getCoachList } from "@/api/coach";
 import router from "@/router";
+import { getCoachClass } from "@/api/courses/courses";
 const coachlist = ref([]);
 const modalHidden = ref(true);
 const wxcodeImg = ref("");
 const choose = (item: any) => {
-  uni.$emit("chooseCoach", item);
-  router.back();
+  uni.showLoading();
+  getCoachClass(item.ID).then((res) => {
+    if (res.data.code == 200) {
+      uni.hideLoading();
+      uni.$emit("chooseCoach", item);
+      router.back();
+    } else {
+      uni.showToast({
+        title: "该教练暂未发布课程",
+		icon:'fail'
+      });
+    }
+  });
 };
 const closepopup = () => {
   modalHidden.value = true;
@@ -130,8 +142,9 @@ const init = () => {
     uni.hideLoading();
   });
 };
-
+const ifChoose = ref(false);
 onMounted(() => {
+  if (router.route.value.query.ifChoose) ifChoose.value = router.route.value.query.ifChoose;
   init();
 });
 </script>

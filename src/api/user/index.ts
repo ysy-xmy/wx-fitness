@@ -9,7 +9,7 @@ export const updateUserInfo = (data: any) => {
 };
 
 export const refreshToken = () => {
-  return request.post("/api/user/token/refresh");
+  return request.post("/api/user/token/refresh?Token=" + uni.getStorageSync("token"));
 };
 
 export const getHWInfo = () => {

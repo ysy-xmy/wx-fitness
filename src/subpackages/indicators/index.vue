@@ -340,7 +340,6 @@ import echart from "@/components/lime-echart/lime-echart.vue";
 import { onMounted, reactive, ref } from "vue";
 import { useAppStore } from "../../state/app";
 import { addBodydata } from "@/api/body";
-// import echart from "@/components/echart/try.vue";废弃
 import dayjs from "dayjs";
 
 const beginTime = ref(dayjs().subtract(1, "year").format("YYYY-MM-DD"));

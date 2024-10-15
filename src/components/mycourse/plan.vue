@@ -28,7 +28,7 @@
             >
               <div class="btn-item w-full mb-1">
                 <van-button
-                  @click="handlefinish(props.list[k][key].id)"
+                  @click="handlefinish(props.list[k][key].cardID)"
                   round
                   type="warning"
                   ><span class="text-white text-lg">打 卡</span></van-button
@@ -55,7 +55,7 @@
             </div>
             <div
               class="line-item justify-center flex w-1/4"
-              @click="seeDetail(props.list[key].id)"
+              @click="seeDetail(props.list[k][key].cardID)"
             >
               <span
                 class="text-[#0c96f2] text-xs w-full text-center pb-2 underline text-center"

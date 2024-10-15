@@ -4,21 +4,20 @@ import { getUserInfo, refreshToken } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 const authStore = useAuthStore();
 onLaunch(() => {
-  if (authStore.isLogin) {
-    refreshToken().then((res) => {
-      console.log(res);
-      if (res.data.length == 0) return;
-      let token = res.data[0].Token;
-      authStore.setToken(token);
-      uni.setStorageSync("token", token);
-    });
-  }
+  refreshToken().then((res) => {
+    console.log(res.data.data);
+
+    if (!res.data.data[0].Refresh) return;
+    let token = res.data.data[0].Token;
+    authStore.setToken(token);
+    uni.setStorageSync("token", token);
+  });
 });
-onShow(() => {});
-onHide(() => {});
+onShow(() => { });
+onHide(() => { });
 </script>
 <style>
 @import url("./style/index.css");
-@import "../colorui/main.css";
-@import "../colorui/icon.css";
+@import "../src/subpackages/colorui/main.css";
+@import "../src/subpackages/colorui/icon.css";
 </style>

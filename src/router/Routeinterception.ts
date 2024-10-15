@@ -9,7 +9,7 @@ const whiteList = [
   "index",
   "course",
   "diyTable",
-  'actionDetail'
+  "actionDetail",
 ];
 
 export function userRouternext(router: Router) {
