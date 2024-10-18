@@ -34,7 +34,7 @@ import { useRouter } from "uni-mini-router";
 import { updateUserInfo } from "./wx_session";
 const router = useRouter();
 const authStore = useAuthStore();
-function login() {
+const login = () => {
   uni.login({
     provider: "weixin",
     // onlyAuthorize: true, // 微信登录仅请求授权认证
@@ -55,6 +55,7 @@ function login() {
             uni.setStorageSync("token", token);
             authStore.setUser({
               name: res.data.data.Username || "微信用户",
+              openid: res.data.data.OpenID,
               id: res.data.data.ID,
               phone: res.data.data.phone,
               Sex: res.data.data.Sex || 0,

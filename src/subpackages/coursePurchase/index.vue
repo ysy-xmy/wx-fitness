@@ -260,6 +260,7 @@ import { getPrice } from "../apis/api";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 import { buyCourse, getWxPaySignatrue } from "../apis/pay/index";
+import { useAuthStore } from "@/state/modules/auth";
 const router = useRouter();
 type data = {
   CoachID: number;
@@ -377,13 +378,17 @@ const pay = () => {
       data["LessonCount"] = Number(pitchNumber.value);
     }
 
+    const auth = useAuthStore();
+    console.log(auth.getUser);
+    
+
     // 微信支付
     getWxPaySignatrue({
-      Amount: 72,
+      Amount: 1,
       Attach: "aliqua minim consectetur voluptate",
       Description: "性类层知作持议周保结率也",
       OutTradeNo: "E38OEVAGQU7UNY4QYQGWYEW3NNG13C3W",
-      OpenID: "oqdlx7aQo0TUTtaEWkjsFQLTVWTM",
+      OpenID: auth.getUser.openid,
     }).then((res) => {
       console.log(res.data.data);
       // 调起微信支付
