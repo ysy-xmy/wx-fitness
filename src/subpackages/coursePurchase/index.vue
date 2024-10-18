@@ -379,16 +379,26 @@ const pay = () => {
     }
 
     const auth = useAuthStore();
-    console.log(auth.getUser);
-    
+    console.log("=====", auth.getUser);
+
+    function generateRandomString(length) {
+      const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        result += chars[randomIndex];
+      }
+      return result;
+    }
 
     // 微信支付
     getWxPaySignatrue({
       Amount: 1,
       Attach: "aliqua minim consectetur voluptate",
       Description: "性类层知作持议周保结率也",
-      OutTradeNo: "E38OEVAGQU7UNY4QYQGWYEW3NNG13C3W",
-      OpenID: auth.getUser.openid,
+      OutTradeNo: generateRandomString(32),
+      OpenID: auth.getUser.openid || "oqdlx7Q91NcSDycAvY8xhBjpq69M",
     }).then((res) => {
       console.log(res.data.data);
       // 调起微信支付
