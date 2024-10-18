@@ -259,7 +259,7 @@ import { onMounted, reactive, ref, watch, computed } from "vue";
 import { getPrice } from "../apis/api";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
-import { buyCourse } from "../apis/pay/index";
+import { buyCourse, getWxPaySignatrue } from "../apis/pay/index";
 const router = useRouter();
 type data = {
   CoachID: number;
@@ -376,31 +376,79 @@ const pay = () => {
     if (packageNo.value == "LESSON") {
       data["LessonCount"] = Number(pitchNumber.value);
     }
-    buyCourse(data)
-      .then((res) => {
-        if (res.data.code == 200) {
-          uni.$emit("alreadyBuy");
+
+    // 微信支付
+    getWxPaySignatrue({
+      Amount: 72,
+      Attach: "aliqua minim consectetur voluptate",
+      Description: "性类层知作持议周保结率也",
+      OutTradeNo: "E38OEVAGQU7UNY4QYQGWYEW3NNG13C3W",
+      OpenID: "oqdlx7aQo0TUTtaEWkjsFQLTVWTM",
+    }).then((res) => {
+      console.log(res.data.data);
+      // 调起微信支付
+      uni.requestPayment({
+        provider: "wxpay",
+        timeStamp: res.data.data.TimeStamp,
+        nonceStr: res.data.data.NonceStr,
+        package: res.data.data.Package,
+        signType: res.data.data.SignType,
+        paySign: res.data.data.Sign,
+        orderInfo: {
+          appid: res.data.data.AppID, // 微信开放平台 - 应用 - AppId，注意和微信小程序、公众号 AppId 可能不一致
+          noncestr: res.data.data.NonceStr, // 随机字符串
+          package: res.data.data.Package, // 固定值
+          partnerid: res.data.data.PartnerID, // 微信支付商户号
+          prepayid: res.data.data.PrepayID, // 统一下单订单号
+          timestamp: res.data.data.TimeStamp, // 时间戳（单位：秒）
+          sign: res.data.data.Sign, // 签名，这里用的 MD5/RSA 签名
+        },
+        success(res) {
+          console.log(res);
           uni.showToast({
-            title: "购买成功",
+            title: "支付成功",
             icon: "success",
           });
+          buyCourse(data)
+            .then((res) => {
+              if (res.data.code == 200) {
+                uni.$emit("alreadyBuy");
+                uni.showToast({
+                  title: "购买成功",
+                  icon: "success",
+                });
+                setTimeout(() => {
+                  router.push({
+                    name: "home",
+                  });
+                }, 2000);
+              } else
+                uni.showToast({
+                  title: res.data.msg,
+                  icon: "error",
+                });
+            })
+            .catch((err) => {
+              uni.showToast({
+                title: "购买失败",
+                icon: "error",
+              });
+            });
           setTimeout(() => {
             router.push({
               name: "home",
             });
           }, 2000);
-        } else
+        },
+        fail(e) {
+          console.log(e);
           uni.showToast({
-            title: res.data.msg,
+            title: "支付失败",
             icon: "error",
           });
-      })
-      .catch((err) => {
-        uni.showToast({
-          title: "购买失败",
-          icon: "error",
-        });
+        },
       });
+    });
   } else {
     uni.showToast({
       title: "请填写真实姓名和联系电话",
