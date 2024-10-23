@@ -71,5 +71,13 @@ export const useAuthStore = defineStore({
     setRoleName(RoleName: string) {
       this.RoleName = RoleName;
     },
+    clearStore() {
+      this.$state = {
+        token: "", //
+        user: {}, // user 类型为对象而不是数组
+        RoleName: "", // 角色名称
+        classID: "", //教练端才有的课程ID
+      };
+    },
   },
 });

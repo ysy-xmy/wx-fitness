@@ -5,16 +5,19 @@ import { useAuthStore } from "@/state/modules/auth";
 const authStore = useAuthStore();
 onLaunch(() => {
   refreshToken().then((res) => {
-    console.log(res.data.data);
-
-    if (!res.data.data[0].Refresh) return;
+    // console.log(res.data.data);
+    if (!res.data.data[0].Refresh) {
+      // uni.clearStorage();
+      // authStore.clearStore();
+      return;
+    }
     let token = res.data.data[0].Token;
     authStore.setToken(token);
     uni.setStorageSync("token", token);
   });
 });
-onShow(() => { });
-onHide(() => { });
+onShow(() => {});
+onHide(() => {});
 </script>
 <style>
 @import url("./style/index.css");
