@@ -170,7 +170,7 @@ onMounted(async () => {
     ? [res.data.data.WeChatBusinessImg]
     : [];
   coachcert.value = res.data.data.CoachCert ? [res.data.data.CoachCert] : [];
-  imgList.value = res.data.data.BodyCheckTable;
+  imgList.value = res.data.data.BodyCheckTable || [];
   uni.hideLoading();
 });
 const preview = (index: number, list: string[]) => {
@@ -203,13 +203,13 @@ const handleUploadimg = () => {
     count: 9, //默认9
     sizeType: ["original", "compressed"], //可以指定是原图还是压缩图，默认二者都有
     sourceType: ["album"], //从相册选择
-    success: (res) => {
-      console.log(res.tempFilePaths);
-      res.tempFilePaths.forEach((item) => {
-        console.log(item);
-        uploadimg(item).then((res) => {
-          imgList.value.push(res);
-        });
+    success: async (res) => {
+      const promises = res.tempFilePaths.map((item) => uploadimg(item));
+      const responses = await Promise.all(promises);
+      console.log(responses, "resp");
+      responses.forEach((i) => {
+        console.log(imgList.value, "i");
+        imgList.value.push(i);
       });
     },
   });
@@ -222,12 +222,9 @@ const handleUploadWXimg = () => {
     sourceType: ["album"], //从相册选择
     success: (res) => {
       console.log(res.tempFilePaths);
-      res.tempFilePaths.forEach((item) => {
-        console.log(item);
-        uploadimg(item).then((res) => {
-          wximg.value = [res];
-        });
-      });
+      const promises = res.tempFilePaths.map((item) => uploadimg(item));
+      const responses = await Promise.all(promises);
+      wximg.value.push(...responses);
     },
   });
 };
