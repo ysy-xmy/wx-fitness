@@ -3,42 +3,29 @@
     <view class="cu-bar relative search bg-white">
       <view class="search-form round">
         <text class="cuIcon-search"></text>
-        <input
-          v-model="searchValue"
-          :adjust-position="false"
-          type="text"
-          placeholder="搜索二级类目、动作"
-          confirm-type="search"
-        />
+        <input v-model="searchValue" :adjust-position="false" type="text" placeholder="搜索二级类目、动作"
+          confirm-type="search" />
       </view>
     </view>
 
-    <view
-      v-if="props.ifChoose"
-      style="
+    <view v-if="props.ifChoose" style="
         width: 100vw;
         height: 30px;
         margin: 5px 0;
         display: flex;
         justify-content: space-between;
         padding-right: 20px;
-      "
-    >
-      <div
-        style="
+      ">
+      <div style="
           height: 30px;
           line-height: 30px;
           margin-left: 30px;
           margin-left: 30px;
-        "
-      >
+        ">
         正在为{{ props.name }}的课程选课
       </div>
       <view class="cu-item" @click="showPopup = true">
-        <div
-          class="cuIcon-apps"
-          style="position: relative; width: 30px; font-size: 30px; height: 30px"
-        >
+        <div class="cuIcon-apps" style="position: relative; width: 30px; font-size: 30px; height: 30px">
           <view class="cu-tag badge">{{ chooseList.length }}</view>
         </div>
       </view>
@@ -49,98 +36,46 @@
     </view>
 
     <view class="VerticalBox bg-white">
-      <scroll-view
-        class="bg-[#f7f8fc] rounded-md VerticalNav nav"
-        scroll-y
-        scroll-with-animation
-        :scroll-top="verticalNavTop"
-        style="height: calc(100vh - 375upx)"
-      >
-        <view
-          style="background-color: #f7f8fc"
-          class="cu-item bg-[#f7f8fc] truncate ..."
-          :class="index == tabCur ? 'text-[#ec6853] cur' : ''"
-          v-for="(item, index) in actionrouterList"
-          :key="index"
-          @tap="TabSelect"
-          :data-id="index"
-        >
+      <scroll-view class="bg-[#f7f8fc] rounded-md VerticalNav nav" scroll-y scroll-with-animation
+        :scroll-top="verticalNavTop" style="height: calc(100vh - 375upx)">
+        <view style="background-color: #f7f8fc" class="cu-item bg-[#f7f8fc] truncate ..."
+          :class="index == tabCur ? 'text-[#ec6853] cur' : ''" v-for="(item, index) in actionrouterList" :key="index"
+          @tap="TabSelect" :data-id="index">
           {{ item.name }}
         </view>
       </scroll-view>
-      <scroll-view
-        scroll-y
-        scroll-with-animation
-        style="height: calc(100vh - 375upx); background-color: white"
-        :scroll-into-view="'main-' + mainCur"
-        @scroll="VerticalMain"
-      >
+      <scroll-view scroll-y scroll-with-animation style="height: calc(100vh - 375upx); background-color: white"
+        :scroll-into-view="'main-' + mainCur" @scroll="VerticalMain">
         <div v-if="secMenu.length > 0">
-          <view
-            class="padding-top"
-            v-for="(item1, index1) in secMenu"
-            :key="index1"
-            :id="'main-' + index1"
-          >
-            <view
-              @click="secMenuSelect(item1, index1)"
-              class="cu-bar text-black font-extrabold solid-bottom bg-white"
-            >
-              <view
-                style="font-size: 45rpx"
-                class="text-2xl action truncate ..."
-              >
+          <view class="padding-top" v-for="(item1, index1) in secMenu" :key="index1" :id="'main-' + index1">
+            <view @click="secMenuSelect(item1, index1)" class="cu-bar text-black font-extrabold solid-bottom bg-white">
+              <view style="font-size: 45rpx" class="text-2xl action truncate ...">
                 <text class="cuIcon-title"></text> {{ item1.name }}
               </view>
               <div class="curight-icon mr-5">
-                <van-icon
-                  v-show="actionrouterList[mainCur].children[index1].active"
-                  name="arrow-down"
-                />
-                <van-icon
-                  v-show="!actionrouterList[mainCur].children[index1].active"
-                  name="arrow-up"
-                />
+                <van-icon v-show="actionrouterList[mainCur].children[index1].active" name="arrow-down" />
+                <van-icon v-show="!actionrouterList[mainCur].children[index1].active" name="arrow-up" />
               </div>
             </view>
-            <view
-              v-if="actionrouterList[mainCur].children[index1].active"
-              class="cu-list pt-3 menu-avatar flex flex-wrap bg-white"
-            >
-              <template
-                v-for="(item2, index2) in actionrouterList[mainCur].children[
-                  index1
-                ].children"
-                :key="index2"
-              >
+            <view v-if="actionrouterList[mainCur].children[index1].active"
+              class="cu-list menu-avatar flex flex-wrap bg-white">
+              <template v-for="(item2, index2) in actionrouterList[mainCur].children[
+          index1
+        ].children" :key="index2">
                 <!-- @click="toDetail(item2) -->
-                <view
-                  class="felx flex-col w-1/2 p-2 px-3 h-36 bg-[#f9fafb]"
-                  style="position: relative"
-                >
-                  <van-checkbox
-                    v-if="ifChoose"
-                    :value="item2.ifcheck"
-                    @change="
-                      (e: any) => chooseAction(e, item2, mainCur, index1)
-                    "
-                    checked-color="#f60422"
-                    style="position: absolute; right: 1px; top: 1px; z-index: 5"
-                  />
-                  <img
-                    @click="toDetail(item2)"
-                    class="w-full h-24 rounded-md lg"
-                    :src="
-                      item2.Imgs
-                        ? item2.Imgs[0].Url
-                        : 'https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241007/1728284282969.png'
-                    "
-                  />
-                  <view class="content">
-                    <view class="text-black text-center text-lg font-extrabold"
-                      >{{ item2.name }}
+                <view class="felx flex-wrap w-full  items-center justify-center content-center px-2 mb-3"
+                  style="position: relative">
+                  <van-checkbox v-if="ifChoose" :value="item2.ifcheck" @change="(e: any) => chooseAction(e, item2, mainCur, index1)
+          " checked-color="#f60422" style="position: absolute; right: 1px; top: 1px; z-index: 5" />
+                  <div class="flex flex-row w-full justify-center items-center flex-wrap bg-[#f4f5f5]  rounded-xl px-2 pt-2"
+                    @click="toDetail(item2)">
+                    <img class="w-28 h-24  rounded-l-md lg" :src="getImageUrl(item2.Imgs, 0)" />
+                    <img class="w-28 h-24 rounded-r-md lg" :src="getImageUrl(item2.Imgs, 1)" />
+                    <view class="content pb-1 w-full">
+                      <view class="text-black text-center text-lg font-extrabold">{{ item2.name }}
+                      </view>
                     </view>
-                  </view>
+                  </div>
                 </view>
               </template>
             </view>
@@ -154,39 +89,25 @@
       </scroll-view>
     </view>
 
-    <van-index-bar
-      v-if="searchResult.length > 0"
-      class="w-screen absolute z-1000 top-10 bg-[#f2f2f2] shadow-sm"
-      :index-list="indexList"
-    >
+    <van-index-bar v-if="searchResult.length > 0" class="w-screen absolute z-1000 top-10 bg-[#f2f2f2] shadow-sm"
+      :index-list="indexList">
       <!-- 遍历搜索结果 -->
       <view class="cu-list menu sm-border card-menu">
         <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa' }">
           搜索结果
         </van-divider>
-        <view
-          v-for="(item, index) in searchResult"
-          :key="index"
-          class="w-screen flex flex-col items-start content-start"
-        >
-          <view
-            @click="
-              handlelocation(
-                item.children.length > 0 ? item.children[0].id : item.id
-              )
-            "
-            class="border-none padding-tb-sm w-full"
-          >
-            <view
-              class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold"
-            >
+        <view v-for="(item, index) in searchResult" :key="index"
+          class="w-screen flex flex-col items-start content-start">
+          <view @click="
+          handlelocation(
+            item.children.length > 0 ? item.children[0].id : item.id
+          )
+          " class="border-none padding-tb-sm w-full">
+            <view class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold">
               <text class="text-black"> 索引至： {{ item.name }}</text>
               <text class="cuIcon-right text-lg text-blue mr-10"></text>
             </view>
-            <view
-              v-if="item.children && item.children.length > 0"
-              v-for="(item1, index1) in item.children"
-            >
+            <view v-if="item.children && item.children.length > 0" v-for="(item1, index1) in item.children">
               <view class="cu-item pl-16">
                 <view class="content">
                   <view>{{ item1.name }}</view>
@@ -198,36 +119,24 @@
         </view>
       </view>
     </van-index-bar>
-    <van-popup
-      custom-style="max-height: 500px;"
-      :show="showPopup"
-      position="bottom"
-      overlay="false"
-      @close="onCloseopup"
-    >
-      <div
-        style="
+    <van-popup custom-style="max-height: 500px;" :show="showPopup" position="bottom" overlay="false"
+      @close="onCloseopup">
+      <div style="
           margin-top: 5px;
           width: 100vw;
           display: flex;
           justify-content: flex-end;
           padding-right: 10px;
-        "
-      >
+        ">
         <van-icon name="close" size="30px" @click="onCloseopup" />
       </div>
       <div style="max-height: 460px; margin: 15px auto; overflow-y: auto">
-        <div
-          class="nodata-card flex flex-col justify-center items-center w-full"
-          v-if="chooseList.length == 0"
-        >
+        <div class="nodata-card flex flex-col justify-center items-center w-full" v-if="chooseList.length == 0">
           <van-empty description="暂未选择动作" />
         </div>
         <div v-for="item in chooseList">
           <div style="width: 100vw; padding: 0 20px">
-            <div
-              class="card"
-              style="
+            <div class="card" style="
                 height: 50px;
                 line-height: 50px;
                 display: flex;
@@ -237,32 +146,21 @@
                 background-color: rgba(255, 255, 255, 0.4);
                 border-bottom: 1px solid gray;
                 border-radius: 5px;
-              "
-            >
+              ">
               <div class="title">{{ item.name }}</div>
-              <van-stepper
-                :value="item.num"
-                integer
-                min="0"
-                step="1"
-                @change="(e) => changeNum(item, e)"
-              />
+              <van-stepper :value="item.num" integer min="0" step="1" @change="(e) => changeNum(item, e)" />
             </div>
           </div>
         </div>
       </div>
-      <div
-        style="
+      <div style="
           margin-top: 5px;
           width: 100vw;
           display: flex;
           justify-content: flex-end;
           padding-right: 30px;
-        "
-      >
-        <van-button type="info" size="normal" round @click="subitClass"
-          >提交</van-button
-        >
+        ">
+        <van-button type="info" size="normal" round @click="subitClass">提交</van-button>
       </div>
     </van-popup>
   </view>
@@ -355,7 +253,11 @@ function getCurrentDateTime() {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
-
+const getImageUrl = (images: any[], index: number) => {
+  console.log(images, index);
+  const defaultUrl = 'https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241007/1728284282969.png';
+  return images && images[index] ? images[index].URL : defaultUrl;
+}
 const onCloseopup = () => {
   showPopup.value = false;
 };

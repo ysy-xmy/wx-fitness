@@ -3,7 +3,7 @@
         <div class="action-header">
             <div class="action-video">
                 <view class="page">
-                    <video :src="actionInfo.Videos[0].URL" id="myVideo"></video>
+                    <video v-if="actionInfo.Videos && actionInfo.Videos.length > 0" :src="actionInfo.Videos[0].URL" id="myVideo"></video>
 
                 </view>
 
@@ -12,11 +12,11 @@
         <div class="action-content">
             <div class="action-title text-2xl font-extrabold px-5 py-2 border-l-8 border-[#fd7d46]">{{ actionInfo.Name
                 }}</div>
-            <div v-if="actionInfo.Imgs.length > 0" class="action-imgs flex justify-center">
+            <div v-if="actionInfo.Imgs && actionInfo.Imgs.length>0" class="action-imgs flex justify-center">
                 <swiper class="screen-swiper square-dot w-full px-6 mt-4" :indicator-dots="true" :circular="true"
                     interval="5000" duration="500">
                     <swiper-item v-for="(item, index) in actionInfo.Imgs" :key="index">
-                        <image :src="item.URL" mode="aspectFill"></image>
+                        <image  :src="item.URL" mode="aspectFill"></image>
                     </swiper-item>
                 </swiper>
 
