@@ -200,34 +200,36 @@ const wximg = ref([]);
 //上传体检表
 const handleUploadimg = () => {
   uni.chooseImage({
-    count: 9, //默认9
-    sizeType: ["original", "compressed"], //可以指定是原图还是压缩图，默认二者都有
-    sourceType: ["album"], //从相册选择
-    success: async (res) => {
-      const promises = res.tempFilePaths.map((item) => uploadimg(item));
-      const responses = await Promise.all(promises);
-      console.log(responses, "resp");
-      responses.forEach((i) => {
-        console.log(imgList.value, "i");
-        imgList.value.push(i);
-      });
-    },
-  });
-};
-//上传微信
-const handleUploadWXimg = () => {
-  uni.chooseImage({
-    count: 1, //默认9
-    sizeType: ["original", "compressed"], //可以指定是原图还是压缩图，默认二者都有
-    sourceType: ["album"], //从相册选择
+    count: 9, // 默认最多选择9张图片
+    sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
+    sourceType: ["album"], // 从相册选择
     success: (res) => {
-      console.log(res.tempFilePaths);
-      const promises = res.tempFilePaths.map((item) => uploadimg(item));
-      const responses = await Promise.all(promises);
-      wximg.value.push(...responses);
+      // 在这个上下文中使用 await 之前，确保是 async 函数
+      handleImageUpload(res.tempFilePaths);
+    },
+    fail: (err) => {
+      console.error("选择图片失败:", err);
     },
   });
 };
+
+// 将上传逻辑提取到新的 async 函数中
+const handleImageUpload = async (filePaths) => {
+  try {
+    const promises = filePaths.map((item) => uploadimg(item));
+    const responses = await Promise.all(promises);
+    console.log(responses, "上传结果");
+
+    // 将上传结果加入到 imgList 中
+    responses.forEach((uploadedImgUrl) => {
+      console.log(imgList.value, "当前 imgList");
+      imgList.value.push(uploadedImgUrl);
+    });
+  } catch (error) {
+    console.error("上传图片时出错:", error);
+  }
+};
+
 //上传教练资格证
 const handleUploadcoachcert = () => {
   uni.chooseImage({

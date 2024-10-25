@@ -27,10 +27,8 @@
                     详细介绍
                 </div>
                 <div class="p-5 course-content ">
-                    <div class="content-item">
-                        {{ actionInfo.Description }}
+                    <div v-html="actionInfo.Description" class="content-item">
                     </div>
-
                 </div>
             </div>
         </div>
