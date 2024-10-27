@@ -3,30 +3,31 @@
     <div class="top">
       <div class="bg-img">
         <img
-          class="w-full h-56"
-          src="https://img95.699pic.com/photo/50195/4017.jpg_wh860.jpg"
+          class="w-full h-40"
+          src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241027/1730030052587.png"
           alt=""
         />
       </div>
     </div>
     <div class="info-card w-full flex justify-center p-4">
-      <div class="card w-full bg-[#f9fafb] p-3">
+      <div class="card w-full bg-[#f7f9fb] p-3">
         <div class="card-top">
-          <div class="title w-full flex justify-between items-center">
+          <div class="title w-full flex justify-between items-center px-1">
             <h2 class="text-xl font-bold">{{ state.name }}</h2>
             <van-circle
-              stroke-width="8"
+              stroke-width="6"
               size="60"
               layer-color="#ebedf0"
               color="#ec6853"
               :value="state.Percentage"
               :text="state.Percentage + '%'"
+              style="font-size: 13px!important"
             />
           </div>
         </div>
         <div class="card-body mt-2 flex w-full justify-between flex-nowrap">
-          <div class="body-content w-2/3 text-lg flex items-center">
-            <h1>{{ state.desc }}</h1>
+          <div class="body-content w-2/3 text-[#666] text-ellipsis h-20 overflow-y-auto text-lg flex items-center">
+            <h1>{{ state.desc? state.desc : "暂无描述" }}</h1>
           </div>
           <div
             class="body-btn w-1/3 flex-1 flex flex-col items-center justify-end"
@@ -202,6 +203,10 @@ onMounted(() => {
   // 获取计划列表
 });
 const getPlan = () => {
+  uni.showLoading({
+    title: "加载中",
+    mask: false
+  });
   list = {
     finish: {},
     online: {},
@@ -275,7 +280,7 @@ const getPlan = () => {
         });
       }
     );
-    console.log(list, "list");
+    uni.hideLoading();
     online.value = list["online"];
     finish.value = list["finish"];
     outline.value = list["outline"];

@@ -1,23 +1,25 @@
 <template>
-  <div class="tab-mycourse w-full flex flex-wrap justify-center pb-20">
+  <div class="tab-mycourse w-full flex flex-wrap justify-center pb-6">
     <!-- 我的课程 -->
     <div
-      class="course-card mt-5 rounded-lg bg-[#e7eeff] w-11/12 flex flex-row h-36"
+    v-if="list.length > 0"
+      class="course-card mt-5 text-[#303440] rounded-lg w-11/12 bg-[#f7f9fb] relative flex flex-row h-36"
       v-for="(item, index) in list"
-      v-if="list.length > 0"
     >
-      <img class="w-1/3 h-full" :src="item.Img" />
+    <!-- <img class="w-full h-full rounded-lg -z-10 absolute" src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241027/1730017173023.png"/> -->
+    <!-- 课程图片，目前暂不支持设定，先隐藏 -->
+      <img class="w-1/3 h-full rounded-l-lg" :src="item.Img" />
       <div class="main-content py-3 w-2/3 h-full content-evenly flex flex-wrap">
         <div class="w-full top flex justify-between">
-          <h1 class="text-2xl">{{ item.Name }}</h1>
-          <div>
+          <h1 class="text-2xl px-2 text-ellipsis flex-1 overflow-hidden whitespace-nowrap">{{ item.Name }}</h1>
+          <div class="w-10 mr-2">
             <van-circle
-              stroke-width="8"
-              size="40"
+              stroke-width="4"
+              size="45"
               color="#ec6853"
               :value="item.Percentage"
               :text="item.Percentage + '%'"
-              class="mr-[0.75rem]"
+              style="font-size: 13px!important;"
             />
           </div>
         </div>
@@ -67,13 +69,13 @@
       <van-empty description="您还没有课程哦~，可以前往购买添加课程哦~" />
     </div>
   </div>
-  <div style="width: 100vw; text-align: center">
+  <div style="width: 100%; text-align: center;font-size: 8px;" class="pb-10">
     <van-button
       @click="tocourse"
       round
       type="primary"
       color="#fd7d46"
-      class="bottom-button mt-3"
+      class="bottom-button"
       >去 添 加</van-button
     >
   </div>
@@ -157,3 +159,13 @@ onMounted(() => {
   });
 });
 </script>
+<style scoped>
+.course-card{
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.van-circle__text{
+  font-size: 8px!important;
+}
+</style>
