@@ -19,9 +19,7 @@
                         <image :src="item.URL" mode="aspectFill"></image>
                     </swiper-item>
                     </template>
-
                 </swiper>
-
             </div>
             <div class="action-desc">
                 <div
@@ -97,6 +95,7 @@ onMounted(() => {
         const query = router.route.value.query;
         console.log(query)
         if (query.itemid) {
+            uni.showLoading({ title: "加载中...", mask: true });
             getActionById(query.itemid).then(res => {
                 console.log(res.data.data)
                 let response = res.data.data
@@ -105,7 +104,7 @@ onMounted(() => {
                 actionInfo.value.Description = response.ActionInfos.Description
                 actionInfo.value.Imgs = response.ActionImgInfos
                 actionInfo.value.Videos = response.ActionVideoInfos
-                console.log(actionInfo.value)
+                uni.hideLoading();
             })
         }
     }
