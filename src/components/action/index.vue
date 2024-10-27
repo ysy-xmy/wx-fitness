@@ -58,7 +58,7 @@
               </div>
             </view>
             <view v-if="actionrouterList[mainCur].children[index1].active"
-              class="cu-list menu-avatar flex flex-wrap bg-white">
+              class="cu-list menu-avatar flex flex-wrap bg-white pt-3">
               <template v-for="(item2, index2) in actionrouterList[mainCur].children[
           index1
         ].children" :key="index2">
@@ -67,7 +67,7 @@
                   style="position: relative">
                   <van-checkbox v-if="ifChoose" :value="item2.ifcheck" @change="(e: any) => chooseAction(e, item2, mainCur, index1)
           " checked-color="#f60422" style="position: absolute; right: 1px; top: 1px; z-index: 5" />
-                  <div class="flex flex-row w-full justify-center items-center flex-wrap bg-[#f4f5f5]  rounded-xl px-2 pt-2"
+                  <div class="flex flex-row w-full justify-center items-center flex-wrap bg-[#f4f5f5]  rounded-xl px-2 pt-3"
                     @click="toDetail(item2)">
                     <img class="w-28 h-24  rounded-l-md lg" :src="getImageUrl(item2.Imgs, 0)" />
                     <img class="w-28 h-24 rounded-r-md lg" :src="getImageUrl(item2.Imgs, 1)" />

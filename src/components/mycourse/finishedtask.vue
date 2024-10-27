@@ -19,7 +19,7 @@
           >
             <view class="flex flex-col">
               <div class="title w-full text-black font-bold">
-                {{ item.name }} +{{ item.groupNum }}组
+                {{ item.name }}   每组{{ item.timesNum }}次  X {{ item.groupNum }}组
               </div>
 
               <div class="desc w-full text-xs text-gray-600">

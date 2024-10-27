@@ -1,11 +1,4 @@
 <template>
-  <!-- <scrollFrom
-    :fun="getMycourese"
-    :dispose="dispose"
-    ref="scorllFormRef"
-    :datasources="list"
-  >
-    <template #card> -->
   <div class="tab-mycourse w-full flex flex-wrap justify-center pb-20">
     <!-- 我的课程 -->
     <div
@@ -74,11 +67,6 @@
       <van-empty description="您还没有课程哦~，可以前往购买添加课程哦~" />
     </div>
   </div>
-  <!-- </template>
-    <template #empty> -->
-
-  <!-- </template>
-  </scrollFrom> -->
   <div style="width: 100vw; text-align: center">
     <van-button
       @click="tocourse"
@@ -91,7 +79,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import scrollFrom from "@/components/scrollForm/index.vue";
 import { useRouter } from "uni-mini-router";
 import { getMycourese } from "@/api/courses/courses";
 import { onMounted, reactive, ref } from "vue";
@@ -168,25 +155,5 @@ onMounted(() => {
   uni.$on("alreadyBuy", () => {
     getList();
   });
-  // uni.$on("nextData", (val) => {
-  //   if (val == "my") {
-  //     console.log("my");
-  //     uni.showLoading();
-  //     scorllFormRef.value.getData();
-  //     getListData();
-  //   }
-  // });
-  // getListData();
 });
-// const getListData = () => {
-//   list.value = scorllFormRef.value?.state.list;
-//   if (scorllFormRef.value?.ifChange()) {
-//     uni.hideLoading();
-//     return;
-//   } else {
-//     setTimeout(() => {
-//       getListData();
-//     }, 500);
-//   }
-// };
 </script>

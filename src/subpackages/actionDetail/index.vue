@@ -3,21 +3,23 @@
         <div class="action-header">
             <div class="action-video">
                 <view class="page">
-                    <video v-if="actionInfo.Videos && actionInfo.Videos.length > 0" :src="actionInfo.Videos[0].URL" id="myVideo"></video>
-
+                    <video v-if="actionInfo.Videos && actionInfo.Videos.length > 0" :src="actionInfo.Videos[0].URL"
+                        id="myVideo"></video>
                 </view>
-
             </div>
         </div>
         <div class="action-content">
             <div class="action-title text-2xl font-extrabold px-5 py-2 border-l-8 border-[#fd7d46]">{{ actionInfo.Name
                 }}</div>
-            <div v-if="actionInfo.Imgs && actionInfo.Imgs.length>0" class="action-imgs flex justify-center">
+            <div v-if="actionInfo.Imgs && actionInfo.Imgs.length > 0" class="action-imgs flex justify-center">
                 <swiper class="screen-swiper square-dot w-full px-6 mt-4" :indicator-dots="true" :circular="true"
                     interval="5000" duration="500">
-                    <swiper-item v-for="(item, index) in actionInfo.Imgs" :key="index">
-                        <image  :src="item.URL" mode="aspectFill"></image>
+                    <template v-for="(item, index) in actionInfo.Imgs" :key="index">
+                        <swiper-item  @click="preview(index)" >
+                        <image :src="item.URL" mode="aspectFill"></image>
                     </swiper-item>
+                    </template>
+
                 </swiper>
 
             </div>
@@ -72,6 +74,14 @@ let actionImgs = [
         type: 'image',
         url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg'
     }]
+
+const preview = (index: number) => {
+  uni.previewImage({
+    current: index,
+    urls: actionInfo.value.Imgs.map(item => item.URL),
+    loop: false,
+  });
+}
 
 actionInfo.value.Imgs = actionImgs
 

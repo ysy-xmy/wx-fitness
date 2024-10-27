@@ -15,8 +15,7 @@
           <div class="card-left w-3/4">
             <div class="card-title mb-2s">
               <h1 class="font-bold text-lg tracking-wide">
-                {{ props.list[k][key].name }}
-                {{ props.list[k][key].groupNum }}组
+                {{ props.list[k][key].name }}   每组{{ props.list[k][key].timesNum }}次  X {{ props.list[k][key].groupNum }}组
               </h1>
             </div>
 

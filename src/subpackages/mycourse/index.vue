@@ -75,6 +75,7 @@ const state = ref({
 });
 // 定义 list 对象的类型
 interface ActionItem {
+  timesNum: number;
   groupNum: number;
   name: string;
   time: string;
@@ -237,6 +238,7 @@ const getPlan = () => {
             // 处理完成的任务
             if (list["finish"][day]) {
               list["finish"][day].push({
+                timesNum: i.TimesNum,
                 groupNum: i.GroupNum,
                 name: i.ActionName,
                 time: dayjs(i.UpdatedAt).format("YYYY-MM-DD HH-MM"),
@@ -244,6 +246,7 @@ const getPlan = () => {
             } else {
               list["finish"][day] = [
                 {
+                  timesNum: i.TimesNum,
                   groupNum: i.GroupNum,
                   name: i.ActionName,
                   time: dayjs(i.UpdatedAt).format("YYYY-MM-DD HH-MM"),
