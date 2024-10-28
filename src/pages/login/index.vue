@@ -80,16 +80,13 @@ function login() {
             });
           })
             .then((res: any) => {
-              console.log(res);
               const { nickName, avatarUrl, gender } = res.userInfo;
-
               const userInfo = {
                 OpenID: OpenID,
                 Username: nickName,
                 Avatar: avatarUrl,
                 Sex: gender,
               } as UserInfo;
-
               updateUserInfo(userInfo)
                 .then(() => {
                   console.log("更新用户信息成功");
