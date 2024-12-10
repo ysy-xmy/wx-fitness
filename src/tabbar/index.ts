@@ -1,6 +1,6 @@
 
 const textcolor = '#9ca3af'
-const textactivecolor = '#ec6853'
+const textactivecolor = '#5bd0e1'
 
 export const tabbardata = [
     {
