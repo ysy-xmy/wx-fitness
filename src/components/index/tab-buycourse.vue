@@ -1,8 +1,8 @@
 <template>
-  <div class="tab-mycourse w-full flex flex-wrap justify-center">
+  <div class="tab-mycourse w-full flex flex-wrap min-h-80  justify-center">
     <div
       @click="buycourse"
-      class="course-card relative w-11/12 mt-7 rounded-lg h-auto"
+      class="course-card relative w-11/12 mt-7 rounded-xl h-48"
     >
       <div class="w-full h-full rounded-xl bg-black absolute opacity-25"></div>
 
@@ -57,5 +57,9 @@ const buycourse = () => {
 <style scoped>
 .custom-class {
   color: black !important;
+}
+.course-card {
+  box-shadow: 26px 26px 30px #b3b2b2,
+  -26px -26px 30px #f0efef;
 }
 </style>
