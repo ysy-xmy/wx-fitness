@@ -24,7 +24,7 @@
       <div @click="toLocation" class="px-5 pb-5 pt-0 flex justify-between">
         <span class="mr-2">
           店铺详细地址：<span class="cuIcon-locationfill text-blue"> </span>
-          广东省湛江市霞山区海滨东二路九巷一号
+          广东省湛江市霞山区海滨东二号
         </span>
         <span
           class="cu-btn whitespace-nowrap rounded-md bg-green-500 text-white"
@@ -43,55 +43,52 @@
         @change="handlePackageNo"
         style="font-size: smaller"
       >
-        <view class="cu-form-group">
-          <view class="title">类型</view>
-          <view
-            v-if="!ifDiy"
-            style="display: flex; flex-wrap: wrap; width: 60%"
-          >
-            <div>
+        <div class="cu-form-group">
+          <div class="title">类型</div>
+          <div v-if="!ifDiy" class="flex flex-wrap w-3/5">
+            <div class="flex items-center justify-end w-full">
               <span class="mx-2">按课时收费</span>
               <radio
-                class="red"
+                class="cyan"
                 :class="packageNo == 'LESSON' ? 'checked' : ''"
                 :checked="packageNo == 'LESSON' ? true : false"
                 value="LESSON"
               ></radio>
             </div>
-            <div>
-              <span class="mx-2">包月</span>
-
-              <radio
-                class="red"
-                :class="packageNo == 'MONTH' ? 'checked' : ''"
-                :checked="packageNo == 'MONTH' ? true : false"
-                value="MONTH"
-              ></radio>
+            <div class="flex flex-row w-full justify-end mt-2">
+              <div class="flex items-center">
+                <span class="mx-2">包月</span>
+                <radio
+                  class="cyan"
+                  :class="packageNo == 'MONTH' ? 'checked' : ''"
+                  :checked="packageNo == 'MONTH' ? true : false"
+                  value="MONTH"
+                ></radio>
+              </div>
+              <div class="flex items-center">
+                <span class="mx-2">包季</span>
+                <radio
+                  class="cyan"
+                  :class="packageNo == 'QUARTER' ? 'checked' : ''"
+                  :checked="packageNo == 'QUARTER' ? true : false"
+                  value="QUARTER"
+                ></radio>
+              </div>
+              <div class="flex items-center">
+                <span class="mx-2">包年</span>
+                <radio
+                  class="cyan"
+                  :class="packageNo == 'YEAR' ? 'checked' : ''"
+                  :checked="packageNo == 'YEAR' ? true : false"
+                  value="YEAR"
+                ></radio>
+              </div>
             </div>
-            <div>
-              <span class="mx-2">包季</span>
-
-              <radio
-                class="red"
-                :class="packageNo == 'QUARTER' ? 'checked' : ''"
-                :checked="packageNo == 'QUARTER' ? true : false"
-                value="QUARTER"
-              ></radio>
-            </div>
-
-            <div>
-              <span class="mx-2">包年</span>
-
-              <radio
-                class="red"
-                :class="packageNo == 'YEAR' ? 'checked' : ''"
-                :checked="packageNo == 'YEAR' ? true : false"
-                value="YEAR"
-              ></radio>
-            </div>
-          </view>
-          <view v-else><span class="mx-2">按课时收费</span> </view>
-        </view>
+          </div>
+          <div v-else>
+            <span class="mx-2">按课时收费</span>
+          </div>
+        </div>
       </radio-group>
       <view v-if="packageNo == 'LESSON'" class="cu-form-group margin-top flex">
         <view class="title">节数</view>
@@ -100,7 +97,7 @@
             <!-- <view class="title">{{}}节</view> -->
             <view class="title">10节</view>
             <radio
-              class="red margin-left-sm"
+              class="cyan margin-left-sm"
               :class="pitchNumber == '10' ? 'checked' : ''"
               :checked="pitchNumber == '10' ? true : false"
               value="10"
@@ -111,7 +108,7 @@
           <view class="cu-form-group">
             <view class="title">15节</view>
             <radio
-              class="red margin-left-sm"
+              class="cyan margin-left-sm"
               :class="pitchNumber == '15' ? 'checked' : ''"
               :checked="pitchNumber == '15' ? true : false"
               value="15"
@@ -123,7 +120,7 @@
               <!-- <radio class='blue radio' :class="radio == 'C' ? 'checked' : ''"
                                 :checked="radio == 'C' ? true : false" value="C"></radio> -->
               <radio
-                class="red margin-left-sm"
+                class="cyan margin-left-sm"
                 :class="pitchNumber == '25' ? 'checked' : ''"
                 :checked="pitchNumber == '25' ? true : false"
                 value="25"
@@ -188,7 +185,7 @@
           <div class="btn justify-center pr-4 items-center h-full">
             <span
               style="font-size: 30px"
-              class="cuIcon-roundcheckfill text-blue"
+              class="cuIcon-roundcheckfill text-cyan"
             ></span>
           </div>
         </div>
@@ -247,7 +244,7 @@
       >
 
       <view class="px-4 flex justify-end">
-        <button @click="pay" class="cu-btn w-28 bg-[#ec6853] round text-white">
+        <button @click="pay" class="cu-btn w-28 bg-cyan round text-white">
           立即支付
         </button>
       </view>
@@ -261,9 +258,16 @@ import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 import { buyCourse } from "../apis/pay/index";
 const router = useRouter();
-type data = {
-  CoachID: number;
+type Data = {
+  CoachID: string;
   CourseType: string;
+  PaymentType: string;
+  PaymentFor: string;
+  PaymentTo: string;
+  Remark: string;
+  UserPhone: string;
+  UserRealName: number;
+  Amount: number;
   LessonCount?: number;
 };
 const computedPrice = () => {
@@ -274,12 +278,19 @@ const computedPrice = () => {
       uni.showLoading({
         title: "计算价格中~",
       });
-      let data: data = {
-        CoachID: Number(coachForm.id),
+      let data: Data = {
+        CoachID: coachForm.id,
         CourseType: packageNo.value,
+        PaymentType: "WECHAT",
+        PaymentFor: "OTHER",
+        PaymentTo: "OTHER",
+        Remark: "",
+        UserPhone: inputName.value || "",
+        UserRealName: inputPhone.value || 0,
+        Amount: Number(courseInfo.price) || 0,
       };
       if (packageNo.value == "LESSON" && pitchNumber.value)
-        data["LessonCount"] = Number(pitchNumber.value);
+        data.LessonCount = Number(pitchNumber.value);
       if (packageNo.value == "LESSON" && !pitchNumber.value) {
         uni.hideLoading();
         return;
@@ -350,7 +361,7 @@ const latitude = 21.2353;
 const longitude = 110.4195;
 const addr = "常态健身俱乐部";
 const toLocation = () => {
-  // 使用微信内置地图查看位置
+  // 使用微信置地图查看位置
   uni.openLocation({
     latitude: latitude, // 目的地的纬度
     longitude: longitude, // 目的地的经度
@@ -361,8 +372,15 @@ const toLocation = () => {
 };
 
 const pay = () => {
+  if (!coachForm.ifFind) {
+    uni.showToast({
+      title: "请先选择教练",
+      icon: "error",
+    });
+    return;
+  }
   if (inputName.value && inputPhone.value) {
-    let data = {
+    let data: Data = {
       CoachID: coachForm.id,
       CourseType: packageNo.value,
       PaymentType: "WECHAT",
@@ -374,7 +392,7 @@ const pay = () => {
       Amount: Number(courseInfo.price),
     };
     if (packageNo.value == "LESSON") {
-      data["LessonCount"] = Number(pitchNumber.value);
+      data.LessonCount = Number(pitchNumber.value);
     }
     buyCourse(data)
       .then((res) => {
@@ -410,7 +428,7 @@ const pay = () => {
 };
 const copyPhone = () => {
   uni.setClipboardData({
-    data: "32456", // e是你要保存的内容
+    data: "32456", // e是你保存的内容
     success: function () {
       uni.showToast({
         title: "复制号码成功",
