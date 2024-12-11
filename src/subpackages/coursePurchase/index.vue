@@ -18,7 +18,7 @@
         </div>
 
         <view class="text-[#606369] text-xl font-bold"
-          >￥{{ courseInfo.price }}</view
+          >{{ coachForm.ifFind ? '￥'+courseInfo.price : '' }}</view
         >
       </div>
       <div @click="toLocation" class="px-5 pb-5 pt-0 flex justify-between">
@@ -240,7 +240,7 @@
 
     <view class="cu-bar bg-white tabbar flex justify-between shop foot">
       <view class="text-[#e4595c] text-xl font-bold px-8"
-        >￥{{ courseInfo.price }}</view
+        >{{coachForm.ifFind? '￥'+courseInfo.price:'' }}</view
       >
 
       <view class="px-4 flex justify-end">
