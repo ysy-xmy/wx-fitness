@@ -45,15 +45,16 @@ function login() {
 
       //客户端成功获取授权临时票据（code）,向业务服务器发起登录请求。
       uni.request({
-        url: `https://meet.ysyxmy.top/api/user/wx-login?code=${code}`, //仅为示例，并非真实接口地址。
+        url: `https://meet.ysyxmy.top/api/user/wx-login?code=${code}`,
         method: "POST",
         success: (res: any) => {
           let OpenID = res.data.data.OpenID;
-          console.log("登录返回信息", res.data);
+          console.log("登录返回信息", OpenID);
           if (res.data.code === 200) {
             const token = res.data.data.Token;
             uni.setStorageSync("token", token);
             authStore.setUser({
+              OpenID: res.data.data.OpenID,
               name: res.data.data.Username || "微信用户",
               id: res.data.data.ID,
               phone: res.data.data.phone,
@@ -88,7 +89,7 @@ function login() {
                 Username: nickName,
                 Avatar: avatarUrl,
                 Sex: gender,
-              } as UserInfo;
+              };
 
               updateUserInfo(userInfo)
                 .then(() => {

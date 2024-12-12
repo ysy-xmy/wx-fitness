@@ -259,8 +259,10 @@ import { onMounted, reactive, ref, watch, computed } from "vue";
 import { getPrice } from "../apis/api";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
-import { buyCourse } from "../apis/pay/index";
+import { useAuthStore } from "@/state/modules/auth";
+import { buyCourse, getPaySignature, ifCanBuy } from "../apis/pay/index";
 const router = useRouter();
+const AuthStore = useAuthStore();
 type data = {
   CoachID: number;
   CourseType: string;
@@ -349,65 +351,96 @@ const choosecoach = () => {
 const latitude = 21.2353;
 const longitude = 110.4195;
 const addr = "常态健身俱乐部";
-const toLocation = () => {
-  // 使用微信内置地图查看位置
-  uni.openLocation({
-    latitude: latitude, // 目的地的纬度
-    longitude: longitude, // 目的地的经度
-    name: addr, // 打开后显示的地址名称
-    address: addr, // 地址的详细说明
-    scale: 18, // 地图缩放级别，范围5-18
-  });
-};
+const pay = async (): Promise<void> => {
+  try {
+    if (inputName.value && inputPhone.value) {
+      // First, initiate the WeChat payment process
+      const res = await getPaySignature({
+        Amount: 1,
+        OpenID: AuthStore.user.OpenID,
+        Description: "私教课",
+      });
 
-const pay = () => {
-  if (inputName.value && inputPhone.value) {
-    let data = {
-      CoachID: coachForm.id,
-      CourseType: packageNo.value,
-      PaymentType: "WECHAT",
-      PaymentFor: "OTHER",
-      PaymentTo: "OTHER",
-      Remark: "",
-      UserPhone: inputName.value,
-      UserRealName: inputPhone.value,
-      Amount: Number(courseInfo.price),
-    };
-    if (packageNo.value == "LESSON") {
-      data["LessonCount"] = Number(pitchNumber.value);
-    }
-    buyCourse(data)
-      .then((res) => {
-        if (res.data.code == 200) {
-          uni.$emit("alreadyBuy");
-          uni.showToast({
-            title: "购买成功",
-            icon: "success",
-          });
-          setTimeout(() => {
-            router.push({
-              name: "home",
-            });
-          }, 2000);
-        } else
+      const paymentData = res.data.data;
+      const data: PaymentData = {
+        CoachID: coachForm.id,
+        CourseType: packageNo.value,
+        PaymentType: "WECHAT",
+        PaymentFor: "OTHER",
+        PaymentTo: "OTHER",
+        Remark: "",
+        UserPhone: inputName.value,
+        UserRealName: inputPhone.value,
+        Amount: Number(courseInfo.price),
+      };
+
+      if (packageNo.value === "LESSON") {
+        data.LessonCount = Number(pitchNumber.value);
+      }
+      ifCanBuy(data).then((res) => {
+        if (res.data.code != 200) {
           uni.showToast({
             title: res.data.msg,
             icon: "error",
           });
-      })
-      .catch((err) => {
-        uni.showToast({
-          title: "购买失败",
-          icon: "error",
-        });
+        } else {
+          uni.requestPayment({
+            provider: "wxpay",
+            timeStamp: paymentData.TimeStamp, // 时间戳
+            nonceStr: paymentData.NonceStr, // 随机字符串
+            package: paymentData.Package,
+            signType: paymentData.SignType, // 签名算法
+            paySign: paymentData.Sign, // 签名
+            success: async (response) => {
+              console.log("Payment success:", JSON.stringify(response));
+              uni.showToast({
+                title: "支付成功",
+                icon: "success",
+              });
+
+              // If payment succeeds, proceed with purchasing the course
+
+              try {
+                const buyResponse = await buyCourse(data);
+                if (buyResponse.data.code === 200) {
+                  uni.$emit("alreadyBuy");
+                  uni.showToast({
+                    title: "购买成功",
+                    icon: "success",
+                  });
+                  setTimeout(() => {
+                    router.push({ name: "home" });
+                  }, 2000);
+                } else {
+                  uni.showToast({
+                    title: buyResponse.data.msg,
+                    icon: "error",
+                  });
+                }
+              } catch (err) {
+                uni.showToast({
+                  title: "购买失败!请联系工作人员",
+                  icon: "error",
+                });
+              }
+            },
+            fail: (err) => {
+              console.log("Payment failed:", JSON.stringify(err));
+            },
+          });
+        }
       });
-  } else {
-    uni.showToast({
-      title: "请填写真实姓名和联系电话",
-      icon: "error",
-    });
+    } else {
+      uni.showToast({
+        title: "请填写真实姓名和联系电话",
+        icon: "error",
+      });
+    }
+  } catch (error) {
+    console.error("Error during payment process:", error);
   }
 };
+
 const copyPhone = () => {
   uni.setClipboardData({
     data: "32456", // e是你要保存的内容
