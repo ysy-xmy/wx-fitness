@@ -1,13 +1,11 @@
 <template>
-  <div class="tab-mycourse w-full flex flex-wrap justify-center pb-6">
+  <div class="tab-mycourse w-full pb-28 flex flex-wrap justify-center">
     <!-- 我的课程 -->
     <div
     v-if="list.length > 0"
       class="course-card mt-5 text-[#303440] rounded-lg w-11/12 bg-[#f7f9fb] relative flex flex-row h-36"
       v-for="(item, index) in list"
     >
-    <!-- <img class="w-full h-full rounded-lg -z-10 absolute" src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241027/1730017173023.png"/> -->
-    <!-- 课程图片，目前暂不支持设定，先隐藏 -->
       <img class="w-1/3 h-full rounded-l-lg" :src="item.Img" />
       <div class="main-content py-3 w-2/3 h-full content-evenly flex flex-wrap">
         <div class="w-full top flex justify-between">
@@ -16,7 +14,7 @@
             <van-circle
               stroke-width="4"
               size="45"
-              color="#ec6853"
+              color="#6eaaac"
               :value="item.Percentage"
               :text="item.Percentage + '%'"
               style="font-size: 13px!important;"
@@ -24,9 +22,9 @@
           </div>
         </div>
         <div class="mt-2 middle w-full flex justify-center">
-          <span>授课老师：{{ item.CoachName }}</span>
+          <span>教练：{{ item.CoachName }}</span>
         </div>
-        <div class="main-btn mt-4 flex px-8 w-full justify-between">
+        <div class="main-btn mt-4 flex px-8 w-full justify-end">
           <van-button
             class="custom-class"
             @click="
@@ -36,31 +34,11 @@
             type="warning"
             color="#ffffff"
             size="small"
-            ><span class="text-lg tracking-widest text-[#EC6853]">查 看</span>
-          </van-button>
-          <van-button
-            class="custom-class ml-2"
-            round
-            type="warning"
-            color="#ffffff"
-            size="small"
-            ><span
-              @click="
-                tomycourse(
-                  item.ID,
-                  item.Percentage,
-                  item.Name,
-                  item.Description
-                )
-              "
-              class="tracking-widest text-lg w-20 text-[#EC6853]"
-              >打 卡</span
-            >
+            ><span class="text-lg tracking-widest text-[#6eaaac]">查 看</span>
           </van-button>
         </div>
       </div>
     </div>
-
     <!-- 没有数据空状态 -->
     <div
       class="nodata-card flex flex-col justify-center items-center w-full"
@@ -68,16 +46,6 @@
     >
       <van-empty description="您还没有课程哦~，可以前往购买添加课程哦~" />
     </div>
-  </div>
-  <div style="width: 100%; text-align: center;font-size: 8px;" class="pb-10">
-    <van-button
-      @click="tocourse"
-      round
-      type="primary"
-      color="#fd7d46"
-      class="bottom-button"
-      >去 添 加</van-button
-    >
   </div>
 </template>
 <script setup lang="ts">

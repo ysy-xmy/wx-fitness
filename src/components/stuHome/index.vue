@@ -7,7 +7,7 @@
         src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
       />
     </div>
-    <div class="tabs bg-white pt-10 rounded-t-2xl shadow-white absolute top-60 w-full">
+    <div class="tabs bg-white pt-4 rounded-t-2xl shadow-white absolute top-60 w-full">
       <CustomTabs :initialActive="active">
         <template #buy>
           <tabBuycourse />

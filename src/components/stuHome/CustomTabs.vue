@@ -57,10 +57,12 @@ function selectTab(name: string) {
   padding: 8px 20px;
   border-bottom: 2px solid transparent;
   border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 4px 20px rgba(110, 170, 172, 0.2);
   display: flex;
   flex-direction: row;
   justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+
 }
 
 .tab-icon{
@@ -75,12 +77,13 @@ function selectTab(name: string) {
 
 .tab-header.active {
   border-color: #6eaaac;
-  background-color: #f9f9f9;
   transition: all 0.3s ease;
   transform: scale(1.05);
+  box-shadow: 4px 4px 20px rgba(110, 170, 172, 0.2);
 }
 
 .tab-content {
   background-color: #fff;
+  overflow-y: auto;
 }
 </style>
