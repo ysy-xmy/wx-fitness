@@ -19,7 +19,9 @@
         display: flex;
         width: 100vw;
         justify-content: space-evenly;
+        align-items: center;
         margin-top: 10px;
+        margin-bottom: 20px;
       "
     >
       <picker
@@ -27,19 +29,41 @@
         :value="beginTime"
         @change="DateBeginChange"
         :end="today"
-        style="background-color: rgba(0, 0, 0, 0.2)"
+        style="
+          background: #f2f6ff;
+          border-radius: 10px 10px 10px 10px;
+          font-size: 15px;
+          color: #8190a7;
+          line-height: 17px;
+          width: 115px;
+          height: 17px;
+          text-align: center;
+          font-style: normal;
+          text-transform: none;
+        "
       >
         <view class="picker">
           {{ beginTime }}
         </view>
       </picker>
-      <div>--</div>
+      <div style="width: 71px; height: 6px; background-color: #8190a7"></div>
       <picker
         mode="date"
         :value="endTime"
         @change="DateEndChange"
         :end="today"
-        style="background-color: rgba(0, 0, 0, 0.2)"
+        style="
+          background: #f2f6ff;
+          width: 115px;
+          height: 17px;
+          border-radius: 10px 10px 10px 10px;
+          font-size: 15px;
+          color: #8190a7;
+          line-height: 17px;
+          text-align: center;
+          font-style: normal;
+          text-transform: none;
+        "
       >
         <view class="picker">
           {{ endTime }}
@@ -48,137 +72,165 @@
     </div>
     <!-- 其他普通数据 -->
     <div
-      class="add-card bg-[#f2f6ff] h-52 absolute w-screen pt-8 z-10 bottom-0"
+      class="flex flex-col gap-[5px] absolute w-screen z-10 bottom-[50px] mt-[5px]"
       v-if="typeVal != 1"
     >
-      <div class="flex card-top">
-        <span class="text-[#6D819C] text-[14px] px-[20px]"
-          >更新于: {{ dataList.timeMonth }} 月 {{ dataList.timeDay }} 日,
-          {{ dataList.beginYear }}</span
-        >
-      </div>
-
-      <div class="flex card-content px-[20px] py-[10px] items-center">
-        <span class="text-[#6D819C] text-[14px] mr-5">{{ dataList.type }}</span
-        ><span class="text-[#282C37] text-[36px] tracking-wide font-bold">{{
-          dataList.data
-        }}</span>
-      </div>
-
-      <div class="flex card-bottom px-[20px] py-[10px]">
-        <div class="left-box flex-col flex">
-          <span class="text-[#6D819C] text-[14px] mr-5 mb-1"
-            >{{ dataList.sententce }}{{ dataList.beginMonth }} 月
-            {{ dataList.beginDay }} 日，{{ dataList.beginYear }}</span
+      <!-- 上面卡片 -->
+      <div class="w-[90%] h-[100px] bg-[#f2f6ff] mx-auto rounded-[20px] p-4">
+        <div class="flex card-top mb-2">
+          <span class="text-[#6D819C] text-[17px] font-bold"
+            >更新于: {{ dataList.timeMonth }} 月 {{ dataList.timeDay }} 日,
+            {{ dataList.beginYear }}</span
           >
-          <span class="text-[#282C37] text-[24px] tracking-wide">{{
-            dataList.beginData
-          }}</span>
         </div>
-        <div class="right-box flex-col flex items-center">
-          <span class="text-[#6D819C] text-[14px] mr-5 mb-1">变化</span>
-          <span class="text-[#FF8D1A] text-[36px] tracking-wide">{{
-            dataList.change
+
+        <div class="flex items-center">
+          <span class="text-[#6D819C] text-[17px] font-bold mr-5">{{
+            dataList.type
           }}</span>
+          <span class="text-black text-[20px]">{{ dataList.data }}</span>
         </div>
       </div>
 
-      <van-button
-        @click="showModal"
-        size="large"
-        type="primary"
-        round
-        class="btn-gradient absolute top-10 right-10 w-[100px] h-[40px]"
-        color="linear-gradient(90deg, #FF6243 0%, #FF0072 100%)"
-      >
-        <span>添 加</span>
-      </van-button>
+      <!-- 下面卡片 -->
+      <div class="w-[90%] h-[100px] bg-[#f2f6ff] mx-auto rounded-[20px] p-4">
+        <div class="flex justify-between">
+          <div class="flex-2">
+            <span class="text-[#6D819C] text-[17px] font-bold block mb-2"
+              >{{ dataList.sententce }}{{ dataList.beginMonth }} 月
+              {{ dataList.beginDay }} 日，{{ dataList.beginYear }}</span
+            >
+            <span class="text-black text-[20px]">{{ dataList.beginData }}</span>
+          </div>
+          <div class="flex-1 text-right">
+            <span class="text-[#6D819C] text-[17px] font-bold block mb-2"
+              >变化</span
+            >
+            <span class="text-[#FF8D1A] text-[20px]">{{
+              dataList.change
+            }}</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- 三维的数据 -->
-    <div
-      class="add-card bg-[#f2f6ff] h-52 absolute w-screen pt-8 z-10 bottom-0"
-      v-else
+    <!-- <van-button
+      v-if="typeVal != 1"
+      @click="showModal"
+      size="large"
+      type="primary"
+      round
+      class="btn-gradient w-[100px] h-[40px]"
+      color="linear-gradient(90deg, #FF6243 0%, #FF0072 100%)"
     >
-      <div class="flex card-top">
-        <span class="text-[#6D819C] text-[14px] px-[20px]"
-          >更新于: {{ dimensionalData.timeMonth }} 月
-          {{ dimensionalData.timeDay }} 日,
-          {{ dimensionalData.beginYear }}</span
-        >
+      <span>添 加</span>
+    </van-button> -->
+    <!-- 三维的数据 -->
+    <div class="add-card absolute pt-8 z-10 bottom-[50px] w-screen" v-else>
+      <!-- 上卡片 -->
+      <div
+        class="bg-[#f2f6ff] rounded-lg shadow-sm mb-[5px] p-4 h-[100px] w-[90%] mx-auto"
+      >
+        <div class="flex card-top mb-1">
+          <span class="text-[#6D819C] text-[14px]"
+            >更新于: {{ dimensionalData.timeMonth }} 月
+            {{ dimensionalData.timeDay }} 日,
+            {{ dimensionalData.beginYear }}</span
+          >
+        </div>
+
+        <div class="card-content py-[8px] flex items-center">
+          <div class="mr-5">
+            <p class="text-[#6D819C] text-[15px] mr-5 mb-1">
+              <span class="text-[#44DB5E] text-[15px] mr-2 font-bold">·</span
+              >胸围
+            </p>
+            <p class="text-[#282C37] text-[20px] tracking-wide">
+              {{ dimensionalData.timeBust }}
+            </p>
+          </div>
+          <div class="mr-5">
+            <p class="text-[#6D819C] text-[15px] mr-5 mb-1">
+              <span class="text-[#FF5E3A] text-[15px] mr-2 font-bold">·</span
+              >腰围
+            </p>
+            <p class="text-[#282C37] text-[20px] tracking-wide">
+              {{ dimensionalData.timeWaistline }}
+            </p>
+          </div>
+          <div class="mr-5">
+            <p class="text-[#6D819C] text-[15px] mr-5 mb-1">
+              <span class="text-[#5856D6] text-[15px] mr-2 font-bold">·</span
+              >臀围
+            </p>
+            <p class="text-[#282C37] text-[20px] tracking-wide">
+              {{ dimensionalData.timeHips }}
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div class="card-content px-[20px] py-[10px] items-center flex">
-        <div class="mr-5">
-          <p class="text-[#6D819C] text-[15px] mr-5">
-            <span class="text-[#44DB5E] text-[15px] mr-2 font-bold">·</span>胸围
-          </p>
-          <p class="text-[#282C37] text-[23px] tracking-wide font-bold">
-            {{ dimensionalData.timeBust }}
-          </p>
-        </div>
-        <div class="mr-5">
-          <p class="text-[#6D819C] text-[15px] mr-5">
-            <span class="text-[#FF5E3A] text-[15px] mr-2 font-bold">·</span>腰围
-          </p>
-          <p class="text-[#282C37] text-[23px] tracking-wide font-bold">
-            {{ dimensionalData.timeWaistline }}
-          </p>
-        </div>
-        <div class="mr-5">
-          <p class="text-[#6D819C] text-[15px] mr-5">
-            <span class="text-[#5856D6] text-[15px] mr-2 font-bold">·</span>臀围
-          </p>
-          <p class="text-[#282C37] text-[23px] tracking-wide font-bold">
-            {{ dimensionalData.timeHips }}
-          </p>
-        </div>
-      </div>
-      <div class="left-box flex-col flex px-[20px]">
-        <span class="text-[#6D819C] text-[14px] mr-5 mb-1"
-          >初始数据{{ dimensionalData.beginMonth }} 月
-          {{ dimensionalData.beginDay }} 日，{{
-            dimensionalData.beginYear
-          }}</span
-        >
-      </div>
-      <div class="card-content px-[20px] py-[10px] items-center flex">
-        <div class="mr-5">
-          <p class="text-[#6D819C] text-[15px] mr-5">
-            <span class="text-[#44DB5E] text-[15px] mr-2 font-bold">·</span>胸围
-          </p>
-          <p class="text-[#282C37] text-[23px] tracking-wide font-bold">
-            {{ dimensionalData.beginBust }}
-          </p>
-        </div>
-        <div class="mr-5">
-          <p class="text-[#6D819C] text-[15px] mr-5">
-            <span class="text-[#FF5E3A] text-[15px] mr-2 font-bold">·</span>腰围
-          </p>
-          <p class="text-[#282C37] text-[23px] tracking-wide font-bold">
-            {{ dimensionalData.beginWaistline }}
-          </p>
-        </div>
-        <div class="mr-5">
-          <p class="text-[#6D819C] text-[15px] mr-5">
-            <span class="text-[#5856D6] text-[15px] mr-2 font-bold">·</span>臀围
-          </p>
-          <p class="text-[#282C37] text-[23px] tracking-wide font-bold">
-            {{ dimensionalData.beginHips }}
-          </p>
-        </div>
-      </div>
-      <van-button
-        @click="showModal"
-        size="large"
-        type="primary"
-        round
-        class="btn-gradient absolute top-10 right-10 w-[100px] h-[40px]"
-        color="linear-gradient(90deg, #FF6243 0%, #FF0072 100%)"
+      <!-- 下卡片 -->
+      <div
+        class="bg-[#f2f6ff] rounded-lg shadow-sm p-4 h-[100px] w-[90%] mx-auto"
       >
-        <span>添 加</span>
-      </van-button>
+        <div class="left-box flex-col flex mb-1">
+          <span class="text-[#6D819C] text-[14px]"
+            >初始数据{{ dimensionalData.beginMonth }} 月
+            {{ dimensionalData.beginDay }} 日，{{
+              dimensionalData.beginYear
+            }}</span
+          >
+        </div>
+        <div class="card-content py-[8px] flex items-center">
+          <div class="mr-5">
+            <p class="text-[#6D819C] text-[15px] mr-5 mb-1">
+              <span class="text-[#44DB5E] text-[15px] mr-2 font-bold">·</span
+              >胸围
+            </p>
+            <p class="text-[#282C37] text-[20px] tracking-wide">
+              {{ dimensionalData.beginBust }}
+            </p>
+          </div>
+          <div class="mr-5">
+            <p class="text-[#6D819C] text-[15px] mr-5 mb-1">
+              <span class="text-[#FF5E3A] text-[15px] mr-2 font-bold">·</span
+              >腰围
+            </p>
+            <p class="text-[#282C37] text-[20px] tracking-wide">
+              {{ dimensionalData.beginWaistline }}
+            </p>
+          </div>
+          <div class="mr-5">
+            <p class="text-[#6D819C] text-[15px] mr-5 mb-1">
+              <span class="text-[#5856D6] text-[15px] mr-2 font-bold">·</span
+              >臀围
+            </p>
+            <p class="text-[#282C37] text-[20px] tracking-wide">
+              {{ dimensionalData.beginHips }}
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
     <echart :endTime="endTime" :beginTime="beginTime" />
+    <button
+      @click="showModal"
+      style="
+        width: 105px;
+        height: 36px;
+        line-height: 36px;
+        font-size: 20px;
+        position: absolute;
+        bottom: 10px;
+        right: 50px;
+        background-color: rgba(109, 132, 185, 0.85);
+        color: white;
+        float: right;
+        border-radius: 20px;
+      "
+    >
+      <span>添 加</span>
+    </button>
   </div>
 
   <view class="cu-modal bottom-modal" :class="show ? 'show' : ''">
@@ -560,3 +612,12 @@ const addNewData = async () => {
   }
 };
 </script>
+<style lang="scss" scoped>
+:deep(.cur) {
+  // background-color: blue !important;
+  background: #5bd0e1;
+  border-radius: 10px;
+  color: white;
+  border: 0;
+}
+</style>

@@ -1,42 +1,98 @@
 <template>
+  <scroll-view
+    v-if="type != 1"
+    scroll-x
+    class="bg-white nav"
+    style="
+      width: 130px;
+      margin: 0 auto;
+      font-size: small;
+      /* height: 30px;
+      line-height: 30px; */
+    "
+  >
+    <view class="flex text-center">
+      <view
+        class="cu-item flex-sub"
+        :class="timeKind == 'month' ? 'text-[#FF5E3A] cur' : ''"
+        @tap="() => changeTimeList({ detail: { name: 'month' } })"
+      >
+        月
+      </view>
+      <view
+        class="cu-item flex-sub"
+        :class="timeKind == 'week' ? 'text-[#FF5E3A] cur' : ''"
+        @tap="() => changeTimeList({ detail: { name: 'week' } })"
+      >
+        周
+      </view>
+      <view
+        class="cu-item flex-sub"
+        :class="timeKind == 'day' ? 'text-[#FF5E3A] cur' : ''"
+        @tap="() => changeTimeList({ detail: { name: 'day' } })"
+      >
+        日
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view
+    v-else
+    scroll-x
+    class="bg-white nav"
+    style="
+      width: 260px;
+      margin: 20px auto;
+      font-size: small;
+
+      line-height: 30px;
+      margin-top: 20px;
+    "
+  >
+    <view class="flex text-center">
+      <view
+        class="cu-item flex-sub"
+        :class="kind == 'bust' ? 'text-[#FF5E3A] cur' : ''"
+        @tap="() => changeList({ detail: { name: 'bust' } })"
+      >
+        胸围
+      </view>
+      <view
+        class="cu-item flex-sub"
+        :class="kind == 'waist' ? 'text-[#FF5E3A] cur' : ''"
+        @tap="() => changeList({ detail: { name: 'waist' } })"
+      >
+        腰围
+      </view>
+      <view
+        class="cu-item flex-sub"
+        :class="kind == 'hip' ? 'text-[#FF5E3A] cur' : ''"
+        @tap="() => changeList({ detail: { name: 'hip' } })"
+      >
+        臀围
+      </view>
+    </view>
+  </scroll-view>
+
   <view>
-    <van-tabs
-      v-if="type != 1"
-      type="card"
-      :active="timeKind"
-      @change="changeTimeList"
+    <div
       style="
-        width: 130px;
-        float: right;
-        font-size: small;
-        height: 30px;
-        line-height: 30px;
+        width: 94%;
+        height: 100%;
+        margin: 0 auto;
+        background: #ebf6d8;
+        border-radius: 30px 30px 30px 30px;
+        opacity: 0.66;
         margin-top: 20px;
+        z-index: -1;
       "
     >
-      <van-tab title="月" name="month"></van-tab>
-      <van-tab title="周" name="week"></van-tab>
-      <van-tab title="日" name="day"></van-tab>
-    </van-tabs>
-    <van-tabs
-      v-else
-      type="card"
-      :active="kind"
-      @change="changeList"
-      style="
-        width: 260px;
-        float: right;
-        font-size: small;
-        height: 30px;
-        line-height: 30px;
-        margin-top: 20px;
-      "
-    >
-      <van-tab title="胸围" name="bust"></van-tab>
-      <van-tab title="腰围" name="waist"></van-tab>
-      <van-tab title="臀围" name="hip"></van-tab>
-    </van-tabs>
-    <l-echart ref="chart" @finished="init"></l-echart>
+      <l-echart
+        ref="chart"
+        @finished="init"
+        style="background-color: red; z-index: -1"
+      ></l-echart>
+    </div>
   </view>
 </template>
 
@@ -110,7 +166,7 @@ const changeType = (active) => {
           uni.hideLoading();
         }
       );
-    } else if ((timeKind.value = "month" && temp.value != "three")) {
+    } else if (timeKind.value == "month" && temp.value != "three") {
       getLastValuePerMonth(res.data.data, props.beginTime, props.endTime).then(
         () => {
           init();
@@ -132,7 +188,7 @@ const init = () => {
   chart.value.init(echarts, (chartInstance) => {
     const option = {
       tooltip: {
-        trigger: "axis", // 或 "axis", 根据需求选择
+        trigger: "axis",
         formatter: (params) => {
           return `${params[0].axisValue}: ${params[0].data}`;
         },
@@ -149,6 +205,35 @@ const init = () => {
           data: yAxis.value,
           type: "line",
           smooth: true,
+          emphasis: {
+            focus: "series",
+          },
+          // 添加区域填充
+          areaStyle: {
+            color: {
+              type: "linear",
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: "rgba(58,177,255,0.5)", // 渐变起始颜色
+                },
+                {
+                  offset: 1,
+                  color: "rgba(58,177,255,0.1)", // 渐变结束颜色
+                },
+              ],
+            },
+          },
+          lineStyle: {
+            color: "#3AB1FF", // 线条颜色
+          },
+          itemStyle: {
+            color: "#3AB1FF", // 数据点颜色
+          },
         },
       ],
     };
@@ -479,10 +564,26 @@ const getLastValuePerMonth = async (data, startDateString, endDateString) => {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .customTooltips {
   position: absolute;
   background-color: rgba(255, 255, 255, 0.8);
   padding: 20rpx;
+}
+
+:deep(.tab-active-class) {
+  background-color: rgba(156, 166, 140, 1) !important;
+  color: white !important;
+}
+.cur {
+  background: rgba(156, 166, 140, 1);
+}
+canvas {
+  z-index: -1;
+}
+</style>
+<style>
+:deep(.nav-class) {
+  background: 0 !important;
 }
 </style>

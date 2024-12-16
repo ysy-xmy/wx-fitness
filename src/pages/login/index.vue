@@ -45,7 +45,7 @@ function login() {
 
       //客户端成功获取授权临时票据（code）,向业务服务器发起登录请求。
       uni.request({
-        url: `https://meet.ysyxmy.top/api/user/wx-login?code=${code}`,
+        url: `https://2018ctjs.cn/api/user/wx-login?code=${code}`,
         method: "POST",
         success: (res: any) => {
           let OpenID = res.data.data.OpenID;
@@ -81,16 +81,13 @@ function login() {
             });
           })
             .then((res: any) => {
-              console.log(res);
               const { nickName, avatarUrl, gender } = res.userInfo;
-
               const userInfo = {
                 OpenID: OpenID,
                 Username: nickName,
                 Avatar: avatarUrl,
                 Sex: gender,
-              };
-
+              } as UserInfo;
               updateUserInfo(userInfo)
                 .then(() => {
                   console.log("更新用户信息成功");

@@ -109,7 +109,6 @@ onMounted(() => {
     getPlan();
   });
   // 获取路由参数
-  console.log(router.route.value.params);
   const id = router.route.value.params?.id;
   iddd.value = router.route.value.params?.id; //直接堆了
   courseId.value = router.route.value.params?.id;
@@ -117,6 +116,7 @@ onMounted(() => {
   const desc = router.route.value.params?.desc;
   const Percentage = router.route.value.params?.Percentage;
   selectCoachClok(id).then((res) => {
+    console.log(res,'dfg');
     if (res.data.data == false) checked.value = false;
     else checked.value = true;
   });

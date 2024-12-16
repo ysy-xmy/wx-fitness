@@ -25,12 +25,14 @@
                 />
               </div>
               <div
-                class="w-5/6 flex pl-2 flex-row items-center justify-between"
+                class="flex-1 flex pl-2 flex-row items-center justify-between"
               >
                 <div class="text-box">
                   <div class="title">
-                    <h1 class="text-lg font-bold py-2">
-                      {{ item.Username }}
+                    <h1 class="w-full flex text-lg font-bold py-2">
+                      <span class="max-w-[130px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden">
+                        {{ item.Username }}
+                      </span>
                       <text
                         v-if="item.Sex"
                         style="font-size: 25px; color: #a54aff"

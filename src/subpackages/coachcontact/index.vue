@@ -3,7 +3,7 @@
     :style="{ overflow: modalHidden ? 'auto' : 'hidden', height: '100vh' }"
     class="main-container bg-[#f9f9f9] min-h-screen w-screen px-5"
   >
-    <div class="bg-white coachlist p-2">
+    <div class="bg-white coachlist">
       <div
         v-for="item in coachlist"
         :key="item.ID"
@@ -47,6 +47,7 @@
               <van-button
                 @click="choose(item)"
                 size="small"
+                color="#3bd5dd"
                 round
                 type="primary"
                 ><span class="text-">选择</span></van-button
@@ -57,8 +58,10 @@
                 @click="contact(item.WeChatBusinessImg)"
                 size="small"
                 round
+                color="#3bd5dd"
                 type="primary"
-                ><span class="text-">联系</span></van-button
+                ><span >联系</span>
+                </van-button
               >
             </div>
           </div>

@@ -130,7 +130,7 @@
           class="w-full rounded-lg"
           size="large"
           type="primary"
-          color="#fd7d46"
+          color="#3bd5dd"
           >报名</van-button
         >
       </div>
