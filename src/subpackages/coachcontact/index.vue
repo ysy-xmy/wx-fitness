@@ -7,11 +7,10 @@
       <div
         v-for="item in coachlist"
         :key="item.ID"
-        class="lists-item flex flex-nowrap items-center justify-between p-1"
+        class="lists-item flex content-center items-center justify-between"
       >
-        <div class="mr-2">
           <img
-            class="w-12 h-12 rounded-full"
+            class="w-12 h-12 m-auto rounded-full"
             :src="
               item.Avatar
                 ? item.Avatar
@@ -19,11 +18,10 @@
             "
             alt=""
           />
-        </div>
         <div class="w-5/6 flex pl-3 flex-row items-center justify-between">
           <div class="text-box">
             <div class="title">
-              <h1 class="text-lg font-bold py-2">
+              <h1 class="text-lg font-bold pb-1">
                 {{ item.Username }}
                 <span class="text-xs text-[#6b7280]"></span>
                 <text
