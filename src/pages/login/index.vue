@@ -45,7 +45,7 @@ function login() {
 
       //客户端成功获取授权临时票据（code）,向业务服务器发起登录请求。
       uni.request({
-        url: `https://2018ctjs.cn/api/user/wx-login?code=${code}`,
+        url: `https://api.2018ctjs.cn/api/user/wx-login?code=${code}`,
         method: "POST",
         success: (res: any) => {
           let OpenID = res.data.data.OpenID;
