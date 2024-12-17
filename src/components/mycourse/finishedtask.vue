@@ -1,7 +1,7 @@
 <template>
   <div class="finished-task container pb-20 w-full h-full">
-
-    <div
+    <Finishtabs />
+    <!-- <div
       class="nodata-card flex flex-col justify-center items-center w-full"
       v-if="Object.keys(props.list).length == 0"
     >
@@ -34,7 +34,7 @@
           </div>
         </view>
       </view>
-    </view> 
+    </view>  -->
   </div>
 </template>
 

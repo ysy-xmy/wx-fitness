@@ -2,11 +2,14 @@
   <div class="course-container">
     <div class="course-item">
       <div class="icon online-icon"></div>
-      <span>线上课程</span>
+      <span class="flex-1 text-center text-xl">线上课程</span>
+      <div class="icon opacity-100"></div>
+
     </div>
     <div class="course-item">
+      <div class="icon opacity-100"></div>
+      <span class="flex-1 text-center text-xl">线下课程</span>
       <div class="icon offline-icon"></div>
-      <span>线下课程</span>
     </div>
   </div>
 </template>
@@ -17,11 +20,12 @@
 
 <style scoped>
 .course-container {
-  width: 300px;
+  width: 100%;
   height: 200px;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
 }
 
 .course-item {
@@ -29,14 +33,12 @@
   align-items: center;
   background-color: #f5f5f5;
   border-radius: 10px;
-  padding: 10px;
 }
 
 .icon {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   background-size: cover;
-  margin-right: 10px;
 }
 
 .online-icon {
