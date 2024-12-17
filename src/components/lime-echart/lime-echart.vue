@@ -78,7 +78,7 @@
     <div
       style="
         width: 94%;
-        height: 100%;
+        /* height: 100%; */
         margin: 0 auto;
         background: #ebf6d8;
         border-radius: 30px 30px 30px 30px;
