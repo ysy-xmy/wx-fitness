@@ -1,24 +1,24 @@
 <template>
-  <div class="main-container">
+  <div class="main-container relative">
     <div class="top">
       <div class="bg-img">
         <img
-          class="w-full h-40"
+          class="w-full h-52"
           src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241027/1730030052587.png"
           alt=""
         />
       </div>
     </div>
-    <div class="info-card w-full flex justify-center p-4">
+    <div class="info-card rounded-t-xl bg-white absolute top-40 w-full flex flex-col justify-center p-4">
       <div class="card w-full bg-[#f7f9fb] p-3">
         <div class="card-top">
           <div class="title w-full flex justify-between items-center px-1">
-            <h2 class="text-xl font-bold">{{ state.name }}</h2>
+            <h2 class="text-xl text-black font-bold">{{ state.name }}</h2>
             <van-circle
               stroke-width="6"
               size="60"
               layer-color="#ebedf0"
-              color="#ec6853"
+              :color="gradientColor"
               :value="state.Percentage"
               :text="state.Percentage + '%'"
               style="font-size: 13px!important"
@@ -32,18 +32,19 @@
           <div
             class="body-btn w-1/3 flex-1 flex flex-col items-center justify-end"
           >
-            <span class="text-[#0c96f2] text-xs w-full text-center pb-2">
-              授权教练打卡
+            <span class="text-[#359be5]  text-xs w-full text-center pb-2">
+                授权教练打卡
             </span>
-            <div class="btn ml-2">
+            <div class="btn">
               <van-switch :checked="checked" @change="handleswitch" />
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="mycourse-tabs">
-      <van-tabs swipeable animated>
+      <Finishtabs/>
+
+      <div class="mycourse-tabs">
+      <van-tabs swipeable animated color="#46c5e5">
         <van-tab title="已完成">
           <finishedtask :list="finish"></finishedtask>
         </van-tab>
@@ -55,6 +56,8 @@
         </van-tab>
       </van-tabs>
     </div>
+    </div>
+
   </div>
 </template>
 <script lang="ts" setup name="mycourse">
@@ -67,6 +70,8 @@ import {
 } from "@/api/courses/courses";
 import { getplanlist } from "@/api/course";
 import dayjs from "dayjs";
+import Finishtabs from './finishtabs.vue'
+
 const router = useRouter();
 const state = ref({
   id: "",
@@ -74,6 +79,10 @@ const state = ref({
   desc: "",
   Percentage: "",
 });
+const gradientColor = {
+  '0%': '#3ed2de',
+  '100%': '#5aa6f4',
+};
 // 定义 list 对象的类型
 interface ActionItem {
   timesNum: number;

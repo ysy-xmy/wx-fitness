@@ -86,8 +86,6 @@ const seeDetail = (id) => {
   });
 };
 const handlefinish = (id: any) => {
-  console.log(id);
-  console.log("finish");
   // Notify({ type: 'success', message: '通知内容' });
   uni.showModal({
     title: "日常打卡",
