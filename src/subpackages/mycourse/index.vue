@@ -41,7 +41,7 @@
           </div>
         </div>
       </div>
-      <Finishtabs/>
+      <!-- <Finishtabs/> -->
 
       <div class="mycourse-tabs">
       <van-tabs swipeable animated color="#46c5e5">
@@ -70,7 +70,7 @@ import {
 } from "@/api/courses/courses";
 import { getplanlist } from "@/api/course";
 import dayjs from "dayjs";
-import Finishtabs from './finishtabs.vue'
+// import Finishtabs from './finishtabs.vue'
 
 const router = useRouter();
 const state = ref({
