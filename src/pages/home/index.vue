@@ -151,12 +151,14 @@ onMounted(() => {
         uni.hideLoading();
         permission.value = res.data.data.RoleName;
         AuthStore.setUser({
+          OpenID: res.data.data.OpenID,
           name: res.data.data.Username || "微信用户",
           id: res.data.data.ID,
           phone: res.data.data.phone,
           Sex: res.data.data.Sex || 0,
           img: res.data.data.Avatar,
           RoleName: res.data.data.RoleName,
+          Age: res.data.data.Age || "18",
         });
         if (res.data.data.RoleName == "coach") {
           getCoachClass(res.data.data.ID)

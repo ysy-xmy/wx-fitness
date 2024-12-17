@@ -41,7 +41,7 @@
             </div>
           </div>
           <div class="flex h-full">
-            <div class="btn h-full mr-2" v-if="ifChoose=='true'">
+            <div class="btn h-full mr-2" v-if="ifChoose == 'true'">
               <van-button
                 @click="choose(item)"
                 size="small"
@@ -118,7 +118,7 @@ const choose = (item: any) => {
     } else {
       uni.showToast({
         title: "该教练暂未发布课程",
-		icon:'fail'
+        icon: 'error',
       });
     }
   });
@@ -145,7 +145,8 @@ const init = () => {
 };
 const ifChoose = ref(false);
 onMounted(() => {
-  if (router.route.value.query.ifChoose) ifChoose.value = router.route.value.query.ifChoose;
+  if (router.route.value.query.ifChoose)
+    ifChoose.value = router.route.value.query.ifChoose;
   init();
 });
 </script>

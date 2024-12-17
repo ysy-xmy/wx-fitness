@@ -1,7 +1,18 @@
 <template>
   <div class="tab-mycourse w-full pb-28 flex flex-wrap justify-center">
+    <van-collapse accordion value="{{ activeName }}" v-if="list.length > 0">
+      <van-collapse-item title="标题1" name="1">
+        代码是写出来给人看的，附带能在机器上运行
+      </van-collapse-item>
+      <van-collapse-item title="标题2" name="2">
+        代码是写出来给人看的，附带能在机器上运行
+      </van-collapse-item>
+      <van-collapse-item title="标题3" name="3">
+        代码是写出来给人看的，附带能在机器上运行
+      </van-collapse-item>
+    </van-collapse>
     <!-- 我的课程 -->
-    <div
+    <!-- <div
     v-if="list.length > 0"
       class="course-card mt-5 text-[#303440] rounded-lg w-11/12 bg-[#f7f9fb] relative flex flex-row h-36"
       v-for="(item, index) in list"
@@ -38,7 +49,7 @@
           </van-button>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- 没有数据空状态 -->
     <div
       class="nodata-card flex flex-col justify-center items-center w-full"
@@ -128,12 +139,12 @@ onMounted(() => {
 });
 </script>
 <style scoped>
-.course-card{
+.course-card {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
 }
-.van-circle__text{
-  font-size: 8px!important;
+.van-circle__text {
+  font-size: 8px !important;
 }
 </style>

@@ -17,9 +17,9 @@
           <span> {{ courseInfo.title }} </span>
         </div>
 
-        <view class="text-[#606369] text-xl font-bold"
-          >{{ coachForm.ifFind ? '￥'+courseInfo.price : '' }}</view
-        >
+        <view class="text-[#606369] text-xl font-bold">{{
+          coachForm.ifFind ? "￥" + courseInfo.price : ""
+        }}</view>
       </div>
       <div @click="toLocation" class="px-5 pb-5 pt-0 flex justify-between">
         <span class="mr-2">
@@ -239,9 +239,9 @@
     </div>
 
     <view class="cu-bar bg-white tabbar flex justify-between shop foot">
-      <view class="text-[#e4595c] text-xl font-bold px-8"
-        >{{coachForm.ifFind? '￥'+courseInfo.price:'' }}</view
-      >
+      <view class="text-[#e4595c] text-xl font-bold px-8">{{
+        coachForm.ifFind ? "￥" + courseInfo.price : ""
+      }}</view>
 
       <view class="px-4 flex justify-end">
         <button @click="pay" class="cu-btn w-28 bg-cyan round text-white">
@@ -256,8 +256,10 @@ import { onMounted, reactive, ref, watch, computed } from "vue";
 import { getPrice } from "../apis/api";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
-import { buyCourse } from "../apis/pay/index";
+import { useAuthStore } from "@/state/modules/auth";
+import { buyCourse, getPaySignature, ifCanBuy } from "../apis/pay/index";
 const router = useRouter();
+const AuthStore = useAuthStore();
 type Data = {
   CoachID: string;
   CourseType: string;
@@ -370,17 +372,28 @@ const toLocation = () => {
     scale: 18, // 地图缩放级别，范围5-18
   });
 };
+const pay = async () => {
+  try {
+    // 验证教练是否已选择
+    if (!coachForm.ifFind) {
+      uni.showToast({
+        title: "请先选择教练",
+        icon: "error",
+      });
+      return;
+    }
 
-const pay = () => {
-  if (!coachForm.ifFind) {
-    uni.showToast({
-      title: "请先选择教练",
-      icon: "error",
-    });
-    return;
-  }
-  if (inputName.value && inputPhone.value) {
-    let data: Data = {
+    // 验证个人信息
+    if (!inputName.value || !inputPhone.value) {
+      uni.showToast({
+        title: "请填写真实姓名和联系电话",
+        icon: "error",
+      });
+      return;
+    }
+
+    // 准备请求数据
+    const data: Data = {
       CoachID: coachForm.id,
       CourseType: packageNo.value,
       PaymentType: "WECHAT",
@@ -391,41 +404,65 @@ const pay = () => {
       UserRealName: inputPhone.value,
       Amount: Number(courseInfo.price),
     };
-    if (packageNo.value == "LESSON") {
+
+    if (packageNo.value === "LESSON") {
       data.LessonCount = Number(pitchNumber.value);
     }
-    buyCourse(data)
-      .then((res) => {
-        if (res.data.code == 200) {
-          uni.$emit("alreadyBuy");
-          uni.showToast({
-            title: "购买成功",
-            icon: "success",
-          });
-          setTimeout(() => {
-            router.push({
-              name: "home",
+
+    // 获取支付签名
+    const signatureRes = await getPaySignature(data);
+    const paymentData = signatureRes.data.data;
+
+    // 发起支付
+    uni.requestPayment({
+      provider: "wxpay",
+      timeStamp: paymentData.TimeStamp,
+      nonceStr: paymentData.NonceStr,
+      package: paymentData.Package,
+      signType: paymentData.SignType,
+      paySign: paymentData.Sign,
+      success: async () => {
+        try {
+          const buyResponse = await buyCourse(data);
+          if (buyResponse.data.code === 200) {
+            uni.$emit("alreadyBuy");
+            uni.showToast({
+              title: "购买成功",
+              icon: "success",
             });
-          }, 2000);
-        } else
+            setTimeout(() => {
+              router.push({ name: "home" });
+            }, 2000);
+          } else {
+            uni.showToast({
+              title: buyResponse.data.msg,
+              icon: "error",
+            });
+          }
+        } catch (err) {
           uni.showToast({
-            title: res.data.msg,
+            title: "购买失败!请联系工作人员",
             icon: "error",
           });
-      })
-      .catch((err) => {
+        }
+      },
+      fail: (err) => {
+        console.log("支付失败:", err);
         uni.showToast({
-          title: "购买失败",
-          icon: "error",
+          title: "支付已取消",
+          icon: "none",
         });
-      });
-  } else {
+      },
+    });
+  } catch (error) {
+    console.error("支付过程出错:", error);
     uni.showToast({
-      title: "请填写真实姓名和联系电话",
+      title: "支付异常，请稍后重试",
       icon: "error",
     });
   }
 };
+
 const copyPhone = () => {
   uni.setClipboardData({
     data: "32456", // e是你保存的内容
