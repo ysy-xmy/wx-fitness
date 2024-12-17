@@ -66,10 +66,10 @@
                 style="
                   width: 60px;
                   height: 25px;
-                  border: 3px solid #ffffff;
+                  border: 1.5px solid #ffffff;
                   color: #ffffff;
                   text-align: center;
-                  border-radius: 12px 12px 12px 12px;
+                  border-radius: 12px;
                 "
               >
                 查 看
