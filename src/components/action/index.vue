@@ -35,16 +35,16 @@
       <cu-custom :isBack="false" bgColor="bg-shadeTop text-white"> </cu-custom>
     </view>
 
-    <view class="VerticalBox bg-white">
-      <scroll-view class="bg-[#f7f8fc] rounded-md VerticalNav nav" scroll-y scroll-with-animation
+    <view style="height: calc(100vh - 160px); overflow: hidden;" class="VerticalBox bg-[#f7f8fc]">
+      <scroll-view class="mx-1 rounded-md VerticalNav nav" scroll-y scroll-with-animation
         :scroll-top="verticalNavTop" style="height: calc(100vh - 375upx)">
-        <view style="background-color: #f7f8fc" class="cu-item bg-[#f7f8fc] truncate ..."
-          :class="index == tabCur ? 'text-[#ec6853] cur' : ''" v-for="(item, index) in actionrouterList" :key="index"
+        <view  class="cu-item truncate"
+          :style="{ backgroundColor: index == tabCur ? '#5adade' : '#f7f8fc', color: index == tabCur ? '#ffffff' : '', fontWeight: index == tabCur ? 'bold' : '', borderRadius: index == tabCur ? '5px' : '' }" v-for="(item, index) in actionrouterList" :key="index"
           @tap="TabSelect" :data-id="index">
           {{ item.name }}
         </view>
       </scroll-view>
-      <scroll-view scroll-y scroll-with-animation style="height: calc(100vh - 375upx); background-color: white"
+      <scroll-view scroll-y scroll-with-animation style="background-color: white"
         :scroll-into-view="'main-' + mainCur" @scroll="VerticalMain">
         <div v-if="secMenu.length > 0">
           <view class="padding-top" v-for="(item1, index1) in secMenu" :key="index1" :id="'main-' + index1">
@@ -67,14 +67,14 @@
                   style="position: relative">
                   <van-checkbox v-if="ifChoose" :value="item2.ifcheck" @change="(e: any) => chooseAction(e, item2, mainCur, index1)
           " checked-color="#f60422" style="position: absolute; right: 1px; top: 1px; z-index: 5" />
-                  <div class="flex flex-row w-full justify-center items-center flex-wrap bg-[#f4f5f5]  rounded-xl px-2 pt-3"
-                    @click="toDetail(item2)">
-                    <img class="w-28 h-24  rounded-l-md lg" :src="getImageUrl(item2.Imgs, 0)" />
-                    <img class="w-28 h-24 rounded-r-md lg" :src="getImageUrl(item2.Imgs, 1)" />
                     <view class="content pb-1 w-full">
-                      <view class="text-black text-center text-lg font-extrabold">{{ item2.name }}
-                      </view>
+                        <view class="text-black tracking-wider pr-2 font-bold text-right text-lg opacity-100">{{ item2.name }}
+                        </view>
                     </view>
+                  <div class="flex flex-row w-full justify-around justify-center flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
+                    @click="toDetail(item2)">
+                    <img  class="w-28 h-28 rounded-l-md lg" :src="getImageUrl(item2.Imgs, 0)" />
+                    <img  class="w-28 h-28 rounded-r-md lg" :src=" getImageUrl(item2.Imgs, 1)" />
                   </div>
                 </view>
               </template>
@@ -174,17 +174,16 @@ import {
   getActionAll,
   getActionsBySec,
 } from "@/api/action/action";
-import { useAuthStore } from "@/state/modules/auth.ts";
-//@ts-ignore
-import type {
+import { useAuthStore } from "@/state/modules/auth";
+import { postPlan } from "@/api/course/index";
+import { useRouter } from "uni-mini-router";
+import type{
   SourceCategory,
   TargetCategory,
   ActionItem,
   ListItem,
-} from "./types.ts";
-import { postPlan } from "@/api/course/index.ts";
-import { useRouter } from "uni-mini-router";
-import dayjs from "dayjs";
+} from "@/components/action/types";
+
 const props = defineProps<{
   stuid?: number;
   courid?: number;
@@ -192,25 +191,30 @@ const props = defineProps<{
   ifChoose?: boolean;
   name?: string;
 }>();
+
 const showPopup = ref(false);
 const AuthStore = useAuthStore();
-const changeNum = (item, e) => {
-  chooseList.value.find((it) => it.id == item.id).num = e.detail;
+const changeNum = (item : any, e: any) => {
+  if (chooseList.value) {
+    const selectedItem = chooseList.value.find((it:any) => it.id == item.id);
+    if (selectedItem) {
+      Reflect.set(selectedItem, "num", e.detail);
+    }
+  }
 };
+
 const subitClass = () => {
-  console.log(chooseList.value);
   //发布课程
   let temp = chooseList.value;
-  temp = temp.filter((item) => item.num != 0);
+  temp = temp.filter((item:any) => item.num != 0);
   if (temp.length == 0) {
     uni.showToast({
       title: "当前没有动作",
       icon: "error",
     });
   } else {
-    let classes = [];
-    console.log(temp, "temp");
-    chooseList.value.forEach((item) => {
+    let classes:any = [];
+    chooseList.value.forEach((item:any) => {
       classes.push({
         ExerciseActionID: item.id,
         ActionName: item.name,
@@ -224,7 +228,6 @@ const subitClass = () => {
       PlanTime: getCurrentDateTime(),
       Actions: classes,
     };
-    console.log("提交课程数据:", data);
     postPlan(data)
       .then((res) => {
         uni.showToast({
@@ -241,6 +244,7 @@ const subitClass = () => {
       });
   }
 };
+
 function getCurrentDateTime() {
   const now = new Date();
 
@@ -253,14 +257,16 @@ function getCurrentDateTime() {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
 const getImageUrl = (images: any[], index: number) => {
-  console.log(images, index);
   const defaultUrl = 'https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241007/1728284282969.png';
   return images && images[index] ? images[index].URL : defaultUrl;
 }
+
 const onCloseopup = () => {
   showPopup.value = false;
 };
+
 const router = useRouter();
 const firstmenu = ref<ListItem[]>([
   { name: "A", id: 0, OrderNum: 1, children: [] },
@@ -268,8 +274,10 @@ const firstmenu = ref<ListItem[]>([
 const indexList = ref();
 const searchValue = ref("");
 const searchResult = ref<ListItem[]>([]);
+
 //排序
 firstmenu.value = sortByOrderNumDescending(firstmenu.value);
+
 //定义总目录
 const actionrouterList = ref<ListItem[]>([]);
 
@@ -280,7 +288,7 @@ const secMenu = ref<ListItem[]>([]);
 const tabCur = ref(0);
 const mainCur = ref(0);
 const verticalNavTop = ref(0);
-const load = ref(true);
+
 type TreeNode = {
   name: string;
   id: number;
@@ -288,84 +296,54 @@ type TreeNode = {
   children: TreeNode[];
 };
 
-//总目录排序函数
-function sortByOrderNumDescending(routers: ListItem[]) {
-  const sortByOrderIdAndIdDesc = (a: ListItem, b: ListItem): number => {
-    if (a.OrderNum !== b.OrderNum) {
-      return b.OrderNum - a.OrderNum;
+// 递归搜索函数
+function findItemAndChildren(items : TreeNode[], id: number | string) {
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].id === id) {
+      // 如果找到匹配的项，返回该项及其子项
+      return items[i];
     }
-    // 如果orderid相同，则比较id
-    return b.id - a.id;
-  };
-
-  // 递归排序每个路由及其子项
-  const sortChildren = (items: ListItem[]): ListItem[] => {
-    if (!items) return [];
-    return items
-      .map((item) => ({
-        ...item,
-        ifcheck: chooseList.value.find((it) => it.id == item.id) ? true : false,
-        children: sortChildren(item.children), // 递归排序子项
-      }))
-      .sort(sortByOrderIdAndIdDesc);
-  };
-
-  // 对顶级路由进行排序，并对每个路由的子项进行排序
-  return routers
-    .map((router) => ({
-      ...router,
-      children: sortChildren(router.children), // 对每个路由的子项进行排序
-    }))
-    .sort(sortByOrderIdAndIdDesc);
-}
-const toDetail = (item: ActionItem) => {
-  if (!props.ifChoose)
-    router.push({
-      name: "actionDetail",
-      params: {
-        itemid: item.id,
-      },
-    });
-};
-//处理搜索点击事件
-const handlelocation = (actionid) => {
-  const { firstCategoryId, secondCategoryId } = findCategoryIds(
-    actionrouterList.value,
-    actionid
-  );
-  const fisstindex = findIndexById(actionrouterList.value, firstCategoryId);
-
-  const secindex = findIndexById(actionrouterList.value, secondCategoryId);
-  console.log("fisstindex:", fisstindex);
-  console.log("secindex:", secindex);
-  const foundItem = findItemAndChildren(
-    actionrouterList.value,
-    secondCategoryId
-  );
-
-  if (foundItem) {
-    console.log("找到的项及其子项:", JSON.stringify(foundItem, null, 2));
-    const secondCate = foundItem;
-    tabCur.value = fisstindex;
-    mainCur.value = fisstindex;
-    verticalNavTop.value = (fisstindex - 1) * 50;
-    actionrouterList.value[mainCur.value].children[secindex].active = true;
-    toSecmenu(findItemAndChildren(actionrouterList.value, firstCategoryId));
-
-    console.log("二级目录:", secMenu.value);
-    // secMenuSelect(secondCate, secindex)
+    // 如果当前项有子项，则递归搜索
+    if (items[i].children && items[i].children.length > 0) {
+      const result:any = findItemAndChildren(items[i].children, id);
+      if (result) {
+        return result; // 如果在子项中找到匹配项，返回结果
+      }
+    }
   }
+  return null; // 如果没有找到，返回null
+}
 
-  // if (firstCategoryId !== null && secondCategoryId !== null) {
-  //     mainCur.value = firstCategoryId;
-  //     secMenuSelect(secMenu.value[secondCategoryId], secondCategoryId);
-  // } else if (firstCategoryId !== null) {
-  //     mainCur.value = firstCategoryId;
-  //     secMenuSelect(secMenu.value[0], 0);
-  // }
-  searchValue.value = "";
-  fuzzySearch(actionrouterList.value, searchValue.value);
-};
+// 查找id的索引
+function findIndexById(data : TreeNode[], id : number | string) {
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id === id) {
+      return i; // 找到id，返回索引
+    }
+    // 如果当前项有子项，递归地在子项中查找
+    if (data[i].children && data[i].children.length > 0) {
+      const childIndex : number = findIndexById(data[i].children, id);
+      if (childIndex !== -1) {
+        return childIndex; // 在子项中找到id，返回索引
+      }
+    }
+  }
+  return -1; // 未找到id，返回-1
+}
+
+// 节流函数
+function throttle(func: any, limit: any) {
+  let inThrottle = false;
+  return function () {
+    const args = arguments;
+    const context = this;
+    if (!inThrottle) {
+      func.apply(context, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+}
 //接口数据转换
 function transformCategories(source: SourceCategory[]): TargetCategory[] {
   const target: TargetCategory[] = [];
@@ -422,7 +400,8 @@ function transformCategories(source: SourceCategory[]): TargetCategory[] {
 
   return target;
 }
-function findCategoryIds(menuItems, actionId) {
+
+function findCategoryIds(menuItems : TreeNode[], actionId : number) {
   for (let i = 0; i < menuItems.length; i++) {
     const firstCategory = menuItems[i];
     if (firstCategory.children && firstCategory.children.length > 0) {
@@ -432,7 +411,6 @@ function findCategoryIds(menuItems, actionId) {
           for (let k = 0; k < secondCategory.children.length; k++) {
             const action = secondCategory.children[k];
             if (action.id === actionId) {
-              console.log(firstCategory.id, secondCategory.id);
               return {
                 firstCategoryId: firstCategory.id,
                 secondCategoryId: secondCategory.id,
@@ -445,6 +423,83 @@ function findCategoryIds(menuItems, actionId) {
   }
   return { firstCategoryId: null, secondCategoryId: null };
 }
+//总目录排序函数
+function sortByOrderNumDescending(routers: ListItem[]) {
+  const sortByOrderIdAndIdDesc = (a: ListItem, b: ListItem): number => {
+    if (a.OrderNum !== b.OrderNum) {
+      return b.OrderNum - a.OrderNum;
+    }
+    // 如果orderid相同，则比较id
+    return b.id - a.id;
+  };
+
+  // 递归排序每个路由及其子项
+  const sortChildren = (items: ListItem[]): ListItem[] => {
+    if (!items) return [];
+    return items
+      .map((item) => ({
+        ...item,
+        ifcheck: chooseList.value.find((it) => it.id == item.id) ? true : false,
+        children: sortChildren(item.children), // 递归排序子项
+      }))
+      .sort(sortByOrderIdAndIdDesc);
+  };
+
+  // 对顶级路由进行排序，并对每个路由的子项进行排序
+  return routers
+    .map((router) => ({
+      ...router,
+      children: sortChildren(router.children), // 对每个路由的子项进行排序
+    }))
+    .sort(sortByOrderIdAndIdDesc);
+}
+
+const toDetail = (item: ActionItem) => {
+  if (!props.ifChoose)
+    router.push({
+      name: "actionDetail",
+      params: {
+        itemid:  String(item.id),
+      },
+    });
+};
+
+//处理搜索点击事件
+const handlelocation = (actionid : number) => {
+  const { firstCategoryId, secondCategoryId } = findCategoryIds(
+    actionrouterList.value,
+    actionid
+  );
+  const fisstindex = findIndexById(actionrouterList.value, firstCategoryId);
+
+  const secindex = findIndexById(actionrouterList.value, secondCategoryId);
+  const foundItem = findItemAndChildren(
+    actionrouterList.value,
+    secondCategoryId
+  );
+
+  if (foundItem) {
+    const secondCate = foundItem;
+    tabCur.value = fisstindex;
+    mainCur.value = fisstindex;
+    verticalNavTop.value = (fisstindex - 1) * 50;
+    actionrouterList.value[mainCur.value].children[secindex].active = true;
+    toSecmenu(findItemAndChildren(actionrouterList.value, firstCategoryId));
+
+    // secMenuSelect(secondCate, secindex)
+  }
+
+  // if (firstCategoryId !== null && secondCategoryId !== null) {
+  //     mainCur.value = firstCategoryId;
+  //     secMenuSelect(secMenu.value[secondCategoryId], secondCategoryId);
+  // } else if (firstCategoryId !== null) {
+  //     mainCur.value = firstCategoryId;
+  //     secMenuSelect(secMenu.value[0], 0);
+  // }
+  searchValue.value = "";
+  fuzzySearch(actionrouterList.value, searchValue.value);
+};
+
 //处理二级目录被选中事件
 //需要传入二级及其子项
 const secMenuSelect = (item: ListItem, index: number) => {
@@ -471,6 +526,7 @@ const secMenuSelect = (item: ListItem, index: number) => {
     actionrouterList.value = sortByOrderNumDescending(actionrouterList.value);
   });
 };
+
 //定义搜索方法：
 const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
   if (!searchQuery) {
@@ -508,53 +564,7 @@ const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
   return searchResults;
 };
 
-// 递归搜索函数
-function findItemAndChildren(items, id) {
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].id === id) {
-      // 如果找到匹配的项，返回该项及其子项
-      return items[i];
-    }
-    // 如果当前项有子项，则递归搜索
-    if (items[i].children && items[i].children.length > 0) {
-      const result = findItemAndChildren(items[i].children, id);
-      if (result) {
-        return result; // 如果在子项中找到匹配项，返回结果
-      }
-    }
-  }
-  return null; // 如果没有找到，返回null
-}
-// 查找id的索引
-function findIndexById(data, id) {
-  for (let i = 0; i < data.length; i++) {
-    if (data[i].id === id) {
-      return i; // 找到id，返回索引
-    }
-    // 如果当前项有子项，递归地在子项中查找
-    if (data[i].children && data[i].children.length > 0) {
-      const childIndex = findIndexById(data[i].children, id);
-      if (childIndex !== -1) {
-        return childIndex; // 在子项中找到id，返回索引
-      }
-    }
-  }
-  return -1; // 未找到id，返回-1
-}
 
-// 节流函数
-function throttle(func: any, limit: any) {
-  let inThrottle;
-  return function () {
-    const args = arguments;
-    const context = this;
-    if (!inThrottle) {
-      func.apply(context, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
-  };
-}
 
 watch(
   searchValue,
@@ -562,11 +572,13 @@ watch(
     fuzzySearch(actionrouterList.value, newQuery);
   }, 200)
 );
+
 const state = reactive({
   stuId: -1,
   courseId: -1,
   type: "",
 });
+
 onMounted(() => {
   uni.$on("beginAddClass", (val) => {
     state.stuId = val.stuID;
@@ -602,7 +614,9 @@ onMounted(() => {
     uni.hideLoading();
   });
 });
+
 const chooseList = ref([]); //被选中课程的列表
+
 const chooseAction = (
   e: any,
   item: { id: any },
@@ -621,7 +635,6 @@ const chooseAction = (
       (it: any) => it == item
     ).ifcheck = !temp.ifcheck;
   }
-  console.log(item);
 };
 
 const getSelection = (item: ListItem) => {
@@ -695,29 +708,7 @@ const VerticalMain = (e: any) => {
   // #ifdef MP-ALIPAY
   return false; // 支付宝小程序暂时不支持双向联动
   // #endif
-  if (load.value) {
-    let tabHeight = 0;
-    firstmenu.value.forEach((item, index) => {
-      const view = uni.createSelectorQuery().select(`#main-${item.id}`);
-      view
-        .fields({ size: true }, (data) => {
-          firstmenu.value[index].top = tabHeight;
-          tabHeight += data.height;
-          firstmenu.value[index].bottom = tabHeight;
-        })
-        .exec();
-    });
-    load.value = false;
-  }
-  const scrollTop = e.detail.scrollTop + 10;
-  firstmenu.value.forEach((item) => {
-    if (scrollTop > item.top! && scrollTop < item.bottom!) {
-      verticalNavTop.value = (item.id - 1) * 50;
-      tabCur.value = item.id;
-      console.log(scrollTop);
-      return false;
-    }
-  });
+  
 };
 </script>
 
