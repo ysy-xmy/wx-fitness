@@ -1,14 +1,82 @@
 <template>
   <div class="tab-mycourse w-full pb-28 flex flex-wrap justify-center">
-    <van-collapse accordion value="{{ activeName }}" v-if="list.length > 0">
-      <van-collapse-item title="标题1" name="1">
-        代码是写出来给人看的，附带能在机器上运行
-      </van-collapse-item>
-      <van-collapse-item title="标题2" name="2">
-        代码是写出来给人看的，附带能在机器上运行
-      </van-collapse-item>
-      <van-collapse-item title="标题3" name="3">
-        代码是写出来给人看的，附带能在机器上运行
+    <van-collapse
+      :value="activeName"
+      v-if="Object.keys(list).length > 0"
+      @change="onChange"
+      style="width: 100vw"
+    >
+      <van-collapse-item
+        :name="item"
+        v-for="(item, index) in Object.keys(list)"
+      >
+        <template v-slot:title
+          ><div style="background: rgba(59, 213, 221, 1)">
+            {{ item }}
+          </div></template
+        >
+        <div
+          style="display: flex; justify-content: space-between; flex-wrap: wrap"
+        >
+          <div
+            v-for="it in list[item]"
+            style="
+              width: 190px;
+              height: 110px;
+              padding: 2px;
+              background-color: rgba(15, 98, 56, 1);
+              margin: 5px 0;
+              border-radius: 20px;
+              display: flex;
+              align-items: center;
+            "
+          >
+            <div
+              class="flex-[1.5]"
+              style="display: flex; flex-direction: column; align-items: center"
+            >
+              <div style="font-size: 12px; color: #ffffff">私教</div>
+              <div
+                style="
+                  font-size: 18px;
+                  color: #ffffff;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+              >
+                {{ it.Name }}
+              </div>
+              <div style="font-size: 12px; color: #ffffff; margin-top: 10px">
+                教练: {{ it.CoachName }}
+              </div>
+            </div>
+            <div
+              class="flex-1 mr-2"
+              style="display: flex; flex-direction: column; align-items: center"
+            >
+              <van-circle :value="100 - it.Percentage" size="60"
+                ><span style="color: white">
+                  {{ 100 - it.Percentage + "%" }}</span
+                ></van-circle
+              >
+              <div
+                @click="
+                  tomycourse(it.ID, it.Percentage, it.Name, it.Description)
+                "
+                style="
+                  width: 60px;
+                  height: 25px;
+                  border: 3px solid #ffffff;
+                  color: #ffffff;
+                  text-align: center;
+                  border-radius: 12px 12px 12px 12px;
+                "
+              >
+                查 看
+              </div>
+            </div>
+          </div>
+        </div>
       </van-collapse-item>
     </van-collapse>
     <!-- 我的课程 -->
@@ -64,6 +132,7 @@ import { useRouter } from "uni-mini-router";
 import { getMycourese } from "@/api/courses/courses";
 import { onMounted, reactive, ref } from "vue";
 import { getOrderlist } from "@/subpackages/apis/order";
+import dayjs from "dayjs";
 const props = defineProps<{
   change: () => void;
 }>();
@@ -78,6 +147,10 @@ type course = {
   LessonCount: number | null;
   RemainingCount: number | null;
   RemainingTime: number | null;
+};
+const activeName = ref<string[]>([]);
+const onChange = (event: any) => {
+  activeName.value = event.detail;
 };
 const router = useRouter();
 const tomycourse = (
@@ -110,15 +183,23 @@ const tocourse = () => {
 const dispose = (item: any) => {
   return item;
 };
-let list = ref<any[]>([]);
+let list = ref<any>({});
 const getList = () => {
   getMycourese()
     .then((res) => {
       list.value = [];
-      const temp = res.data.data || [];
+      const temp = (res.data.data || []).sort(
+        (a: any, b: any) =>
+          dayjs(b.CreatedAt).valueOf() - dayjs(a.CreatedAt).valueOf()
+      );
       temp.forEach((item: any) => {
-        list.value.push(dispose(item));
+        console.log(dayjs(item.CreatedAt).format("YYYY-MM"));
+        if (!list.value[dayjs(item.CreatedAt).format("YYYY-MM")]) {
+          list.value[dayjs(item.CreatedAt).format("YYYY-MM")] = [];
+        }
+        list.value[dayjs(item.CreatedAt).format("YYYY-MM")].push(dispose(item));
       });
+      console.log(list.value);
       uni.hideLoading();
     })
     .catch((err) => {
@@ -146,5 +227,8 @@ onMounted(() => {
 }
 .van-circle__text {
   font-size: 8px !important;
+}
+.van-collapse-item__title {
+  background-color: rgba(59, 213, 221, 1) !important;
 }
 </style>
