@@ -60,4 +60,4 @@ interface ListItem {
     editorder?: boolean
     active?: boolean;
 }
-
+export type { SourceCategory, TargetCategory, ActionItem, ListItem };
