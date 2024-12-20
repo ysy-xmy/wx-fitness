@@ -1,5 +1,5 @@
 <template>
-  <view class="relative">
+  <view class="relative flex flex-col h-full">
     <view class="cu-bar relative search bg-white">
       <view class="search-form round">
         <text class="cuIcon-search"></text>
@@ -35,7 +35,7 @@
       <cu-custom :isBack="false" bgColor="bg-shadeTop text-white"> </cu-custom>
     </view>
 
-    <view style="height: calc(100vh - 160px); overflow: hidden;" class="VerticalBox bg-[#f7f8fc]">
+    <view style="overflow: hidden;flex:1;height: 0;" class="VerticalBox bg-[#f7f8fc]">
       <scroll-view class="mx-1 rounded-md VerticalNav nav" scroll-y scroll-with-animation
         :scroll-top="verticalNavTop" style="height: calc(100vh - 375upx)">
         <view  class="cu-item truncate"
@@ -59,23 +59,22 @@
             </view>
             <view v-if="actionrouterList[mainCur].children[index1].active"
               class="cu-list menu-avatar flex flex-wrap bg-white pt-3">
-              <template v-for="(item2, index2) in actionrouterList[mainCur].children[
-          index1
-        ].children" :key="index2">
-                <!-- @click="toDetail(item2) -->
+              <template v-for="(item2, index2) in actionrouterList[mainCur].children[index1].children" :key="index2">
                 <view class="felx flex-wrap w-full  items-center justify-center content-center px-2 mb-3"
                   style="position: relative">
                   <van-checkbox v-if="ifChoose" :value="item2.ifcheck" @change="(e: any) => chooseAction(e, item2, mainCur, index1)
           " checked-color="#f60422" style="position: absolute; right: 1px; top: 1px; z-index: 5" />
-                    <view class="content pb-1 w-full">
+                    <view @click="toggleActive(item2,actionrouterList[mainCur].children[index1].children)" class="content pb-1 w-full">
                         <view class="text-black tracking-wider pr-2 font-bold text-right text-lg opacity-100">{{ item2.name }}
                         </view>
                     </view>
-                  <div class="flex flex-row w-full justify-around justify-center flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
-                    @click="toDetail(item2)">
-                    <img  class="w-28 h-28 rounded-l-md lg" :src="getImageUrl(item2.Imgs, 0)" />
-                    <img  class="w-28 h-28 rounded-r-md lg" :src=" getImageUrl(item2.Imgs, 1)" />
-                  </div>
+                  <transition name="fade">
+                    <div v-if="item2.active"  class="flex flex-row w-full  justify-center flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
+                      @click="toDetail(item2)">
+                      <img  class="w-28 h-28 rounded-l-md lg" :src="getImageUrl(item2.Imgs, 0)" />
+                      <img  class="w-28 h-28 rounded-r-md lg" :src=" getImageUrl(item2.Imgs, 1)" />
+                    </div>
+                  </transition>
                 </view>
               </template>
             </view>
@@ -89,7 +88,7 @@
       </scroll-view>
     </view>
 
-    <van-index-bar v-if="searchResult.length > 0" class="w-screen absolute z-1000 top-10 bg-[#f2f2f2] shadow-sm"
+    <van-index-bar v-if="searchResult.length > 0" class="w-screen fixed z-1000 top-10 bg-[#f2f2f2] shadow-sm"
       :index-list="indexList">
       <!-- 遍历搜索结果 -->
       <view class="cu-list menu sm-border card-menu">
@@ -163,7 +162,7 @@
         <van-button type="info" size="normal" round @click="subitClass">提交</van-button>
       </div>
     </van-popup>
-  </view>
+</view>
 </template>
 
 <script setup lang="ts">
@@ -201,6 +200,13 @@ const changeNum = (item : any, e: any) => {
       Reflect.set(selectedItem, "num", e.detail);
     }
   }
+};
+
+const toggleActive = (item: any,Array: any) => {
+  Array.map((item:any)=>{
+    item.active = false;
+  })
+  item.active = !item.active;
 };
 
 const subitClass = () => {
@@ -762,5 +768,31 @@ const VerticalMain = (e: any) => {
 .cuIcon-title::before {
   color: white;
   display: none;
+}
+
+
+.fade-enter-from {
+  opacity: 0;
+}
+
+/* 进入过渡的结束状态 */
+.fade-enter-to {
+  opacity: 1;
+}
+
+/* 离开过渡的开始状态 */
+.fade-leave-from {
+  opacity: 1;
+}
+
+/* 离开过渡的结束状态 */
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 定义进入和离开过渡的时间曲线 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease;
 }
 </style>

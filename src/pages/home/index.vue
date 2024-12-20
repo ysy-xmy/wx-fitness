@@ -1,16 +1,15 @@
 <template>
-  <scroll-view
-    style="height: 100vh"
-    @scrolltolower="lowerBottom"
-    scroll-y="true"
+  <div
+    style="height: 100vh;display: flex;flex-direction: column;"
   >
-    <div class="viewcontent">
+    <div style="flex:1!important;height: 0;" class="viewcontent flex-1">
       <div v-show="usetsto.active === 'index'" class="index-page">
         <CoachHome v-if="permission == 'coach'" />
         <Index v-else />
       </div>
-      <div v-show="usetsto.active === 'action'" class="action-page">
+      <div v-show="usetsto.active === 'action'" class="action-page h-full">
         <Action
+          class="h-full"
           :if-choose="ifChoose"
           :stuid="stuid"
           :courid="courid"
@@ -24,7 +23,7 @@
     </div>
     <van-tabbar
       placeholder
-      style="margin-bottom: 15px; margin-top: 15px; padding-top: 15px"
+      safe-area-inset-bottom
       @change="onChange"
       v-model="usetsto.getcurrentactive"
     >
@@ -32,10 +31,9 @@
         :name="tabbardata[0].name"
         style="margin-bottom: 15px; height: 100%"
         v-if="usetsto.active == tabbardata[0].name"
+        placeholder
       >
-        <span :style="{ color: tabbardata[0].textactivecolor }">{{
-          tabbardata[0].title
-        }}</span>
+        <span :style="{ color: tabbardata[0].textactivecolor }">{{ tabbardata[0].title }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[0].activeicon" />
         </template>
@@ -45,9 +43,7 @@
         :name="tabbardata[0].name"
         v-else
       >
-        <span :style="{ color: tabbardata[0].textcolor }">{{
-          tabbardata[0].title
-        }}</span>
+        <span :style="{ color: tabbardata[0].textcolor }">{{ tabbardata[0].title }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[0].inactiveicon" />
         </template>
@@ -57,9 +53,7 @@
         :name="tabbardata[1].name"
         v-if="usetsto.active == tabbardata[1].name"
       >
-        <span :style="{ color: tabbardata[1].textactivecolor }">{{
-          tabbardata[1].title
-        }}</span>
+        <span :style="{ color: tabbardata[1].textactivecolor }">{{ tabbardata[1].title }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[1].activeicon" />
         </template>
@@ -69,9 +63,7 @@
         :name="tabbardata[1].name"
         v-else
       >
-        <span :style="{ color: tabbardata[1].textcolor }">{{
-          tabbardata[1].title
-        }}</span>
+        <span :style="{ color: tabbardata[1].textcolor }">{{ tabbardata[1].title }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[1].inactiveicon" />
         </template>
@@ -82,9 +74,7 @@
         :name="tabbardata[2].name"
         v-if="usetsto.active == tabbardata[2].name"
       >
-        <span :style="{ color: tabbardata[2].textactivecolor }">{{
-          tabbardata[2].title
-        }}</span>
+        <span :style="{ color: tabbardata[2].textactivecolor }">{{ tabbardata[2].title }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[2].activeicon" />
         </template>
@@ -94,15 +84,13 @@
         :name="tabbardata[2].name"
         v-else
       >
-        <span :style="{ color: tabbardata[2].textcolor }">{{
-          tabbardata[2].title
-        }}</span>
+        <span :style="{ color: tabbardata[2].textcolor }">{{ tabbardata[2].title }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[2].inactiveicon" />
         </template>
       </van-tabbar-item>
     </van-tabbar>
-  </scroll-view>
+  </div>
 </template>
 <script setup lang="ts" name="home">
 import { useAppStore } from "@/state/app";
@@ -124,11 +112,11 @@ const onChange = (item: any) => {
   ifChoose.value = false;
 };
 const permission = ref("");
-const lowerBottom = () => {
-  if (usetsto.active === "index") {
-    uni.$emit("bot", true);
-  }
-};
+// const lowerBottom = () => {
+//   if (usetsto.active === "index") {
+//     uni.$emit("bot", true);
+//   }
+// };
 const ifChoose = ref(false);
 const stuid = ref(-1);
 const courid = ref(-1);
