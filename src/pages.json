@@ -169,6 +169,13 @@
           "style": {
             "navigationBarTitleText": "查看体检表"
           }
+        },
+        {
+          "path": "calender/index",
+          "name": "calender",
+          "style": {
+            "navigationBarTitleText": "训练计划表"
+          }
         }
       ]
     }

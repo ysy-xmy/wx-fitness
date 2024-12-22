@@ -1,5 +1,48 @@
 <template>
   <div class="main flex w-full justify-center flex-col items-center">
+    <img src="@/static/wave-bg.png" alt="" class="bg" />
+    <div class="tags-left">
+      <van-tag
+        round
+        v-for="item in tagsList.slice(0, 6)"
+        :key="item"
+        size="large"
+        class="tag"
+        :color="item.color"
+        closeable="true"
+        @close="deleteTag(item)"
+        >{{ item.content }}</van-tag
+      >
+      <van-button
+        v-if="tagsList.length < 6"
+        color="#F0FFFF"
+        class="tag"
+        style="border-radius: 75%; width: 15px; height: 15px"
+        @click="showDialogAddTags = true"
+        ><van-icon name="plus" color="black" size="16"
+      /></van-button>
+    </div>
+    <div class="tags-right" v-if="tagsList.length >= 6">
+      <van-tag
+        round
+        v-for="item in tagsList.slice(6, 12)"
+        :key="item"
+        :color="item.color"
+        size="large"
+        class="tag"
+        closeable="true"
+        @close="deleteTag(item)"
+        >{{ item.content }}</van-tag
+      >
+      <van-button
+        v-if="tagsList.length < 12"
+        color="#F0FFFF"
+        class="tag"
+        style="border-radius: 75%; width: 15px; height: 15px"
+        @click="showDialogAddTags = true"
+        ><van-icon name="plus" color="black" size="16"
+      /></van-button>
+    </div>
     <div class="info mt-5 flex flex-col items-center">
       <div class="avatar">
         <img class="w-28 h-28 rounded-full" :src="stuInfo.Avatar" alt="" />
@@ -29,71 +72,87 @@
       </div>
     </div>
 
-    <div class="tab-title mt-2 bg-[#f8fafc] w-11/12 rounded-lg p-2">
-      <div class="tab flex justify-center items-center bg-white">
-        <div class="tab-item w-1/3 text-center py-3 cursor-pointer">
-          <span class="text-[#F65625] tracking-widest">训 练 计 划</span>
-        </div>
-      </div>
+    <div class="tab-title mt-2 bg-[#f8fafc] w-full">
+      <van-tabs active="a">
+        <van-tab title="已完成" name="finish"></van-tab>
+        <van-tab title="线下计划" name="outline"></van-tab>
+        <van-tab title="线上任务" name="online"></van-tab>
+      </van-tabs>
     </div>
-    <div
-      class="cardTitle py-2 w-11/12 flex bg-[rgba(248,250,255,1)] h-10 leading-10 justify-between px-3 rounded mt-4"
-    >
-      <div class="font-bold">
-        私教课<span
-          class="ml-2 font-thin tracking-wider"
-          style="color: #6d819cff; margin-left: 2px"
-        ></span>
-      </div>
-      <!-- <van-circle class="mr-4" stroke-width="4" size="45" layer-color="#ebedf0" color="#ec6853" value="70" text="70%"
-        style="margin-top: 15px" /> -->
-    </div>
-
-    <div
-      style="align-items: start"
-      class="w-11/12 flex content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody flex-wrap"
-    >
-      <div
-        v-if="planList"
-        v-for="item in planList"
-        :key="item.ID"
-        class="action-group w-full"
-      >
-        <div class="flex justify-between items-center w-full">
-          <h2 class="text-xl font-extrabold px-2 py-2">{{ item.PlanTime }}</h2>
-          <span
-            v-if="item.show"
-            class="cuIcon-unfold"
-            @click="item.show = !item.show"
-          ></span>
-          <span
-            v-else
-            class="cuIcon-fold"
-            @click="item.show = !item.show"
-          ></span>
-        </div>
-        <div v-if="item.show">
+    <van-collapse :value="activeName" @change="onChange">
+      <van-collapse-item name="1">
+        <template v-slot:title>
+          <div class="cardTitle py-2 w-full leading-10 px-3 rounded">
+            <div class="font-bold">
+              私教课 增肌一对一 （12节）<span
+                class="ml-2 font-thin tracking-wider"
+                style="color: #6d819cff; margin-left: 2px"
+              ></span>
+            </div>
+            <div
+              style="
+                font-size: 14px;
+                margin-top: 10px;
+                width: 100%;
+                display: flex;
+                font-weight: 500;
+                justify-content: space-between;
+              "
+            >
+              <div>2024.10.01 (起始时间)</div>
+              <div>进行中</div>
+            </div>
+          </div>
+        </template>
+        <div
+          style="align-items: start"
+          class="w-full flex content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody flex-wrap"
+        >
           <div
-            v-for="item2 in item.Actions"
-            :key="item2.title"
-            class="action-item flex my-1 flex-row w-full justify-between items-center"
+            v-if="planList"
+            v-for="item in planList"
+            :key="item.ID"
+            class="action-group w-full"
           >
-            <p class="ml-6 py-1">
-              {{ item2.ActionName }} x {{ item2.GroupNum }}组
-            </p>
-            <van-checkbox
-              :value="item2.Complete"
-              checked-color="#ec6853"
-              @change="changeCheck(item2)"
-            ></van-checkbox>
+            <div class="flex justify-between items-center w-full">
+              <h2 class="text-xl font-extrabold px-2 py-2">
+                {{ item.PlanTime }}
+              </h2>
+              <span
+                v-if="item.show"
+                class="cuIcon-unfold"
+                @click="item.show = !item.show"
+              ></span>
+              <span
+                v-else
+                class="cuIcon-fold"
+                @click="item.show = !item.show"
+              ></span>
+            </div>
+            <div v-if="item.show">
+              <div
+                v-for="item2 in item.Actions"
+                :key="item2.title"
+                class="action-item flex my-1 flex-row w-full justify-between items-center"
+              >
+                <p class="ml-6 py-1">
+                  {{ item2.ActionName }} x {{ item2.GroupNum }}组
+                </p>
+                <van-checkbox
+                  :value="item2.Complete"
+                  checked-color="#ec6853"
+                  @change="changeCheck(item2)"
+                ></van-checkbox>
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <van-empty class="h-28" description="该课程暂无计划" />
           </div>
         </div>
-      </div>
-      <div v-else>
-        <van-empty class="h-28" description="该课程暂无计划" />
-      </div>
-    </div>
-    <div clss></div>
+      </van-collapse-item>
+    </van-collapse>
+
     <!-- <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
       展示更多 <van-icon name="arrow-down" />
     </div> -->
@@ -129,6 +188,26 @@
         </van-cell-group>
       </van-radio-group>
     </van-dialog>
+
+    <van-dialog
+      use-slot
+      title="添加标签"
+      :show="showDialogAddTags"
+      show-cancel-button
+      @confirm="addTags"
+      @close="
+        () => {
+          addTagVal = '';
+          showDialogAddTags = false;
+        }
+      "
+    >
+      <van-field
+        :value="addTagVal"
+        placeholder="输入标签"
+        @change="changeDialogAddTags"
+      />
+    </van-dialog>
   </div>
 </template>
 
@@ -145,18 +224,38 @@ const AppStore = useAppStore();
 const router = useRouter();
 const stuInfo = ref();
 const radioType = ref("");
+const addTagVal = ref(""); //添加标签
+const showDialogAddTags = ref(false); //是否展示弹窗输入标签
 const courseInfo = ref();
 const showDialog = ref(false); //显示弹窗
 const CoachPunchInAuth = ref(false); //是否授权
+const activeName = ref([]);
+const tagsList = ref<{ content: string; color: string }[]>([]);
+const tagsColor = ["#00FF7F", "#FF0000", "#FFD700"];
 const seeBodyForm = () => {
   const imgData = JSON.stringify(stuInfo.value.BodyCheckImg);
   router.push({
     path: `/subpackages/bodyFormDetail/index?img=${imgData}&&name=${stuInfo.value.Username}`, // 对 JSON 字符串进行编码
   });
 };
+const addTags = () => {
+  tagsList.value.push({
+    content: addTagVal.value,
+    color: tagsColor[Math.floor(Math.random() * tagsColor.length)],
+  });
+  showDialogAddTags.value = false;
+};
+const onChange = (val: any) => {
+  console.log(val, "onChange");
+  activeName.value = val.detail;
+};
 const toAddClass = () => {
   //去添加课程
   showDialog.value = true;
+};
+const deleteTag = (item: any) => {
+  console.log(item, "deleteTag");
+  tagsList.value = tagsList.value.filter((tag) => tag !== item);
 };
 const onCloseDialog = () => {
   showDialog.value = false;
@@ -165,6 +264,10 @@ const onCloseDialog = () => {
 const chooseType = (val: string) => {
   //选择课程类型
   radioType.value = val;
+};
+const changeDialogAddTags = (e: any) => {
+  console.log(e, "addTagVal");
+  addTagVal.value = e.detail;
 };
 const goChooseAction = () => {
   if (radioType.value == "") {
@@ -268,12 +371,10 @@ onMounted(() => {
   align-items: center;
   vertical-align: middle;
   border-radius: 5px;
-  border-bottom: 0.5px solid #e5e5e5;
+  border-bottom: 2px solid skyblue;
 }
 
 .cardBody {
-  padding-left: 0.75rem;
-  padding-right: 1.5rem;
   align-items: center;
   vertical-align: middle;
 
@@ -310,25 +411,121 @@ onMounted(() => {
   height: 42px;
   line-height: 42px;
 }
+.bg {
+  // background-color: skyblue;
+  width: 100%;
+  height: 300px;
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  // -webkit-clip-path: polygon(
+  //   58% 0,
+  //   100% 0,
+  //   100% 35%,
+  //   100% 71%,
+  //   67% 50%,
+  //   31% 58%,
+  //   10% 70%,
+  //   0 51%,
+  //   0% 35%,
+  //   0 0
+  // );
+  // clip-path: polygon(
+  //   58% 0,
+  //   100% 0,
+  //   100% 35%,
+  //   100% 71%,
+  //   67% 50%,
+  //   31% 58%,
+  //   10% 70%,
+  //   0 51%,
+  //   0% 35%,
+  //   0 0
+  // );
+  // .progress {
+  //   width: 35px;
+  //   height: 35px;
+  //   border-color: white;
+  //   border-radius: 75%;
+  //   position: relative;
+  //   &::after {
+  //     content: "75%";
+  //     position: absolute;
+  //     border-radius: 75%;
+  //     font-size: small;
+  //     line-height: 35px;
+  //     text-align: center;
+  //     width: 35px;
+  //     height: 35px;
+  //     background-color: orange;
+  //     top: 0;
+  //     left: 0;
+  //   }
+}
+.tags-left {
+  height: 220px;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
 
-// .progress {
-//   width: 35px;
-//   height: 35px;
-//   border-color: white;
-//   border-radius: 75%;
-//   position: relative;
-//   &::after {
-//     content: "75%";
-//     position: absolute;
-//     border-radius: 75%;
-//     font-size: small;
-//     line-height: 35px;
-//     text-align: center;
-//     width: 35px;
-//     height: 35px;
-//     background-color: orange;
-//     top: 0;
-//     left: 0;
-//   }
-// }
+  .tag {
+    font-weight: 700;
+    color: white;
+    margin-top: 15px;
+    &:nth-child(1) {
+      margin-left: 40px;
+    }
+    &:nth-child(2) {
+      margin-left: 30px;
+    }
+    &:nth-child(3) {
+      margin-left: 20px;
+    }
+    &:nth-child(4) {
+      margin-left: 20px;
+    }
+    &:nth-child(5) {
+      margin-left: 30px;
+    }
+    &:nth-child(6) {
+      margin-left: 40px;
+    }
+  }
+}
+
+.tags-right {
+  height: 220px;
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  display: flex;
+  flex-direction: column;
+  .tag {
+    margin-top: 15px;
+    &:nth-child(1) {
+      margin-left: 0px;
+    }
+    &:nth-child(2) {
+      margin-left: 10px;
+    }
+    &:nth-child(3) {
+      margin-left: 20px;
+    }
+    &:nth-child(4) {
+      margin-left: 20px;
+    }
+    &:nth-child(5) {
+      margin-left: 10px;
+    }
+    &:nth-child(6) {
+      margin-left: 0px;
+    }
+  }
+}
+:deep(.van-tabs__line) {
+  background-color: #00bfff;
+}
 </style>

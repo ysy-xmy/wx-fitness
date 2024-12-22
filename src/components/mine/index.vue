@@ -132,6 +132,18 @@
             </div>
           </view>
         </view>
+        <view
+          @click="router.push({ name: 'calender' })"
+          class="cu-item my-3 w-11/12 shadow-sm p-3 py-5 rounded-xl arrow"
+        >
+          <view class="content py-3 flex flex-row items-center">
+            <text class="cuIcon-circlefill text-grey"></text>
+            <div class="flex flex-col ml-3">
+              <text class="text-[#042c5c] text-xl font-bold">我的训练计划</text>
+              <text class="text-gray-500">查看我的训练计划</text>
+            </div>
+          </view>
+        </view>
       </view>
     </div>
   </div>
