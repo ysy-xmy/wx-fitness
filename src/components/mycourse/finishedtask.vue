@@ -1,49 +1,27 @@
 <template>
   <div class="finished-task container pb-20 w-full h-full">
-    <Finishtabs />
-    <!-- <div
-      class="nodata-card flex flex-col justify-center items-center w-full"
-      v-if="Object.keys(props.list).length == 0"
-    >
-      <van-empty description="暂无完成" />
-    </div>
-
-    <view class="cu-timeline" v-else>
-      <view class="cu-item text-green" v-for="key in Object.keys(props.list)">
-        <view
-          style="box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.1)"
-          class="content bg-white"
-        >
-          <div
-            class="content-item flex flex-nowrap pl-5 justify-between items-center"
-            v-for="item in props.list[key]"
-          >
-            <view class="flex flex-col">
-              <div class="title w-full text-black font-bold">
-                {{ item.name }}   每组{{ item.timesNum }}次  X {{ item.groupNum }}组
-              </div>
-
-              <div class="desc w-full text-xs text-gray-600">
-                {{ item.time }}
-              </div>
-            </view>
-            <view
-              style="font-size: 25px"
-              class="w-10 h-10 cuIcon-roundcheckfill text-[#ff5e3a]"
-            ></view>
-          </div>
-        </view>
-      </view>
-    </view>  -->
+    <PlanCard title="私教课" startDate="2022.11.01" endDate="2022.11.30" :status=1 :actionGroups="actionGroupsdata" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, defineProps, onMounted, reactive } from "vue";
-import Finishtabs from "./finishtabs.vue";
+import PlanCard from "@/components/plan-card/index.vue";
 const props = defineProps<{
   list: any;
 }>();
+
+const actionGroupsdata = ref([
+  {title: '肌肉训练',date: '2022.11.01',status: 1},
+  {title: '瘦身训练',date: '2022.11.02',status: 2},
+  {title: '塑形训练',date: '2022.11.03',status: 0},
+  {title: '增肌训练',date: '2022.11.04',status: 1},
+  {title: '减脂训练',date: '2022.11.05',status: 2},
+  {title: '塑胶训练',date: '2022.11.06',status: 0},
+  {title: '燃脂训练',date: '2022.11.07',status: 2},
+  {title: '减重训练',date: '2022.11.08',status: 0},
+
+])
 </script>
 <style scoped>
 .content-item {
