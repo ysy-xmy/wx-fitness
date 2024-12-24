@@ -14,12 +14,8 @@
         <li class="flex justify-between actionGroup-item" v-for="(actionGroup, index) in actionGroups" :key="index">
           <span class="flex flex-nowrap">
             <checkbox v-if="actionGroup.status!=2" class='round cyan' :class="actionGroup.status==1?'checked':''" :checked="actionGroup.status==1?true:false"></checkbox>
-            <!-- <radio v-else class='radio grey' :checked="true"></radio> -->
-            <!-- <div v-else style="height: 26px; height: 26px;" class=" aspect-square bg-[#b5b4b9] rounded-full"></div> -->
             <checkbox v-else class='round checked grey' checked></checkbox>
-
             <view class="title ml-3">   {{ index + 1 }}. {{ actionGroup.title }}</view>
-
           </span>
           <span>{{actionGroup.date}}</span>
         </li>

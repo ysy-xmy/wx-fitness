@@ -70,6 +70,7 @@ import {
 } from "@/api/courses/courses";
 import { getplanlist } from "@/api/course";
 import dayjs from "dayjs";
+import type { actionGroup } from "@/components/mycourse/course";
 // import Finishtabs from './finishtabs.vue'
 
 const router = useRouter();
@@ -104,11 +105,11 @@ const outline = ref({});
 let list = reactive<{
   finish: Record<string, ActionItem[]>;
   online: Record<string, PlanItem[]>;
-  outline: Record<string, any>; // outline 这里假设类型
+  outline: actionGroup[]; // outline 这里假设类型
 }>({
   finish: {},
   online: {},
-  outline: {},
+  outline: [],
 });
 const iddd = ref(0);
 const courseId = ref("");
@@ -219,10 +220,11 @@ const getPlan = () => {
   list = {
     finish: {},
     online: {},
-    outline: {},
+    outline: [],
   };
-  getplanlist(Number(iddd.value)).then((res) => {
+  getplanlist(iddd.value).then((res) => {
     let temp = res.data.data || [];
+    console.log(res,'temp');
     temp.forEach(
       (item: {
         ID: any;
@@ -293,6 +295,8 @@ const getPlan = () => {
     online.value = list["online"];
     finish.value = list["finish"];
     outline.value = list["outline"];
+  }).finally(() => {
+    uni.hideLoading();
   });
 };
 //@ts-ignore

@@ -47,18 +47,7 @@
                   {{ props.list[k][key].end }}
                 </div>
               </div>
-              <!-- <div class="dec-item">
-              <div class="icon">
-                <van-icon name="clock-o" size="25" />
-              </div>
-              <div class="line-title text-sm text-gray-600">2022-01-01</div>
-            </div> -->
             </div>
-            <!-- <div class="line-item justify-center flex w-1/4 w-full ">
-                        <span class="text-[#0c96f2] text-xs w-full text-center pb-2 underline text-center ">
-                            查看教程
-                        </span>
-                    </div> -->
             <a
               @click="seeDetail(props.list[k][key].id)"
               type="warning"

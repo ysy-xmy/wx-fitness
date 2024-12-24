@@ -1,65 +1,33 @@
 <template>
-  <div class="finished-tast w-full min-h-screen flex justify-center mt-5">
+  <div class="finished-tast w-full flex justify-center mt-5">
     <div class="w-full lists-item mt-3 px-5">
       <div
         class="nodata-card flex flex-col justify-center items-center w-full"
-        v-if="Object.keys(props.list).length == 0"
+        v-if="Object.keys(props.list).length === 0"
       >
         <van-empty description="暂无计划" />
       </div>
-      <div v-else v-for="k in Object.keys(props.list)">
+      <div v-else>
         <div
-          class="card rounded-lg bg-white flex flex-wrap justify-between items-center py-8 p-5 shadow-lg"
-          v-for="key in Object.keys(props.list[k])"
+          class="card rounded-lg bg-white flex flex-wrap justify-between items-center p-4 shadow mb-3"
+          v-for="(plan, index) in Object.values(props.list).flat()"
+          :key="index"
         >
-          <div class="card-left w-3/4">
-            <div class="card-title mb-2s">
-              <h1 class="font-bold text-lg tracking-wide">
-                {{ props.list[k][key].name }}   每组{{ props.list[k][key].timesNum }}次  X {{ props.list[k][key].groupNum }}组
-              </h1>
-            </div>
-
-            <!-- <div class="card-desc text-sm text-gray-600 py-1">这里写一些备注</div> -->
+          <div class="card-left w-full flex items-center mb-2">
+            <div class="dot w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+            <h1 class="font-normal text-base text-gray-700">
+              {{ plan.PlanTitle }}
+            </h1>
+            <span class="ml-auto text-sm text-gray-500">共{{ plan.ID }}节</span>
           </div>
-          <div class="card-right w-1/4">
-            <div
-              class="card-btn w-full flex flex-wrap content-center items-center justify-center"
-            >
-              <div class="btn-item w-full mb-1">
-                <van-button
-                  @click="handlefinish(props.list[k][key].cardID)"
-                  round
-                  type="warning"
-                  ><span class="text-white text-lg">打 卡</span></van-button
-                >
-              </div>
+          <div class="card-footer w-full flex justify-between items-center text-sm text-gray-500">
+            <div class="left-info">
+              教练员：{{ plan.PlanTime }}
             </div>
-          </div>
-          <div class="card-line w-full flex-nowrap flex mt-2 justify-end">
-            <div class="w-3/4 justify-start flex flex-nowrap">
-              <div class="dec-item">
-                <div class="icon">
-                  <van-icon name="todo-list-o" size="25" />
-                </div>
-                <div class="line-title text-sm text-gray-600">
-                  {{ props.list[k][key].begin }}
-                </div>
-              </div>
-              <!-- <div class="dec-item">
-              <div class="icon">
-                <van-icon name="clock-o" size="25" />
-              </div>
-              <div class="line-title text-sm text-gray-600">2022-01-01</div>
-            </div> -->
-            </div>
-            <div
-              class="line-item justify-center flex w-1/4"
-              @click="seeDetail(props.list[k][key].cardID)"
-            >
-              <span
-                class="text-[#0c96f2] text-xs w-full text-center pb-2 underline text-center"
-              >
-                查看教程
+            <div class="right-info flex items-center">
+              <span @click="seeDetail(plan.ID)" 
+                    class="text-primary cursor-pointer">
+                详情
               </span>
             </div>
           </div>
@@ -72,11 +40,13 @@
 import { ref, defineProps } from "vue";
 import { actionClok } from "@/api/courses/courses";
 import { useRouter } from "uni-mini-router";
+import type { actionGroup } from "./course";
 const router = useRouter();
-const show = ref(false);
 const props = defineProps<{
-  list: any;
+  list: actionGroup[];
 }>();
+
+
 const seeDetail = (id) => {
   router.push({
     path: `/subpackages/actionDetail/index?itemid=${id}`,
@@ -96,7 +66,7 @@ const handlefinish = (id: any) => {
             uni.showToast({
               title: "打卡成功", // 提示的内容
               icon: "success", // 图标类型，可选值有success、loading、none
-              duration: 2000, // 提示框停留时间，单位毫秒
+              duration: 2000, // 提示框停留时间，单��毫秒
               mask: false, // 是否显示透明蒙层，防止触摸穿透，默认：false
             });
             uni.$emit("refreshAction", true);
@@ -126,25 +96,10 @@ const handlefinish = (id: any) => {
 };
 </script>
 <style scoped>
-.btn-item {
-  display: flex;
-
-  justify-content: center;
-}
-
-.dec-item {
-  display: flex;
-  flex-wrap: nowrap;
-  margin-right: 5px;
-  align-items: center;
-  align-content: center;
-}
-
-.icon {
-  padding-right: 2px;
-}
-
 .card {
-  margin-bottom: 10px;
+  border: 1px solid #f0f0f0;
+}
+.text-primary {
+  color: #4080ff;
 }
 </style>
