@@ -193,6 +193,37 @@ const props = defineProps<{
 
 const showPopup = ref(false);
 const AuthStore = useAuthStore();
+
+
+const router = useRouter();
+const firstmenu = ref<ListItem[]>([
+  { name: "A", id: 0, OrderNum: 1, children: [] },
+]);
+const indexList = ref();
+const searchValue = ref("");
+const searchResult = ref<ListItem[]>([]);
+
+//排序
+firstmenu.value = sortByOrderNumDescending(firstmenu.value);
+
+//定义总目录
+const actionrouterList = ref<ListItem[]>([]);
+
+//定义二级类目menu
+const secMenu = ref<ListItem[]>([]);
+
+//排序后的数据
+const tabCur = ref(0);
+const mainCur = ref(0);
+const verticalNavTop = ref(0);
+
+type TreeNode = {
+  name: string;
+  id: number;
+  OrderNum: number;
+  children: TreeNode[];
+};
+
 const changeNum = (item : any, e: any) => {
   if (chooseList.value) {
     const selectedItem = chooseList.value.find((it:any) => it.id == item.id);
@@ -271,35 +302,6 @@ const getImageUrl = (images: any[], index: number) => {
 
 const onCloseopup = () => {
   showPopup.value = false;
-};
-
-const router = useRouter();
-const firstmenu = ref<ListItem[]>([
-  { name: "A", id: 0, OrderNum: 1, children: [] },
-]);
-const indexList = ref();
-const searchValue = ref("");
-const searchResult = ref<ListItem[]>([]);
-
-//排序
-firstmenu.value = sortByOrderNumDescending(firstmenu.value);
-
-//定义总目录
-const actionrouterList = ref<ListItem[]>([]);
-
-//定义二级类目menu
-const secMenu = ref<ListItem[]>([]);
-
-//排序后的数据
-const tabCur = ref(0);
-const mainCur = ref(0);
-const verticalNavTop = ref(0);
-
-type TreeNode = {
-  name: string;
-  id: number;
-  OrderNum: number;
-  children: TreeNode[];
 };
 
 // 递归搜索函数
@@ -570,13 +572,11 @@ const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
   return searchResults;
 };
 
-
-
 watch(
   searchValue,
   throttle(function (newQuery: any) {
     fuzzySearch(actionrouterList.value, newQuery);
-  }, 200)
+  }, 50)
 );
 
 const state = reactive({
@@ -592,7 +592,6 @@ onMounted(() => {
     state.type = val.type;
   });
   uni.showLoading({ title: "加载中...", mask: true });
-  const newList: ListItem[] = [];
   //先获取一级目录
   getFirstmenulist().then((res) => {
     //遍历存到总数组中
@@ -609,16 +608,25 @@ onMounted(() => {
     const sortedItems = sortByOrderNumDescending(actionrouterList.value);
     actionrouterList.value = sortedItems;
     //获取二级目录信息，传入一个一级目录的
+    uni.hideLoading();
+
+ 
     getSelection(actionrouterList.value[0]);
+
+
+    tabCur.value = 0;
+    mainCur.value = 0;
+    verticalNavTop.value = (1 - 1) * 50;
+    getSelection(actionrouterList.value[0]);
+
   });
   //另一个进程获取全部完整的信息
   getActionAll().then((res) => {
     const transformedData = transformCategories(res.data.data);
     actionrouterList.value = sortByOrderNumDescending(transformedData);
+
   });
-  nextTick(() => {
-    uni.hideLoading();
-  });
+
 });
 
 const chooseList = ref([]); //被选中课程的列表
@@ -646,6 +654,7 @@ const chooseAction = (
 const getSelection = (item: ListItem) => {
   var firstmenuid = item.id;
   if (item.children.length > 0) {
+    console.log(item)
     toSecmenu(item);
   } else {
     uni.showLoading({

@@ -224,7 +224,7 @@ const getPlan = () => {
   };
   getplanlist(iddd.value).then((res) => {
     let temp = res.data.data || [];
-    console.log(res,'temp');
+    console.log(temp,'temp');
     temp.forEach(
       (item: {
         ID: any;

@@ -13,8 +13,8 @@
       <ul class="plan-sessions">
         <li class="flex justify-between actionGroup-item" v-for="(actionGroup, index) in actionGroups" :key="index">
           <span class="flex flex-nowrap">
-            <checkbox v-if="actionGroup.status!=2" class='round cyan' :class="actionGroup.status==1?'checked':''" :checked="actionGroup.status==1?true:false"></checkbox>
-            <checkbox v-else class='round checked grey' checked></checkbox>
+            <checkbox v-if="actionGroup.status!=2" class='round cyan' disabled :class="actionGroup.status==1?'checked':''" :checked="actionGroup.status==1?true:false"></checkbox>
+            <checkbox v-else class='round checked grey' disabled checked></checkbox>
             <view class="title ml-3">   {{ index + 1 }}. {{ actionGroup.title }}</view>
           </span>
           <span>{{actionGroup.date}}</span>
