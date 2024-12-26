@@ -23,13 +23,14 @@
     </div>
     <van-tabbar
       placeholder
-      safe-area-inset-bottom
       @change="onChange"
       v-model="usetsto.getcurrentactive"
     >
       <van-tabbar-item
         :name="tabbardata[0].name"
-        style="margin-bottom: 15px; height: 100%"
+        style=" height: 84px"
+        class="pt-3"
+
         v-if="usetsto.active == tabbardata[0].name"
         placeholder
       >
@@ -39,7 +40,9 @@
         </template>
       </van-tabbar-item>
       <van-tabbar-item
-        style="margin-bottom: 15px; height: 100%"
+        style=" height: 84px"
+        class="pt-3"
+
         :name="tabbardata[0].name"
         v-else
       >
@@ -49,7 +52,9 @@
         </template>
       </van-tabbar-item>
       <van-tabbar-item
-        style="margin-bottom: 15px; height: 100%"
+        style=" height: 84px"
+        class="pt-3"
+
         :name="tabbardata[1].name"
         v-if="usetsto.active == tabbardata[1].name"
       >
@@ -59,7 +64,10 @@
         </template>
       </van-tabbar-item>
       <van-tabbar-item
-        style="margin-bottom: 15px; height: 100%"
+        style=" height: 84px"
+        class="pt-3"
+
+
         :name="tabbardata[1].name"
         v-else
       >
@@ -70,7 +78,10 @@
       </van-tabbar-item>
 
       <van-tabbar-item
-        style="margin-bottom: 15px; height: 100%"
+        style=" height: 84px"
+        class="pt-3"
+
+
         :name="tabbardata[2].name"
         v-if="usetsto.active == tabbardata[2].name"
       >
@@ -80,7 +91,10 @@
         </template>
       </van-tabbar-item>
       <van-tabbar-item
-        style="margin-bottom: 15px; height: 100%"
+        style=" height: 84px"
+        class="pt-3"
+
+
         :name="tabbardata[2].name"
         v-else
       >
@@ -164,4 +178,9 @@ onMounted(() => {
   }
 });
 </script>
-<style scoped></style>
+<style>
+.van-tabbar {
+  height: 76px!important;
+  align-items: center;
+}
+</style>
