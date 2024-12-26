@@ -79,7 +79,7 @@
         <van-tab title="线上任务" name="online"></van-tab>
       </van-tabs>
     </div>
-    <van-collapse :value="activeName" @change="onChange">
+    <van-collapse :value="activeName" @change="onChange" class="w-full">
       <van-collapse-item name="1">
         <template v-slot:title>
           <div class="cardTitle py-2 w-full leading-10 px-3 rounded">
@@ -165,6 +165,7 @@
       @confirm="goChooseAction"
       @close="onCloseDialog"
     >
+      <van-picker :columns="columns" @change="changeClass" />
       <van-radio-group v-model="radioType">
         <van-cell-group>
           <van-cell
@@ -232,6 +233,7 @@ const CoachPunchInAuth = ref(false); //是否授权
 const activeName = ref([]);
 const tagsList = ref<{ content: string; color: string }[]>([]);
 const tagsColor = ["#00FF7F", "#FF0000", "#FFD700"];
+const columns = ref(["私教课"]);
 const seeBodyForm = () => {
   const imgData = JSON.stringify(stuInfo.value.BodyCheckImg);
   router.push({
@@ -252,6 +254,10 @@ const onChange = (val: any) => {
 const toAddClass = () => {
   //去添加课程
   showDialog.value = true;
+};
+const changeClass = (e: any) => {
+  const { picker, value, index } = e.detail;
+  console.log(picker, value, index, "changeClass");
 };
 const deleteTag = (item: any) => {
   console.log(item, "deleteTag");

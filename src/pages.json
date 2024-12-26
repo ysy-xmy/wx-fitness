@@ -176,6 +176,13 @@
           "style": {
             "navigationBarTitleText": "训练计划表"
           }
+        },
+        {
+          "path": "actionArrange/index",
+          "name": "actionArrange",
+          "style": {
+            "navigationBarTitleText": "动作库"
+          }
         }
       ]
     }

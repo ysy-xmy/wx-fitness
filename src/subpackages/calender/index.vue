@@ -75,7 +75,7 @@
       </div>
     </div>
 
-    <div class="addBtn">
+    <div class="addBtn" @click="router.push({ name: 'actionArrange' })">
       <van-icon name="plus" size="20" color="#6495ED" />
     </div>
   </view>
@@ -83,7 +83,6 @@
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted } from "vue";
-
 const selected = ref<any[]>([]);
 const startDate = ref<string>("2023-01-01");
 const endDate = ref<string>("2024-12-31");
@@ -94,7 +93,8 @@ const isDragging = ref<boolean>(false);
 const startY = ref<number>(0);
 const startHeight = ref<number>(150);
 const calendarRef = ref<any>(null);
-
+import { useRouter } from "uni-mini-router";
+const router = useRouter();
 function getDate(date: Date | string, AddDayCount = 0) {
   if (!date) {
     date = new Date();
