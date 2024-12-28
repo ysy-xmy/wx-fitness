@@ -61,7 +61,7 @@
               >
               <div
                 @click="
-                  tomycourse(it.ID, it.Percentage, it.Name, it.Description)
+                  tomycourse(it.ID, it.Percentage, it.Name, it.Description, it.CoachName, String(it.LessonCount), it.EndTime)
                 "
                 style="
                   width: 60px;
@@ -157,7 +157,10 @@ const tomycourse = (
   id: string,
   Percentage: string,
   name: string,
-  desc: string
+  desc: string,
+  CoachName: string,
+  LessonCount: string,
+  EndTime: string
 ) => {
   console.log({
     id,
@@ -166,13 +169,15 @@ const tomycourse = (
     desc,
   });
   router.push({
-    // path: `/subpackages/mycourse/index?id=${id}&&Percentage=${Percentage}&&name=${name}&&desc=${desc}`,
     name: "mycourse",
     params: {
       id,
       Percentage: Percentage,
       name: name,
       desc,
+      CoachName: encodeURIComponent(CoachName),
+      LessonCount: LessonCount,
+      EndTime: EndTime
     },
   });
 };
