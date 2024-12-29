@@ -3,31 +3,32 @@
     <div class="w-full lists-item mt-3 px-5">
       <div
         class="nodata-card flex flex-col justify-center items-center w-full"
-        v-if="Object.keys(props.list).length === 0"
+        v-if="Object.keys(outLineList).length === 0"
       >
         <van-empty description="暂无计划" />
       </div>
       <div v-else>
         <div
-          class="card rounded-lg bg-white flex flex-wrap justify-between items-center p-4 shadow mb-3"
-          v-for="(plan, index) in Object.values(props.list).flat()"
+          class="card rounded-lg bg-[#f9f9f9] flex flex-wrap justify-between items-center p-4 shadow mb-3"
+          v-for="(plan, index) in Object.values(outLineList).flat()"
           :key="index"
         >
           <div class="card-left w-full flex items-center mb-2">
-            <div class="dot w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+            <div class="dot w-5 h-5 bg-gray-400 rounded-full mr-2">
+
+            </div>
             <h1 class="font-normal text-base text-gray-700">
-              {{ plan.PlanTitle }}
+              {{ plan.PlanTitle===''? `私教课第 ${index + 1}节` : plan.PlanTitle}}
             </h1>
-            <span class="ml-auto text-sm text-gray-500">共{{ plan.ID }}节</span>
+            <span class="ml-auto text-sm text-gray-500">{{ LessonCount!=='' ? '共' + LessonCount + '节' : EndTime }}</span>
           </div>
           <div class="card-footer w-full flex justify-between items-center text-sm text-gray-500">
-            <div class="left-info">
-              教练员：{{ plan.PlanTime }}
+            <div class="left-text">
+              教练员：{{ CoachName }}
             </div>
-            <div class="right-info flex items-center">
-              <span @click="seeDetail(plan.ID)" 
-                    class="text-primary cursor-pointer">
-                详情
+            <div class="right-text flex items-center">
+              <span>
+                    {{ plan.PlanTime }}
               </span>
             </div>
           </div>
@@ -37,17 +38,46 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, defineProps } from "vue";
+import { ref, onMounted, watch, PropType } from "vue";
 import { actionClok } from "@/api/courses/courses";
 import { useRouter } from "uni-mini-router";
 import type { actionGroup } from "./course";
+
 const router = useRouter();
-const props = defineProps<{
-  list: actionGroup[];
-}>();
+const outLineList = ref<actionGroup[]>([]);
+const props = defineProps({
+  list: {
+    type: Array as PropType<actionGroup[]>,
+    required: true,
+    default: () => []
+  },
+  CoachName: {
+    type: String,
+    required: true,
+    default: ''
+  },
+  LessonCount: {
+    type: String,
+    required: true,
+    default: ''
+  },
+  EndTime: {
+    type: String,
+    required: true,
+    default: ''
+  }
+});
+const initPlanList = (data: actionGroup[]) => {
+  let temp: actionGroup[] = []
+  data.forEach((item) => {
+    if(item.Type === 'outline'){
+      temp.push(item)
+    }
+  })
+  outLineList.value = temp;
+};
 
-
-const seeDetail = (id) => {
+const seeDetail = (id: any) => {
   router.push({
     path: `/subpackages/actionDetail/index?itemid=${id}`,
   });
@@ -66,7 +96,7 @@ const handlefinish = (id: any) => {
             uni.showToast({
               title: "打卡成功", // 提示的内容
               icon: "success", // 图标类型，可选值有success、loading、none
-              duration: 2000, // 提示框停留时间，单��毫秒
+              duration: 2000, // 提示框停留时间，单位毫秒
               mask: false, // 是否显示透明蒙层，防止触摸穿透，默认：false
             });
             uni.$emit("refreshAction", true);
@@ -94,10 +124,19 @@ const handlefinish = (id: any) => {
     },
   });
 };
+
+watch(() => props.list, (newVal) => {
+  initPlanList(newVal);
+}, {
+  immediate: true,
+  deep: true
+});
+
 </script>
 <style scoped>
 .card {
   border: 1px solid #f0f0f0;
+  margin-bottom: 30px;
 }
 .text-primary {
   color: #4080ff;
