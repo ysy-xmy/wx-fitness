@@ -1,31 +1,73 @@
 <template>
-  <div class="training-plan">
+  <div class="training-plan" v-if="!isHideHeader">
     <div class="plan-header">
       <div class="plan-title tracking-wider">
-        {{ title }}
+        {{ props.title }}
       </div>
     </div>
     <div class="plan-info">
-      <div class="plan-dates">{{ startDate }} - {{ endDate }}</div>
-      <span>{{ status ? '已完成' : '进行中' }}</span>
+      <div class="plan-dates">{{ props.startDate }} - {{ props.endDate }}</div>
+      <span>{{ props.status ? "已完成" : "进行中" }}</span>
     </div>
     <div class="plan-details">
       <ul class="plan-sessions">
-        <li class="flex justify-between actionGroup-item" v-for="(actionGroup, index) in actionGroups" :key="index">
+        <li
+          class="flex justify-between actionGroup-item"
+          v-for="(actionGroup, index) in props.actionGroups"
+          @click="getOrderDetail(actionGroup)"
+          :key="index"
+        >
           <span class="flex flex-nowrap">
-            <checkbox v-if="actionGroup.status!=2" class='round cyan' disabled :class="actionGroup.status==1?'checked':''" :checked="actionGroup.status==1?true:false"></checkbox>
-            <checkbox v-else class='round checked grey' disabled checked></checkbox>
-            <view class="title ml-3">   {{ index + 1 }}. {{ actionGroup.title }}</view>
+            <checkbox
+              v-if="actionGroup.status != 2"
+              class="round cyan"
+              disabled
+              :class="actionGroup.status == 1 ? 'checked' : ''"
+              :checked="actionGroup.status == 1 ? true : false"
+            ></checkbox>
+            <checkbox
+              v-else
+              class="round checked grey"
+              disabled
+              checked
+            ></checkbox>
+            <view class="title ml-3">
+              {{ index + 1 }}. {{ actionGroup.title }}</view
+            >
           </span>
-          <span>{{actionGroup.date}}</span>
+          <span>{{ actionGroup.date }}</span>
         </li>
       </ul>
     </div>
   </div>
+  <ul class="plan-sessions" v-if="isHideHeader">
+    <li
+      class="flex justify-between actionGroup-item"
+      v-for="(actionGroup, index) in props.actionGroups"
+      :key="index"
+      @click="getOrderDetail(actionGroup)"
+    >
+      <span class="flex flex-nowrap">
+        <checkbox
+          v-if="actionGroup.status != 2"
+          class="round cyan"
+          disabled
+          :class="actionGroup.status == 1 ? 'checked' : ''"
+          :checked="actionGroup.status == 1 ? true : false"
+        ></checkbox>
+        <checkbox v-else class="round checked grey" disabled checked></checkbox>
+        <view class="title ml-3">
+          {{ index + 1 }}. {{ actionGroup.title }}</view
+        >
+      </span>
+      <span>{{ actionGroup.date }}</span>
+    </li>
+  </ul>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, PropType } from 'vue';
+<script lang="ts" setup>
+import { ref, PropType } from "vue";
+import { useRouter } from "uni-mini-router";
 
 type ActionGroupType = {
   title: string;
@@ -33,39 +75,45 @@ type ActionGroupType = {
   status: number;
 };
 
-export default defineComponent({
-  name: 'TrainingPlan',
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    startDate: {
-      type: String,
-      required: true,
-    },
-    endDate: {
-      type: String,
-      required: true,
-    },
-    status: {
-      type: Number,
-      required: true,
-    },
-    actionGroups: {
-      type: Array as PropType<ActionGroupType[]>,
-      required: true,
-    },
+const props = defineProps({
+  title: {
+    type: String,
+    required: false,
   },
-  setup(props) {
-    const isOpen = ref(false);
-    return {
-      isOpen,
-    };
+  startDate: {
+    type: String,
+    required: false,
+  },
+  endDate: {
+    type: String,
+    required: false,
+  },
+  status: {
+    type: Number,
+    required: true,
+  },
+  actionGroups: {
+    type: Array as PropType<ActionGroupType[]>,
+    required: true,
+  },
+  isHideHeader: {
+    type: Boolean,
+    required: false,
   },
 });
-</script>
 
+const isOpen = ref(false);
+const router = useRouter();
+
+const getOrderDetail = (item: any) => {
+  console.log(item, "item");
+  uni.setStorageSync("planList", item);
+  uni.setStorageSync("time", item.day);
+  router.push({
+    path: "/subpackages/calender/index",
+  });
+};
+</script>
 <style scoped>
 .training-plan {
   border-radius: 8px;
@@ -89,7 +137,12 @@ export default defineComponent({
 
 .plan-details {
   border-top: 1px solid #037fec;
-  border-image: linear-gradient(to right, #92c2f3 0%, #1f90f3 50%, #92c2f3 100%);
+  border-image: linear-gradient(
+    to right,
+    #92c2f3 0%,
+    #1f90f3 50%,
+    #92c2f3 100%
+  );
   border-image-slice: 1;
   margin-top: 20px;
   padding-top: 20px;
@@ -99,7 +152,6 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
-
 }
 
 .plan-dates {

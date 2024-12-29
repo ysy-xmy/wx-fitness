@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <div class="tabs w-full">
+      <div class="tabs w-full" style="height: 45vh; overflow: auto">
         <myStudent />
       </div>
     </view>

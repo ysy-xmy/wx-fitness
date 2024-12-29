@@ -29,7 +29,7 @@ const props = defineProps<{
 const state = reactive<stateType>({
   list: [],
   Page: 1,
-  Size: 5,
+  Size: 100,
   total: 1,
   init() {
     this.list = [];
@@ -48,6 +48,7 @@ const state = reactive<stateType>({
         temp = res.data.data.OrderInfos;
       this.total = res.data.Total || res.data.data.Total || temp.length;
       temp.forEach((item: any) => {
+        console.log(item, "item");
         this.list.push(props.dispose ? props.dispose(item) : item);
       });
 

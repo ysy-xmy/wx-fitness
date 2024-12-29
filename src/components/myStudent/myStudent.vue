@@ -30,7 +30,9 @@
                 <div class="text-box">
                   <div class="title">
                     <h1 class="w-full flex text-lg font-bold py-2">
-                      <span class="max-w-[130px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden">
+                      <span
+                        class="max-w-[130px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden"
+                      >
                         {{ item.Username }}
                       </span>
                       <text
@@ -65,7 +67,12 @@
                   />
                   <van-button
                     @click="
-                      todetail(item.UserID, item.ID, item.CoachPunchInAuth)
+                      todetail(
+                        item.UserID,
+                        item.ID,
+                        item.CoachPunchInAuth,
+                        item.Name
+                      )
                     "
                     color="#fd7d46"
                     size="small"
@@ -135,8 +142,14 @@ const getListData = () => {
 const dispose = (item: any) => {
   return item;
 };
-const todetail = (stuid: any, courseId: any, CoachPunchInAuth: any) => {
+const todetail = (
+  stuid: any,
+  courseId: any,
+  CoachPunchInAuth: any,
+  name: any
+) => {
   console.log("查看");
+  uni.setStorageSync("classname", name);
   router.push({
     name: "studentDetail",
     params: {

@@ -1,9 +1,11 @@
 <template>
-  <div
-    style="height: 100vh;display: flex;flex-direction: column;"
-  >
-    <div style="flex:1!important;height: 0;" class="viewcontent flex-1">
-      <div v-show="usetsto.active === 'index'" class="index-page">
+  <div style="height: 100vh; display: flex; flex-direction: column">
+    <div style="flex: 1 !important; height: 0" class="viewcontent flex-1">
+      <div
+        v-show="usetsto.active === 'index'"
+        class="index-page"
+        style="height: 90vh; overflow: hidden"
+      >
         <CoachHome v-if="permission == 'coach'" />
         <Index v-else />
       </div>
@@ -28,77 +30,80 @@
     >
       <van-tabbar-item
         :name="tabbardata[0].name"
-        style=" height: 84px"
+        style="height: 84px"
         class="pt-3"
-
         v-if="usetsto.active == tabbardata[0].name"
         placeholder
       >
-        <span :style="{ color: tabbardata[0].textactivecolor }">{{ tabbardata[0].title }}</span>
+        <span :style="{ color: tabbardata[0].textactivecolor }">{{
+          tabbardata[0].title
+        }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[0].activeicon" />
         </template>
       </van-tabbar-item>
       <van-tabbar-item
-        style=" height: 84px"
+        style="height: 84px"
         class="pt-3"
-
         :name="tabbardata[0].name"
         v-else
       >
-        <span :style="{ color: tabbardata[0].textcolor }">{{ tabbardata[0].title }}</span>
+        <span :style="{ color: tabbardata[0].textcolor }">{{
+          tabbardata[0].title
+        }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[0].inactiveicon" />
         </template>
       </van-tabbar-item>
       <van-tabbar-item
-        style=" height: 84px"
+        style="height: 84px"
         class="pt-3"
-
         :name="tabbardata[1].name"
         v-if="usetsto.active == tabbardata[1].name"
       >
-        <span :style="{ color: tabbardata[1].textactivecolor }">{{ tabbardata[1].title }}</span>
+        <span :style="{ color: tabbardata[1].textactivecolor }">{{
+          tabbardata[1].title
+        }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[1].activeicon" />
         </template>
       </van-tabbar-item>
       <van-tabbar-item
-        style=" height: 84px"
+        style="height: 84px"
         class="pt-3"
-
-
         :name="tabbardata[1].name"
         v-else
       >
-        <span :style="{ color: tabbardata[1].textcolor }">{{ tabbardata[1].title }}</span>
+        <span :style="{ color: tabbardata[1].textcolor }">{{
+          tabbardata[1].title
+        }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[1].inactiveicon" />
         </template>
       </van-tabbar-item>
 
       <van-tabbar-item
-        style=" height: 84px"
+        style="height: 84px"
         class="pt-3"
-
-
         :name="tabbardata[2].name"
         v-if="usetsto.active == tabbardata[2].name"
       >
-        <span :style="{ color: tabbardata[2].textactivecolor }">{{ tabbardata[2].title }}</span>
+        <span :style="{ color: tabbardata[2].textactivecolor }">{{
+          tabbardata[2].title
+        }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[2].activeicon" />
         </template>
       </van-tabbar-item>
       <van-tabbar-item
-        style=" height: 84px"
+        style="height: 84px"
         class="pt-3"
-
-
         :name="tabbardata[2].name"
         v-else
       >
-        <span :style="{ color: tabbardata[2].textcolor }">{{ tabbardata[2].title }}</span>
+        <span :style="{ color: tabbardata[2].textcolor }">{{
+          tabbardata[2].title
+        }}</span>
         <template #icon>
           <img class="w-7 h-7" :src="tabbardata[2].inactiveicon" />
         </template>
@@ -180,7 +185,7 @@ onMounted(() => {
 </script>
 <style>
 .van-tabbar {
-  height: 76px!important;
+  height: 76px !important;
   align-items: center;
 }
 </style>

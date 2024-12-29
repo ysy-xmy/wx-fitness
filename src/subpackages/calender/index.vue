@@ -18,8 +18,6 @@
           :selected="selected"
           :showMonth="showCalendar"
           :insert="true"
-          :startDate="startDate"
-          :endDate="endDate"
           :range="false"
           :clearDate="false"
           @change="change"
@@ -38,51 +36,54 @@
         <view class="drag-line"></view>
       </view>
     </view>
-
-    <div class="plan-container">
-      <div class="top" style="background-color: rgba(59, 213, 221, 1)">
-        <div class="title">负重臀桥</div>
-        <van-icon name="plus" size="20" color="white" />
-      </div>
-      <div class="bottom">
-        <div class="card" v-for="item in 3">
-          <div class="content">
-            <div class="name">第一组</div>
-            <div class="wei">70Kg</div>
-            <div class="count">10次</div>
+    <div v-for="(item, index) in ifshow" :key="index">
+      <div class="plan-container" v-if="item.type === 'weight'">
+        <div class="top" style="background-color: rgba(59, 213, 221, 1)">
+          <div class="title">{{ item.title }}</div>
+          <van-icon name="plus" size="20" color="white" />
+        </div>
+        <div class="bottom">
+          <div class="card" v-for="it in item.planActions" :key="it.ActionName">
+            <div class="content">
+              <div class="name">{{ it.ActionName }}</div>
+              <div class="wei">{{ it.Weight }}Kg</div>
+              <div class="count">{{ it.GroupNum }}次</div>
+            </div>
+            <div class="btn">
+              <van-icon name="minus" size="15" color="white" />
+            </div>
           </div>
-          <div class="btn">
-            <van-icon name="minus" size="15" color="white" />
+        </div>
+      </div>
+      <div class="plan-container" v-if="item.type === 'stretch'">
+        <div class="top" style="background-color: rgba(138, 207, 90, 1)">
+          <div class="title">{{ item.title }}</div>
+          <van-icon name="plus" size="20" color="white" />
+        </div>
+        <div class="bottom">
+          <div class="card" v-for="it in item.List" :key="it.ActionName">
+            <div class="content">
+              <div class="name">{{ it.ActionName }}</div>
+              <div class="count">{{ it.Second }}秒</div>
+            </div>
+            <div class="btn">
+              <van-icon name="minus" size="15" color="white" />
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="plan-container">
-      <div class="top" style="background-color: rgba(138, 207, 90, 1)">
-        <div class="title">拉伸运动</div>
-        <van-icon name="plus" size="20" color="white" />
-      </div>
-      <div class="bottom">
-        <div class="card">
-          <div class="content">
-            <div class="name">肱二头肌</div>
-            <div class="count">10次</div>
-          </div>
-          <div class="btn">
-            <van-icon name="minus" size="15" color="white" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="addBtn" @click="router.push({ name: 'actionArrange' })">
+    <div class="addBtn" @click="toActionArrange">
       <van-icon name="plus" size="20" color="#6495ED" />
     </div>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from "vue";
+import { ref, nextTick, onMounted, computed } from "vue";
+import { useRouter } from "uni-mini-router";
+
+const router = useRouter();
 const selected = ref<any[]>([]);
 const startDate = ref<string>("2023-01-01");
 const endDate = ref<string>("2024-12-31");
@@ -93,8 +94,9 @@ const isDragging = ref<boolean>(false);
 const startY = ref<number>(0);
 const startHeight = ref<number>(150);
 const calendarRef = ref<any>(null);
-import { useRouter } from "uni-mini-router";
-const router = useRouter();
+const currentSelectDay = ref(""); //当前选择的日期
+const planListType = ref<any[]>([]);
+
 function getDate(date: Date | string, AddDayCount = 0) {
   if (!date) {
     date = new Date();
@@ -119,25 +121,53 @@ function getDate(date: Date | string, AddDayCount = 0) {
   };
 }
 
+const changeTime = (dateTime: string) => {
+  // 将字符串转化为 Date 对象
+  const date = new Date(dateTime.replace(" ", "T"));
+
+  // 转化为 ISO 格式并提取日期部分
+  const isoDate = date.toISOString().split("T")[0];
+  return isoDate;
+};
+
+const ifshow = computed(() => {
+  return currentSelectDay.value === changeTime(uni.getStorageSync("time"))
+    ? planListType.value
+    : [];
+});
+
+const toActionArrange = () => {
+  router.push({
+    name: "actionArrange",
+  });
+};
+
 onMounted(() => {
+  if (uni.getStorageSync("planList") && uni.getStorageSync("time")) {
+    console.log(uni.getStorageSync("planList"), "planList");
+    uni.getStorageSync("planList").actionGroups.forEach((item: any) => {
+      planListType.value.push({
+        planActions: item["List"],
+        title: item["title"],
+        type: item["type"],
+      });
+    });
+    console.log(planListType.value, "planListType");
+  }
+
   nextTick(() => {
     showCalendar.value = true;
     // 获取今天的日期
     const today = getDate(new Date()).fullDate;
-    currentDate.value = today;
+    currentDate.value = changeTime(uni.getStorageSync("time"));
+    currentSelectDay.value = changeTime(uni.getStorageSync("time"));
     startDate.value = getDate(new Date(), -60).fullDate;
     endDate.value = getDate(new Date(), 30).fullDate;
 
     // 初始化打卡数据
     selected.value = [
       {
-        date: getDate(new Date(), -3).fullDate,
-      },
-      {
-        date: getDate(new Date(), -2).fullDate,
-      },
-      {
-        date: getDate(new Date(), -1).fullDate,
+        date: changeTime(uni.getStorageSync("time")),
       },
     ];
 
@@ -171,6 +201,7 @@ const scrollToSelectedDate = () => {
 
 const change = (e: any) => {
   console.log("选择的日期是:", e);
+  currentSelectDay.value = e.fulldate;
   // 检查是否已经打卡
   scrollToSelectedDate();
 };

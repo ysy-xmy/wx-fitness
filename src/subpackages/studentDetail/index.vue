@@ -73,7 +73,7 @@
     </div>
 
     <div class="tab-title mt-2 bg-[#f8fafc] w-full">
-      <van-tabs active="a">
+      <van-tabs :active="tabStatus" @change="changeTab">
         <van-tab title="已完成" name="finish"></van-tab>
         <van-tab title="线下计划" name="outline"></van-tab>
         <van-tab title="线上任务" name="online"></van-tab>
@@ -84,7 +84,8 @@
         <template v-slot:title>
           <div class="cardTitle py-2 w-full leading-10 px-3 rounded">
             <div class="font-bold">
-              私教课 增肌一对一 （12节）<span
+              {{ title
+              }}<span
                 class="ml-2 font-thin tracking-wider"
                 style="color: #6d819cff; margin-left: 2px"
               ></span>
@@ -99,12 +100,12 @@
                 justify-content: space-between;
               "
             >
-              <div>2024.10.01 (起始时间)</div>
+              <!-- <div>{{ item.day }} (起始时间)</div> -->
               <div>进行中</div>
             </div>
           </div>
         </template>
-        <div
+        <!-- <div
           style="align-items: start"
           class="w-full flex content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody flex-wrap"
         >
@@ -149,7 +150,8 @@
           <div v-else>
             <van-empty class="h-28" description="该课程暂无计划" />
           </div>
-        </div>
+        </div> -->
+        <PlanCard :isHideHeader="true" :status="1" :actionGroups="showList" />
       </van-collapse-item>
     </van-collapse>
 
@@ -213,7 +215,8 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import PlanCard from "@/components/plan-card/index.vue";
+import { computed, reactive, ref, watch } from "vue";
 import { getplanlist } from "@/api/course/index";
 import { getstudentInfobyId } from "@/api/coach/index";
 import { useRouter } from "uni-mini-router";
@@ -225,6 +228,7 @@ const AppStore = useAppStore();
 const router = useRouter();
 const stuInfo = ref();
 const radioType = ref("");
+const title = ref(uni.getStorageSync("classname") || "私教课");
 const addTagVal = ref(""); //添加标签
 const showDialogAddTags = ref(false); //是否展示弹窗输入标签
 const courseInfo = ref();
@@ -233,7 +237,16 @@ const CoachPunchInAuth = ref(false); //是否授权
 const activeName = ref([]);
 const tagsList = ref<{ content: string; color: string }[]>([]);
 const tagsColor = ["#00FF7F", "#FF0000", "#FFD700"];
+const tabStatus = ref("finish");
 const columns = ref(["私教课"]);
+
+const changeTab = (e: any) => {
+  console.log(e, "changeTab");
+  tabStatus.value = e.detail.name;
+};
+const showList = computed(() => {
+  return plansList.value[tabStatus.value];
+});
 const seeBodyForm = () => {
   const imgData = JSON.stringify(stuInfo.value.BodyCheckImg);
   router.push({
@@ -259,6 +272,11 @@ const changeClass = (e: any) => {
   const { picker, value, index } = e.detail;
   console.log(picker, value, index, "changeClass");
 };
+const plansList = ref<any>({
+  online: [],
+  outline: [],
+  finish: [],
+});
 const deleteTag = (item: any) => {
   console.log(item, "deleteTag");
   tagsList.value = tagsList.value.filter((tag) => tag !== item);
@@ -323,7 +341,6 @@ const changeCheck = (item: data) => {
   // console.log(params, "修改计划状态");
   // const response = await changePlanStatus(params);
 };
-let planList = ref();
 
 const query = ref();
 const initData = async () => {
@@ -336,17 +353,31 @@ const initData = async () => {
     stuInfo.value = res.data.data;
     //获取课程内容
     const response = await getplanlist(query.value.courseId);
-    console.log(response.data.data, "课程内容");
     if (response.data.data === null || !response.data.data)
       return uni.hideLoading();
-    planList.value = response.data.data.map((item: any) => {
-      return {
-        ...item,
-        PlanTime: formatDateString(item.PlanTime),
+    response.data.data.forEach((item: any) => {
+      let temp = {
+        title: item["PlanTitle"] || "私教课",
+        day: item["PlanTime"],
+        status: item["Complete"] ? 1 : 0,
+        id: item["ID"],
 
-        show: false,
+        actionGroups: item["ActionGroups"].map((it: any, ind: number) => {
+          return {
+            title: it["ActionGroupTitle"] || `动作${ind + 1}`,
+            date: "",
+            status: it["Complete"] || 0,
+            List: it["PlanActions"],
+            type: it["ContentType"],
+          };
+        }),
       };
+      plansList.value[item["Type"].toLowerCase()].push(temp);
+      if (item["Complete"]) {
+        plansList.value["finish"].push(temp);
+      }
     });
+    console.log(plansList.value, "plansList");
     uni.hideLoading();
   }
 };
