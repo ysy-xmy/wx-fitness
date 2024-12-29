@@ -49,10 +49,22 @@
           <finishedtask :list="list"></finishedtask>
         </van-tab>
         <van-tab title="线下计划">
-          <outLinePlan :list="list" :LessonCount="state.LessonCount" :EndTime="state.EndTime" :CoachName="state.CoachName"></outLinePlan>
+          <PlanList 
+            type="outline"
+            :list="list" 
+            :LessonCount="state.LessonCount" 
+            :EndTime="state.EndTime" 
+            :CoachName="state.CoachName"
+          />
         </van-tab>
         <van-tab title="线上任务">
-          <!-- <onlinetask :list="list"></onlinetask> -->
+          <PlanList 
+            type="online"
+            :list="list" 
+            :LessonCount="state.LessonCount" 
+            :EndTime="state.EndTime" 
+            :CoachName="state.CoachName"
+          />
         </van-tab>
       </van-tabs>
     </div>
@@ -71,13 +83,8 @@ import {
 import { getplanlist } from "@/api/course";
 import dayjs from "dayjs";
 import type { actionGroup } from "@/components/mycourse/course";
-//@ts-ignore
 import finishedtask from "@/components/mycourse/finishedtask.vue";
-//@ts-ignore
-import outLinePlan from "@/components/mycourse/outLineplan.vue";
-//@ts-ignore
-import onlinetask from "@/components/mycourse/onlinetask.vue";
-// import Finishtabs from './finishtabs.vue'
+import PlanList from "@/components/mycourse/PlanList.vue";
 const checked = ref(false);
 let list = ref<actionGroup[]>([]); // 确保 list 被初始化为一个空数组
 const iddd = ref();
