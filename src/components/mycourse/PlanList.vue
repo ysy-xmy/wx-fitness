@@ -20,10 +20,10 @@
               icon-size="24px"
               :value="plan.Complete"
               :checked="plan.Complete"
-              @change="handlePunchIn(plan.ID, plan.Complete, index)"
+              @change.stop="handlePunchIn(plan.ID, plan.Complete, index)"
             />
             <h1 class="font-normal text-base text-gray-700">
-              {{ plan.PlanTitle === '' ? `私教课第 ${index + 1}节` : plan.PlanTitle }}
+              {{ plan.PlanTitle === '' ? `私教课第 ${index + 1} 节` : plan.PlanTitle }}
             </h1>
             <span class="ml-auto text-sm text-gray-500">{{ LessonCount !== '' ? '共' + LessonCount + '节' : EndTime }}</span>
           </div>
@@ -33,7 +33,7 @@
             </div>
             <div class="right-text flex items-center">
               <span>
-                {{ plan.PlanTime }}
+                {{ plan.PlanTime.split(' ')[0] }}
               </span>
             </div>
           </div>

@@ -6,36 +6,33 @@
       </div>
     </div>
     <div class="plan-info">
-      <div class="plan-dates">{{ props.startDate }} - {{ props.endDate }}</div>
+      <div v-if="props.startDate" class="plan-dates">
+        {{ formatDateRange(props.startDate, props.endDate) }}
+      </div>
       <span>{{ props.status ? "已完成" : "进行中" }}</span>
     </div>
     <div class="plan-details">
       <ul class="plan-sessions">
         <li
           class="flex justify-between actionGroup-item"
-          v-for="(actionGroup, index) in props.actionGroups"
-          @click="getOrderDetail(actionGroup)"
-          :key="index"
-        >
+          v-for="(plan, index) in planList"
+          @click="getOrderDetail(plan)"
+          :key="index">
           <span class="flex flex-nowrap">
-            <checkbox
-              v-if="actionGroup.status != 2"
-              class="round cyan"
-              disabled
-              :class="actionGroup.status == 1 ? 'checked' : ''"
-              :checked="actionGroup.status == 1 ? true : false"
-            ></checkbox>
-            <checkbox
-              v-else
-              class="round checked grey"
-              disabled
-              checked
-            ></checkbox>
+            <div @click.stop="handlePunchIn(plan.ID, plan.Complete, index)">
+              <van-checkbox
+                class="round cyan"
+                checked-color="#1cbbb4"
+                icon-size="24px"
+                :value="plan.Complete"
+                :checked="plan.Complete" />
+            </div>
+
             <view class="title ml-3">
-              {{ index + 1 }}. {{ actionGroup.title }}</view
+              {{ plan.PlanTitle === '' ? `私教课第 ${index + 1} 节` : plan.PlanTitle }}</view
             >
           </span>
-          <span>{{ actionGroup.date }}</span>
+          <span>{{ plan.PlanTime.split(' ')[0] }}</span>
         </li>
       </ul>
     </div>
@@ -43,37 +40,38 @@
   <ul class="plan-sessions" v-if="isHideHeader">
     <li
       class="flex justify-between actionGroup-item"
-      v-for="(actionGroup, index) in props.actionGroups"
+      v-for="(plan, index) in planList"
       :key="index"
-      @click="getOrderDetail(actionGroup)"
-    >
+      @click="getOrderDetail(plan)">
       <span class="flex flex-nowrap">
-        <checkbox
-          v-if="actionGroup.status != 2"
+        <div @click.stop="handlePunchIn(plan.ID, plan.Complete, index)">
+        <van-checkbox
           class="round cyan"
-          disabled
-          :class="actionGroup.status == 1 ? 'checked' : ''"
-          :checked="actionGroup.status == 1 ? true : false"
-        ></checkbox>
-        <checkbox v-else class="round checked grey" disabled checked></checkbox>
-        <view class="title ml-3">
-          {{ index + 1 }}. {{ actionGroup.title }}</view
-        >
+          checked-color="#1cbbb4"
+          icon-size="24px"
+          :value="plan.Complete"
+          :checked="plan.Complete" />
+        </div>
+        <view class="title ml-3">  {{ plan.PlanTitle === '' ? `私教课第 ${index + 1}节` : plan.PlanTitle }}</view>
       </span>
-      <span>{{ actionGroup.date }}</span>
+      <span>{{ plan.PlanTime }}</span>
     </li>
   </ul>
 </template>
 
 <script lang="ts" setup>
-import { ref, PropType } from "vue";
+import { ref, PropType, watch } from "vue";
 import { useRouter } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
+import { actionClok } from "@/api/courses/courses";
 
 type ActionGroupType = {
-  title: string;
-  date: string;
-  status: number;
+  ID: number;
+  Type: string;
+  PlanTitle: string;
+  PlanTime: string;
+  CreatedAt: string;
+  Complete: boolean;
 };
 
 const props = defineProps({
@@ -102,9 +100,22 @@ const props = defineProps({
     required: false,
   },
 });
+const planList = ref<ActionGroupType[]>(props.actionGroups);
 
-const isOpen = ref(false);
 const router = useRouter();
+
+const formatDateRange = (startDate?: string, endDate?: string) => {
+  if (!startDate) return '';
+  
+  const formatDate = (date: string) => date.split(' ')[0];
+  const start = formatDate(startDate);
+  
+  if (!endDate) {
+    return `创建于 ${start}`;
+  }
+  
+  return `${start} - ${formatDate(endDate)}`;
+};
 
 const getOrderDetail = (item: any) => {
   console.log(item, "item");
@@ -114,6 +125,71 @@ const getOrderDetail = (item: any) => {
     path: "/subpackages/calender/index",
   });
 };
+
+const handlePunchIn = (id: any, status: boolean, index: number) => {
+  if (status) {
+    uni.showToast({
+      title: "已完成打卡，如需取消请联系管理员取消",
+      icon: "none",
+      duration: 2000,
+      mask: false,
+    });
+    planList.value[index].Complete = true;
+    planList.value = [...planList.value];
+    return;
+  }
+
+  uni.showModal({
+    title: "日常打卡",
+    content: "是否进行打卡？",
+    confirmText: "确定",
+    cancelText: "取消",
+    success: (res) => {
+      if (res.confirm) {
+        actionClok(id)
+          .then(() => {
+            planList.value[index].Complete = true;
+            uni.showToast({
+              title: "成功",
+              icon: "success",
+              duration: 2000,
+              mask: false,
+            });
+            uni.$emit("refreshAction", true);
+          })
+          .catch((err) => {
+            uni.showToast({
+              title: "打卡失败",
+              icon: "error",
+              duration: 2000,
+              mask: false,
+            });
+            console.error("打卡失败", err);
+          });
+      } else {
+        uni.showToast({
+          title: "已取消打卡",
+          icon: "none",
+          duration: 2000,
+          mask: false,
+        });
+        planList.value[index].Complete = false;
+        planList.value = [...planList.value];
+      }
+    },
+  });
+};
+
+watch(
+  () => props.actionGroups,
+  (newVal: any) => {
+    planList.value = newVal;
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+);
 </script>
 <style scoped>
 .training-plan {
