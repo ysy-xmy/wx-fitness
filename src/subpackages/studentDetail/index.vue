@@ -161,13 +161,12 @@
     <div class="addmore w-11/12" @click="toAddClass">+ 添加课表</div>
     <van-dialog
       use-slot
-      title="选择课程类型"
+      title="课程信息"
       :show="showDialog"
       show-cancel-button
       @confirm="goChooseAction"
       @close="onCloseDialog"
     >
-      <van-picker :columns="columns" @change="changeClass" />
       <van-radio-group v-model="radioType">
         <van-cell-group>
           <van-cell
@@ -190,8 +189,32 @@
           </van-cell>
         </van-cell-group>
       </van-radio-group>
+      <van-field
+        :value="addClassName"
+        placeholder="请输入课程名"
+        border="true"
+        @change="onChangeAddClassName"
+      />
+      <van-field
+        type="datetime"
+        :value="actionTime"
+        placeholder="请输入时间"
+        border="true"
+        @focus="showSelectTime = true"
+        @change="(e: any) => (currentDate = e.detail)"
+      />
     </van-dialog>
-
+    <van-datetime-picker
+      style="z-index: 10000; width: 100vw; position: absolute; bottom: 0"
+      v-if="showSelectTime"
+      type="datetime"
+      :value="currentDate"
+      :min-date="minDate"
+      :max-date="maxDate"
+      @input="onInput"
+      @confirm="showSelectTime = false"
+      @cancel="showSelectTime = false"
+    />
     <van-dialog
       use-slot
       title="添加标签"
@@ -217,29 +240,38 @@
 <script setup lang="ts">
 import PlanCard from "@/components/plan-card/index.vue";
 import { computed, reactive, ref, watch } from "vue";
-import { getplanlist } from "@/api/course/index";
+import { getplanlist, postPlan } from "@/api/course/index";
 import { getstudentInfobyId } from "@/api/coach/index";
 import { useRouter } from "uni-mini-router";
 import { onMounted } from "vue";
 import { useAppStore } from "@/state/app";
 import { actionClok } from "@/api/courses/courses";
+import dayjs from "dayjs";
+import { useActionsStore } from "@/state/modules/actions";
 const AppStore = useAppStore();
+const actionsStore = useActionsStore();
 //获取路由参数
 const router = useRouter();
 const stuInfo = ref();
+const addClassName = ref("");
 const radioType = ref("");
-const title = ref(uni.getStorageSync("classname") || "私教课");
+const title = ref(actionsStore.getClassname || "私教课");
 const addTagVal = ref(""); //添加标签
 const showDialogAddTags = ref(false); //是否展示弹窗输入标签
 const courseInfo = ref();
 const showDialog = ref(false); //显示弹窗
 const CoachPunchInAuth = ref(false); //是否授权
 const activeName = ref([]);
+const currentDate = ref();
+const minDate = new Date().getTime();
+const maxDate = new Date(
+  new Date().setFullYear(new Date().getFullYear() + 1)
+).getTime();
 const tagsList = ref<{ content: string; color: string }[]>([]);
 const tagsColor = ["#00FF7F", "#FF0000", "#FFD700"];
 const tabStatus = ref("finish");
 const columns = ref(["私教课"]);
-
+const showSelectTime = ref(false);
 const changeTab = (e: any) => {
   console.log(e, "changeTab");
   tabStatus.value = e.detail.name;
@@ -247,6 +279,10 @@ const changeTab = (e: any) => {
 const showList = computed(() => {
   return plansList.value[tabStatus.value];
 });
+const onInput = (e: any) => {
+  console.log(e, "onInput");
+  currentDate.value = e.detail;
+};
 const seeBodyForm = () => {
   const imgData = JSON.stringify(stuInfo.value.BodyCheckImg);
   router.push({
@@ -268,6 +304,12 @@ const toAddClass = () => {
   //去添加课程
   showDialog.value = true;
 };
+const actionTime = computed(() => {
+  return dayjs(currentDate.value).format("YYYY-MM-DD HH:mm:ss");
+});
+const onChangeAddClassName = (e: any) => {
+  addClassName.value = e.detail;
+};
 const changeClass = (e: any) => {
   const { picker, value, index } = e.detail;
   console.log(picker, value, index, "changeClass");
@@ -284,6 +326,7 @@ const deleteTag = (item: any) => {
 const onCloseDialog = () => {
   showDialog.value = false;
   radioType.value = "";
+  addClassName.value = "";
 };
 const chooseType = (val: string) => {
   //选择课程类型
@@ -294,24 +337,52 @@ const changeDialogAddTags = (e: any) => {
   addTagVal.value = e.detail;
 };
 const goChooseAction = () => {
-  if (radioType.value == "") {
+  if (
+    radioType.value == "" ||
+    addClassName.value == "" ||
+    actionTime.value == ""
+  ) {
     uni.showToast({
-      title: "请选择课程类型",
+      title: "请完善信息！",
       icon: "error",
     });
-  } else {
-    AppStore.setactive("action");
-    router.push({
-      path: `/pages/home/index?isChoose=true&&stuid=${query.value.studentId}&&courid=${query.value.courseId}&&type=${radioType.value}&&name=${stuInfo.value.Username}`,
-    });
+    return;
   }
+  let data = {
+    UserID: Number(query.value.studentId),
+    UserCourseID: Number(query.value.courseId),
+    Type: radioType.value,
+    PlanTitle: addClassName.value,
+    PlanTime: actionTime.value,
+  };
+  postPlan(data)
+    .then((res) => {
+      console.log(data, "res");
+      if (res.data.code === 200) {
+        uni.showToast({
+          title: "添加成功！",
+        });
+        initData();
+      } else {
+        uni.showToast({
+          title: "添加失败！",
+          icon: "error",
+        });
+      }
+    })
+    .catch((err) => {
+      uni.showToast({
+        title: "添加失败！",
+        icon: "error",
+      });
+    });
 };
 type data = {
   title: string;
   day: string;
   finish: boolean;
 };
-const changeCheck = (item: data) => {
+const changeCheck = (item: any) => {
   if (item.Complete) return;
   //判断是否已经授权，如果没有授权，提示
   if (!CoachPunchInAuth.value) {
@@ -345,6 +416,11 @@ const changeCheck = (item: data) => {
 const query = ref();
 const initData = async () => {
   if (query.value) {
+    plansList.value = {
+      online: [],
+      outline: [],
+      finish: [],
+    };
     uni.showLoading({ title: "加载中...", mask: true });
     // const query = router.route.value.query;
     CoachPunchInAuth.value = query.value.CoachPunchInAuth;

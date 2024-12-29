@@ -68,6 +68,7 @@
 <script lang="ts" setup>
 import { ref, PropType } from "vue";
 import { useRouter } from "uni-mini-router";
+import { useActionsStore } from "@/state/modules/actions";
 
 type ActionGroupType = {
   title: string;
@@ -107,8 +108,8 @@ const router = useRouter();
 
 const getOrderDetail = (item: any) => {
   console.log(item, "item");
-  uni.setStorageSync("planList", item);
-  uni.setStorageSync("time", item.day);
+  useActionsStore().setPlanList(item);
+  useActionsStore().setTime(item.day);
   router.push({
     path: "/subpackages/calender/index",
   });

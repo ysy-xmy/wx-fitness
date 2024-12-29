@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 import type { planRequest } from "./types";
-export const postPlan = (data: planRequest) => {
+export const postPlan = (data: any) => {
   return request.post("/api/course/postPlan", data);
 };
 // export const getCourselist = () => {

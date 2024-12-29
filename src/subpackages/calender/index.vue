@@ -20,6 +20,7 @@
           :insert="true"
           :range="false"
           :clearDate="false"
+          :showToday="false"
           @change="change"
           @monthSwitch="monthSwitch"
           :date="currentDate"
@@ -70,8 +71,21 @@
               <van-icon name="minus" size="15" color="white" />
             </div>
           </div>
+          <div
+            class="card"
+            style="text-align: center"
+            v-if="item.list.length === 0"
+          >
+            暂无计划
+          </div>
         </div>
       </div>
+    </div>
+    <div
+      style="text-align: center; margin-top: 20px; width: 100%"
+      v-if="ifshow.length === 0"
+    >
+      暂无计划
     </div>
     <div class="addBtn" @click="toActionArrange">
       <van-icon name="plus" size="20" color="#6495ED" />
@@ -82,6 +96,7 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, computed } from "vue";
 import { useRouter } from "uni-mini-router";
+import { useActionsStore } from "@/state/modules/actions";
 
 const router = useRouter();
 const selected = ref<any[]>([]);
@@ -96,7 +111,7 @@ const startHeight = ref<number>(150);
 const calendarRef = ref<any>(null);
 const currentSelectDay = ref(""); //当前选择的日期
 const planListType = ref<any[]>([]);
-
+const actionsStore = useActionsStore();
 function getDate(date: Date | string, AddDayCount = 0) {
   if (!date) {
     date = new Date();
@@ -131,7 +146,7 @@ const changeTime = (dateTime: string) => {
 };
 
 const ifshow = computed(() => {
-  return currentSelectDay.value === changeTime(uni.getStorageSync("time"))
+  return currentSelectDay.value === changeTime(actionsStore.getTime)
     ? planListType.value
     : [];
 });
@@ -143,9 +158,8 @@ const toActionArrange = () => {
 };
 
 onMounted(() => {
-  if (uni.getStorageSync("planList") && uni.getStorageSync("time")) {
-    console.log(uni.getStorageSync("planList"), "planList");
-    uni.getStorageSync("planList").actionGroups.forEach((item: any) => {
+  if (actionsStore.getPlanList && actionsStore.getTime) {
+    actionsStore.getPlanList.actionGroups.forEach((item: any) => {
       planListType.value.push({
         planActions: item["List"],
         title: item["title"],
@@ -159,15 +173,15 @@ onMounted(() => {
     showCalendar.value = true;
     // 获取今天的日期
     const today = getDate(new Date()).fullDate;
-    currentDate.value = changeTime(uni.getStorageSync("time"));
-    currentSelectDay.value = changeTime(uni.getStorageSync("time"));
+    currentDate.value = changeTime(actionsStore.getTime);
+    currentSelectDay.value = changeTime(actionsStore.getTime);
     startDate.value = getDate(new Date(), -60).fullDate;
     endDate.value = getDate(new Date(), 30).fullDate;
 
     // 初始化打卡数据
     selected.value = [
       {
-        date: changeTime(uni.getStorageSync("time")),
+        date: changeTime(actionsStore.getTime),
       },
     ];
 

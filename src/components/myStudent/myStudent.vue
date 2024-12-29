@@ -100,6 +100,7 @@ import { useRouter } from "uni-mini-router";
 import scrollFrom from "@/components/scrollForm/index.vue";
 import { ref, onMounted } from "vue";
 import { getCoachStudentinfo } from "@/api/coach";
+import { useActionsStore } from "@/state/modules/actions";
 const router = useRouter();
 const scorllFormRef = ref<any>(null);
 let list = ref<any[]>([]);
@@ -149,7 +150,7 @@ const todetail = (
   name: any
 ) => {
   console.log("查看");
-  uni.setStorageSync("classname", name);
+  useActionsStore().setClassname(name);
   router.push({
     name: "studentDetail",
     params: {
