@@ -6,6 +6,11 @@ export const useActionsStore = defineStore({
     classname: "",
     time: "",
     planList: {},
+    chooseActions: {
+      type: "",
+      name: "",
+    },
+    chooseActionId: -Infinity,
   }),
   getters: {
     getPlanList(): any {
@@ -17,6 +22,12 @@ export const useActionsStore = defineStore({
     getClassname(): string {
       return this.classname;
     },
+    getChooseActions(): any {
+      return this.chooseActions;
+    },
+    getChooseActionId(): number {
+      return this.chooseActionId;
+    },
   },
   actions: {
     setPlanList(list: any) {
@@ -27,6 +38,12 @@ export const useActionsStore = defineStore({
     },
     setClassname(classname: string) {
       this.classname = classname;
+    },
+    setChooseActions(actions: any) {
+      this.chooseActions = actions;
+    },
+    setChooseActionId(id: number) {
+      this.chooseActionId = id;
     },
   },
 });

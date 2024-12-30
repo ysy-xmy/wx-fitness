@@ -448,6 +448,13 @@ const initData = async () => {
           };
         }),
       };
+      if (
+        actionsStore.getChooseActionId != -Infinity &&
+        actionsStore.getChooseActionId == item["ID"]
+      ) {
+        actionsStore.setPlanList(temp);
+        console.log(actionsStore.setPlanList, "actionsStore.getChooseActions");
+      }
       plansList.value[item["Type"].toLowerCase()].push(temp);
       if (item["Complete"]) {
         plansList.value["finish"].push(temp);
@@ -475,6 +482,11 @@ onMounted(() => {
   initData();
   uni.$on("getNew", () => {
     initData();
+  });
+  uni.$on("reload", () => {
+    console.log("重新获取");
+    initData();
+    console.log(actionsStore.getChooseActionId, "plansList");
   });
 });
 </script>

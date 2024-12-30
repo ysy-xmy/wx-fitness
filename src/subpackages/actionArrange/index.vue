@@ -31,7 +31,7 @@
           margin-left: 30px;
         "
       >
-        正在为{{ props.name }}的课程选课
+        正在为动作组 "{{ props.name || "" }}" 选课
       </div>
       <view class="cu-item" @click="showPopup = true">
         <div
@@ -246,6 +246,7 @@
         <div v-for="item in chooseList">
           <div style="width: 100vw; padding: 0 20px">
             <div
+              v-if="props.type == 'stretch'"
               class="card"
               style="
                 height: 50px;
@@ -261,12 +262,43 @@
             >
               <div class="title">{{ item.name }}</div>
               <van-stepper
+                :value="item.second"
+                integer
+                min="0"
+                step="1"
+                @change="(e) => changeNum(item, e, 'second')"
+              />秒
+            </div>
+            <div
+              v-if="props.type == 'weight'"
+              class="card"
+              style="
+                height: 50px;
+                line-height: 50px;
+                display: flex;
+                justify-content: space-between;
+                padding: 0 20px;
+                align-items: center;
+                background-color: rgba(255, 255, 255, 0.4);
+                border-bottom: 1px solid gray;
+                border-radius: 5px;
+              "
+            >
+              <div class="title">{{ item.name }}</div>
+              <van-stepper
+                :value="item.weight"
+                integer
+                min="0"
+                step="1"
+                @change="(e) => changeNum(item, e, 'weight')"
+              />Kg
+              <van-stepper
                 :value="item.num"
                 integer
                 min="0"
                 step="1"
-                @change="(e) => changeNum(item, e)"
-              />
+                @change="(e) => changeNum(item, e, 'num')"
+              />个
             </div>
           </div>
         </div>
@@ -295,31 +327,29 @@ import {
   getSecByFirst,
   getActionAll,
   getActionsBySec,
+  addActionToGroupAction,
 } from "@/api/action/action";
 import { useAuthStore } from "@/state/modules/auth";
 import { postPlan } from "@/api/course/index";
 import { useRouter } from "uni-mini-router";
+import { useActionsStore } from "@/state/modules/actions";
 import type {
   SourceCategory,
   TargetCategory,
   ActionItem,
   ListItem,
 } from "@/components/action/types";
-
-const props = defineProps<{
-  stuid?: number;
-  courid?: number;
-  type?: string;
-  ifChoose?: boolean;
-  name?: string;
-}>();
+const actionsStore = useActionsStore();
+const props = ref(actionsStore.getChooseActions);
 const showPopup = ref(false);
 const AuthStore = useAuthStore();
-const changeNum = (item: any, e: any) => {
+const changeNum = (item: any, e: any, type: string) => {
   if (chooseList.value) {
     const selectedItem = chooseList.value.find((it: any) => it.id == item.id);
     if (selectedItem) {
-      Reflect.set(selectedItem, "num", e.detail);
+      if (type == "num") Reflect.set(selectedItem, "num", e.detail);
+      if (type == "second") Reflect.set(selectedItem, "second", e.detail);
+      if (type == "weight") Reflect.set(selectedItem, "weight", e.detail);
     }
   }
 };
@@ -334,39 +364,56 @@ const toggleActive = (item: any, Array: any) => {
 const subitClass = () => {
   //发布课程
   let temp = chooseList.value;
-  temp = temp.filter((item: any) => item.num != 0);
+  temp = temp.filter(
+    (item: any) => (item.weight != 0 && item.num != 0) || item.second != 0
+  );
   if (temp.length == 0) {
     uni.showToast({
       title: "当前没有动作",
       icon: "error",
     });
   } else {
+    const PlantId = actionsStore.getChooseActionId;
     let classes: any = [];
     chooseList.value.forEach((item: any) => {
-      classes.push({
+      let temp = {
+        PlanID: PlantId,
+        ActionGroupTitle: props.value.name,
         ExerciseActionID: item.id,
         ActionName: item.name,
-        GroupNum: item.num,
-      });
+      };
+      if (props.value.type == "stretch") {
+        temp["Second"] = item.second;
+        temp["ContentType"] = "stretch";
+      } else {
+        temp["Weight"] = item.weight;
+        temp["GroupNum"] = item.num;
+        temp["ContentType"] = "weight";
+      }
+      classes.push(temp);
     });
-    let data = {
-      UserID: Number(props.stuid),
-      CourseID: Number(AuthStore.getClass),
-      Type: props.type,
-      PlanTime: getCurrentDateTime(),
-      Actions: classes,
-    };
-    postPlan(data)
+    console.log(classes, "classes");
+    addActionToGroupAction(classes)
       .then((res) => {
-        uni.showToast({
-          title: "添加成功！",
-        });
-        uni.$emit("getNew", true);
-        router.back();
+        if (res.data.code == 200) {
+          uni.showToast({
+            title: "添加成功",
+            icon: "success",
+          });
+          uni.$emit("reload");
+          setTimeout(() => {
+            router.back();
+          }, 1000);
+        } else {
+          uni.showToast({
+            title: "添加失败",
+            icon: "error",
+          });
+        }
       })
       .catch((err) => {
         uni.showToast({
-          title: "添加失败！",
+          title: "添加失败",
           icon: "error",
         });
       });
@@ -707,6 +754,7 @@ const state = reactive({
 });
 
 onMounted(() => {
+  console.log(props.value, "props");
   uni.$on("beginAddClass", (val) => {
     state.stuId = val.stuID;
     state.courseId = val.courID;
@@ -754,7 +802,8 @@ const chooseAction = (
     (it: any) => it == item
   );
   if (temp) {
-    if (!temp.ifcheck) chooseList.value.push({ ...item, num: 0 });
+    if (!temp.ifcheck)
+      chooseList.value.push({ ...item, num: 0, second: 0, weight: 0 });
     else {
       chooseList.value = chooseList.value.filter((it) => it.id != item.id);
     }

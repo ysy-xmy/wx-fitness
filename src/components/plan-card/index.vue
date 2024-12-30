@@ -110,6 +110,7 @@ const getOrderDetail = (item: any) => {
   console.log(item, "item");
   useActionsStore().setPlanList(item);
   useActionsStore().setTime(item.day);
+  useActionsStore().setChooseActionId(item.id);
   router.push({
     path: "/subpackages/calender/index",
   });

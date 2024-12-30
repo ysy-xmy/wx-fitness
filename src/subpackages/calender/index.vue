@@ -41,7 +41,12 @@
       <div class="plan-container" v-if="item.type === 'weight'">
         <div class="top" style="background-color: rgba(59, 213, 221, 1)">
           <div class="title">{{ item.title }}</div>
-          <van-icon name="plus" size="20" color="white" />
+          <van-icon
+            name="plus"
+            size="20"
+            color="white"
+            @click="addAction(item)"
+          />
         </div>
         <div class="bottom">
           <div class="card" v-for="it in item.planActions" :key="it.ActionName">
@@ -50,7 +55,7 @@
               <div class="wei">{{ it.Weight }}Kg</div>
               <div class="count">{{ it.GroupNum }}次</div>
             </div>
-            <div class="btn">
+            <div class="btn" @click="deleteAction(it)">
               <van-icon name="minus" size="15" color="white" />
             </div>
           </div>
@@ -59,22 +64,27 @@
       <div class="plan-container" v-if="item.type === 'stretch'">
         <div class="top" style="background-color: rgba(138, 207, 90, 1)">
           <div class="title">{{ item.title }}</div>
-          <van-icon name="plus" size="20" color="white" />
+          <van-icon
+            name="plus"
+            size="20"
+            color="white"
+            @click="addAction(item)"
+          />
         </div>
         <div class="bottom">
-          <div class="card" v-for="it in item.List" :key="it.ActionName">
+          <div class="card" v-for="it in item.planActions" :key="it.ActionName">
             <div class="content">
               <div class="name">{{ it.ActionName }}</div>
               <div class="count">{{ it.Second }}秒</div>
             </div>
-            <div class="btn">
+            <div class="btn" @click="deleteAction(it)">
               <van-icon name="minus" size="15" color="white" />
             </div>
           </div>
           <div
             class="card"
             style="text-align: center"
-            v-if="item.list.length === 0"
+            v-if="item.planActions.length === 0"
           >
             暂无计划
           </div>
@@ -91,17 +101,54 @@
       <van-icon name="plus" size="20" color="#6495ED" />
     </div>
   </view>
+  <van-dialog
+    use-slot
+    title="课程信息"
+    :show="showDialog"
+    show-cancel-button
+    @confirm="goChooseAction"
+    @close="onCloseDialog"
+  >
+    <van-radio-group v-model="radioType">
+      <van-cell-group>
+        <van-cell
+          title="放松训练"
+          value-class="value-class"
+          clickable
+          data-name="stretch"
+          @click="() => chooseType('stretch')"
+        >
+          <van-radio name="stretch" />
+        </van-cell>
+        <van-cell
+          title="力量训练"
+          value-class="value-class"
+          clickable
+          data-name="weight"
+          @click="() => chooseType('weight')"
+        >
+          <van-radio name="weight" />
+        </van-cell>
+      </van-cell-group>
+    </van-radio-group>
+    <van-field
+      :value="addClassName"
+      placeholder="请输入动作组名称"
+      border="true"
+      @change="onChangeAddClassName"
+    />
+  </van-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, computed } from "vue";
+import { ref, nextTick, onMounted, computed, watch } from "vue";
 import { useRouter } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
-
+import { addActionToGroup, deleteActionFromGroup } from "@/api/action/action";
 const router = useRouter();
 const selected = ref<any[]>([]);
 const startDate = ref<string>("2023-01-01");
-const endDate = ref<string>("2024-12-31");
+const endDate = ref<string>("2054-12-31");
 const showCalendar = ref<boolean>(false);
 const currentDate = ref<string>(new Date().toISOString().split("T")[0]);
 const wrapperHeight = ref<number>(415);
@@ -112,6 +159,21 @@ const calendarRef = ref<any>(null);
 const currentSelectDay = ref(""); //当前选择的日期
 const planListType = ref<any[]>([]);
 const actionsStore = useActionsStore();
+const addClassName = ref<string>("");
+const onChangeAddClassName = (e: any) => {
+  addClassName.value = e.detail;
+};
+const addAction = (item: any) => {
+  console.log(item, "item");
+  let temp = {
+    type: item.type,
+    name: item.title,
+  };
+  actionsStore.setChooseActions(temp);
+  router.push({
+    name: "actionArrange",
+  });
+};
 function getDate(date: Date | string, AddDayCount = 0) {
   if (!date) {
     date = new Date();
@@ -135,7 +197,32 @@ function getDate(date: Date | string, AddDayCount = 0) {
     day: dd.getDay(),
   };
 }
-
+const deleteAction = (item: any) => {
+  console.log(item, "item");
+  deleteActionFromGroup([item.ID])
+    .then((res: any) => {
+      console.log(res, "res");
+      if (res.data.code == 200) {
+        uni.showToast({
+          title: "删除成功",
+          icon: "none",
+        });
+        uni.$emit("reload");
+      } else {
+        uni.showToast({
+          title: "删除失败",
+          icon: "none",
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err, "err");
+      uni.showToast({
+        title: "删除失败",
+        icon: "none",
+      });
+    });
+};
 const changeTime = (dateTime: string) => {
   // 将字符串转化为 Date 对象
   const date = new Date(dateTime.replace(" ", "T"));
@@ -145,34 +232,77 @@ const changeTime = (dateTime: string) => {
   return isoDate;
 };
 
+const showDialog = ref<boolean>(false);
+const radioType = ref<string>("");
+const chooseType = (type: string) => {
+  radioType.value = type;
+};
+
+const onCloseDialog = () => {
+  radioType.value = "";
+  showDialog.value = false;
+};
+const goChooseAction = () => {
+  console.log(radioType.value, "radioType");
+  console.log(addClassName.value, "addClassName");
+  if (!radioType.value) {
+    uni.showToast({
+      title: "请选择课程类型",
+      icon: "none",
+    });
+    return;
+  }
+  if (!addClassName.value) {
+    uni.showToast({
+      title: "请输入动作组名称",
+      icon: "none",
+    });
+    return;
+  }
+  let temp = {
+    type: radioType.value,
+    name: addClassName.value,
+  };
+  actionsStore.setChooseActions(temp);
+  router.push({
+    name: "actionArrange",
+  });
+};
 const ifshow = computed(() => {
+  console.log(currentSelectDay.value, "currentSelectDay", planListType.value);
   return currentSelectDay.value === changeTime(actionsStore.getTime)
     ? planListType.value
     : [];
 });
 
 const toActionArrange = () => {
-  router.push({
-    name: "actionArrange",
-  });
+  showDialog.value = true;
 };
-
-onMounted(() => {
-  if (actionsStore.getPlanList && actionsStore.getTime) {
-    actionsStore.getPlanList.actionGroups.forEach((item: any) => {
-      planListType.value.push({
-        planActions: item["List"],
-        title: item["title"],
-        type: item["type"],
+watch(
+  () => actionsStore.getPlanList,
+  (newVal) => {
+    if (newVal && actionsStore.getTime) {
+      planListType.value = [];
+      console.log(newVal.actionGroups, "newVal");
+      newVal.actionGroups.forEach((item: any) => {
+        planListType.value.push({
+          planActions: item["List"],
+          title: item["title"],
+          type: item["type"],
+        });
       });
-    });
-    console.log(planListType.value, "planListType");
+      console.log(planListType.value, "planListType");
+    }
+  },
+  {
+    immediate: true,
+    deep: true,
   }
-
+);
+onMounted(() => {
   nextTick(() => {
     showCalendar.value = true;
     // 获取今天的日期
-    const today = getDate(new Date()).fullDate;
     currentDate.value = changeTime(actionsStore.getTime);
     currentSelectDay.value = changeTime(actionsStore.getTime);
     startDate.value = getDate(new Date(), -60).fullDate;
@@ -322,15 +452,26 @@ const dragEnd = () => {
       .content {
         margin-right: 20px;
         flex: 1;
-        display: flex;
+        /* display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: center; */
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
         .name,
         .wei,
         .count {
           font-size: 15px;
           font-weight: bold;
           color: rgba(0, 0, 0, 1);
+        }
+        .name {
+          text-align: left;
+        }
+        .wei {
+          text-align: center;
+        }
+        .count {
+          text-align: right;
         }
       }
       .btn {
