@@ -1,6 +1,10 @@
 <template>
   <div class="main flex w-full justify-center flex-col items-center">
-    <img src="@/static/wave-bg.png" alt="" class="bg" />
+    <img
+      src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241231/1735586047169.png"
+      alt=""
+      class="bg"
+    />
     <div class="tags-left">
       <van-tag
         round

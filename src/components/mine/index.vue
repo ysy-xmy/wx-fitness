@@ -1,7 +1,10 @@
 <template>
   <div class="mine-page w-screen relative min-h-screen bg-[#fafafa]">
     <div class="mine-header w-full h-64 relative">
-      <img class="w-screen z-0 absolute top-0" src="@/static/wave-bg.png" />
+      <img
+        class="w-screen z-0 absolute top-0"
+        src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241231/1735586047169.png"
+      />
 
       <div class="user-info z-10 p-5 w-full h-32 flex items-center">
         <view
@@ -132,7 +135,7 @@
             </div>
           </view>
         </view>
-        <view
+        <!-- <view
           @click="router.push({ name: 'calender' })"
           class="cu-item my-3 w-11/12 shadow-sm p-3 py-5 rounded-xl arrow"
         >
@@ -143,7 +146,7 @@
               <text class="text-gray-500">查看我的训练计划</text>
             </div>
           </view>
-        </view>
+        </view> -->
       </view>
     </div>
   </div>

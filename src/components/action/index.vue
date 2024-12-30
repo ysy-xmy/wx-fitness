@@ -725,6 +725,9 @@ const VerticalMain = (e: any) => {
   // #endif
   
 };
+
+// 动态导入 PlanCard 组件
+const PlanCard = () => import('@/components/plan-card/index.vue')
 </script>
 
 <style>

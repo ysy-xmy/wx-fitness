@@ -46,6 +46,7 @@
             size="20"
             color="white"
             @click="addAction(item)"
+            v-if="roleName === 'coach'"
           />
         </div>
         <div class="bottom">
@@ -55,7 +56,11 @@
               <div class="wei">{{ it.Weight }}Kg</div>
               <div class="count">{{ it.GroupNum }}次</div>
             </div>
-            <div class="btn" @click="deleteAction(it)">
+            <div
+              class="btn"
+              @click="deleteAction(it)"
+              v-if="roleName === 'coach'"
+            >
               <van-icon name="minus" size="15" color="white" />
             </div>
           </div>
@@ -69,6 +74,7 @@
             size="20"
             color="white"
             @click="addAction(item)"
+            v-if="roleName === 'coach'"
           />
         </div>
         <div class="bottom">
@@ -77,7 +83,11 @@
               <div class="name">{{ it.ActionName }}</div>
               <div class="count">{{ it.Second }}秒</div>
             </div>
-            <div class="btn" @click="deleteAction(it)">
+            <div
+              class="btn"
+              @click="deleteAction(it)"
+              v-if="roleName === 'coach'"
+            >
               <van-icon name="minus" size="15" color="white" />
             </div>
           </div>
@@ -97,7 +107,7 @@
     >
       暂无计划
     </div>
-    <div class="addBtn" @click="toActionArrange">
+    <div class="addBtn" @click="toActionArrange" v-if="roleName === 'coach'">
       <van-icon name="plus" size="20" color="#6495ED" />
     </div>
   </view>
@@ -144,8 +154,10 @@
 import { ref, nextTick, onMounted, computed, watch } from "vue";
 import { useRouter } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
+import { useAuthStore } from "@/state/modules/auth";
 import { addActionToGroup, deleteActionFromGroup } from "@/api/action/action";
 const router = useRouter();
+const authStore = useAuthStore();
 const selected = ref<any[]>([]);
 const startDate = ref<string>("2023-01-01");
 const endDate = ref<string>("2054-12-31");
@@ -163,6 +175,9 @@ const addClassName = ref<string>("");
 const onChangeAddClassName = (e: any) => {
   addClassName.value = e.detail;
 };
+const roleName = computed(() => {
+  return authStore.user.RoleName;
+});
 const addAction = (item: any) => {
   console.log(item, "item");
   let temp = {
