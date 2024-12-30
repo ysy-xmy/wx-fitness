@@ -12,16 +12,47 @@ const props = defineProps<{
 }>();
 
 const actionGroupsdata = ref([
-  {title: '肌肉训练',date: '2022.11.01',status: 1},
-  {title: '瘦身训练',date: '2022.11.02',status: 2},
-  {title: '塑形训练',date: '2022.11.03',status: 0},
-  {title: '增肌训练',date: '2022.11.04',status: 1},
-  {title: '减脂训练',date: '2022.11.05',status: 2},
-  {title: '塑胶训练',date: '2022.11.06',status: 0},
-  {title: '燃脂训练',date: '2022.11.07',status: 2},
-  {title: '减重训练',date: '2022.11.08',status: 0},
-
-])
+  {
+    ID: 1,
+    Type: "肌肉训练",
+    PlanTitle: "肌肉训练",
+    PlanTime: "2022.11.01",
+    CreatedAt: "2022.11.01",
+    Complete: true,
+  },
+  {
+    ID: 2,
+    Type: "瘦身训练",
+    PlanTitle: "瘦身训练",
+    PlanTime: "2022.11.02",
+    CreatedAt: "2022.11.02",
+    Complete: false,
+  },
+  {
+    ID: 3,
+    Type: "塑形训练",
+    PlanTitle: "塑形训练",
+    PlanTime: "2022.11.03",
+    CreatedAt: "2022.11.03",
+    Complete: false,
+  },
+  {
+    ID: 4,
+    Type: "增肌训练",
+    PlanTitle: "增肌训练",
+    PlanTime: "2022.11.04",
+    CreatedAt: "2022.11.04",
+    Complete: true,
+  },
+  {
+    ID: 5,
+    Type: "减脂训练",
+    PlanTitle: "减脂训练",
+    PlanTime: "2022.11.05",
+    CreatedAt: "2022.11.05",
+    Complete: false,
+  },
+]);
 </script>
 <style scoped>
 .content-item {

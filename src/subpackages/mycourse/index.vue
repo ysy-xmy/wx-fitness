@@ -46,7 +46,13 @@
       <div class="mycourse-tabs">
       <van-tabs swipeable animated color="#46c5e5">
         <van-tab title="已完成">
-          <finishedtask :list="list"></finishedtask>
+          <PlanCard 
+            title="私教课"
+            :startDate="state.CreatedAt"
+            :endDate="state.EndTime"
+            :status="someStatus"
+            :actionGroups="list.filter(item => item.Complete)"
+          />
         </van-tab>
         <van-tab title="线下计划">
           <PlanList 
@@ -81,10 +87,10 @@ import {
   selectCoachClok,
 } from "@/api/courses/courses";
 import { getplanlist } from "@/api/course";
-import dayjs from "dayjs";
 import type { actionGroup } from "@/components/mycourse/course";
-import finishedtask from "@/components/mycourse/finishedtask.vue";
 import PlanList from "@/components/mycourse/PlanList.vue";
+import PlanCard from "@/components/plan-card/index.vue";
+import dayjs from "dayjs";
 const checked = ref(false);
 let list = ref<actionGroup[]>([]); // 确保 list 被初始化为一个空数组
 const iddd = ref();
@@ -97,12 +103,14 @@ const state = ref({
   Percentage: "",
   CoachName: "",
   LessonCount: "",
-  EndTime: ''
+  EndTime: '',
+  CreatedAt: ''
 });
 const gradientColor = {
   '0%': '#3ed2de',
   '100%': '#5aa6f4',
 };
+const someStatus = ref(0);
 
 const getPlanlist = () => {
   uni.showLoading({
@@ -166,7 +174,7 @@ onMounted(() => {
   const LessonCount = router.route.value.params?.LessonCount;
   const EndTime = router.route.value.params?.EndTime;
   const Percentage = router.route.value.params?.Percentage;
-
+  const CreatedAt = router.route.value.params?.CreatedAt;
   state.value = {
     id,
     name: decodeURIComponent(name || ""),
@@ -174,7 +182,8 @@ onMounted(() => {
     CoachName: decodeURIComponent(CoachName || ""),
     Percentage,
     LessonCount,
-    EndTime
+    EndTime: decodeURIComponent(EndTime || ""),
+    CreatedAt: decodeURIComponent(CreatedAt || "")
   };
   getPlanlist();
 });

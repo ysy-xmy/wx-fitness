@@ -61,7 +61,7 @@
               >
               <div
                 @click="
-                  tomycourse(it.ID, it.Percentage, it.Name, it.Description, it.CoachName, String(it.LessonCount), it.EndTime)
+                  tomycourse(it.ID, it.Percentage, it.Name, it.Description, it.CoachName, String(it.LessonCount), it.EndTime, it.CreatedAt)
                 "
                 style="
                   width: 60px;
@@ -160,7 +160,8 @@ const tomycourse = (
   desc: string,
   CoachName: string,
   LessonCount: string,
-  EndTime: string
+  EndTime: string,
+  CreatedAt: string
 ) => {
   console.log({
     id,
@@ -177,7 +178,8 @@ const tomycourse = (
       desc,
       CoachName: encodeURIComponent(CoachName),
       LessonCount: LessonCount,
-      EndTime: EndTime
+      EndTime: EndTime,
+      CreatedAt: CreatedAt
     },
   });
 };
