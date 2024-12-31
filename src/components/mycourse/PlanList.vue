@@ -17,14 +17,16 @@
           @click="seePlan(plan)"
         >
           <div class="card-left w-full flex items-center mb-2">
+            <div @click.stop="handlePunchIn(plan.ID, plan.Complete, index)">
             <van-checkbox
               class="round cyan"
               checked-color="#1cbbb4"
               icon-size="24px"
               :value="plan.Complete"
               :checked="plan.Complete"
-              @change.stop="handlePunchIn(plan.ID, plan.Complete, index)"
+              
             />
+          </div>
             <h1 class="font-normal text-base text-gray-700">
               {{
                 plan.PlanTitle === ""
@@ -122,7 +124,7 @@ const seePlan = (plan: actionGroup) => {
 const handlePunchIn = (id: any, status: boolean, index: number) => {
   if (status) {
     uni.showToast({
-      title: "已完成打卡，如需取消请联系管理员取消",
+      title: "已完成打卡，如需取消请联系对应教练取消取消",
       icon: "none",
       duration: 2000,
       mask: false,

@@ -19,8 +19,8 @@
               size="60"
               layer-color="#ebedf0"
               :color="gradientColor"
-              :value="state.Percentage"
-              :text="state.Percentage + '%'"
+              :value="100-Number(state.Percentage)"
+              :text="(100-Number(state.Percentage)) + '%'"
               style="font-size: 13px!important"
             />
           </div>

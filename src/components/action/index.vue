@@ -592,41 +592,45 @@ onMounted(() => {
     state.type = val.type;
   });
   uni.showLoading({ title: "加载中...", mask: true });
-  //先获取一级目录
+
+  // 获取一级目录
   getFirstmenulist().then((res) => {
-    //遍历存到总数组中
-    for (let item of res.data.data) {
-      let data: ListItem = {
-        name: item.Name,
-        id: item.ID,
-        OrderNum: item.OrderNum,
-        children: [],
-      };
-      actionrouterList.value.push(data);
+    if (res.data.data.length > 0) {
+      // 遍历存到总数组中
+      for (let item of res.data.data) {
+        let data: ListItem = {
+          name: item.Name,
+          id: item.ID,
+          OrderNum: item.OrderNum,
+          children: [],
+        };
+        actionrouterList.value.push(data);
+      }
+
+      // 排序
+      const sortedItems = sortByOrderNumDescending(actionrouterList.value);
+      actionrouterList.value = sortedItems;
+
+      // 默认选择第一项
+      if (actionrouterList.value.length > 0) {
+        tabCur.value = 0;
+        mainCur.value = 0;
+        verticalNavTop.value = 0;
+        getSelection(actionrouterList.value[0]);
+      }
     }
-    //排序
-    const sortedItems = sortByOrderNumDescending(actionrouterList.value);
-    actionrouterList.value = sortedItems;
-    //获取二级目录信息，传入一个一级目录的
+
     uni.hideLoading();
-
- 
-    getSelection(actionrouterList.value[0]);
-
-
-    tabCur.value = 0;
-    mainCur.value = 0;
-    verticalNavTop.value = (1 - 1) * 50;
-    getSelection(actionrouterList.value[0]);
-
+  }).catch(() => {
+    uni.hideLoading();
+    uni.showToast({ title: "加载失败", icon: "error" });
   });
-  //另一个进程获取全部完整的信息
+
+  // 获取全部完整的信息
   getActionAll().then((res) => {
     const transformedData = transformCategories(res.data.data);
     actionrouterList.value = sortByOrderNumDescending(transformedData);
-
   });
-
 });
 
 const chooseList = ref([]); //被选中课程的列表

@@ -130,7 +130,7 @@ const getOrderDetail = (item: any) => {
 const handlePunchIn = (id: any, status: boolean, index: number) => {
   if (status) {
     uni.showToast({
-      title: "已完成打卡，如需取消请联系管理员取消",
+      title: "已完成打卡，如需取消请联系对应教练取消取消",
       icon: "none",
       duration: 2000,
       mask: false,
