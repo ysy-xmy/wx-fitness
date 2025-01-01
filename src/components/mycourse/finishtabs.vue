@@ -4,7 +4,6 @@
       <div class="icon online-icon"></div>
       <span class="flex-1 text-center text-xl">线上课程</span>
       <div class="icon opacity-100"></div>
-
     </div>
     <div class="course-item">
       <div class="icon opacity-100"></div>
@@ -14,9 +13,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-
-</script>
+<script lang="ts" setup></script>
 
 <style scoped>
 .course-container {
@@ -41,10 +38,10 @@
 }
 
 .online-icon {
-  background-image: url('@/static/icon/onlineCourse.png'); /* 替换为实际的线上课程图标路径 */
+  background-image: url("https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250102/1735755534827.png"); /* 替换为实际的线上课程图标路径 */
 }
 
 .offline-icon {
-  background-image: url('@/static/icon/offlineCourse.png'); /* 替换为实际的线下课程图标路径 */
+  background-image: url("https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250102/1735755483460.png"); /* 替换为实际的线下课程图标路径 */
 }
 </style>
