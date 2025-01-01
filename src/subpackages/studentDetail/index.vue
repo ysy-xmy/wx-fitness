@@ -54,7 +54,9 @@
       <h1 class="my-3 text-2xl text-center font-bold">
         {{ stuInfo.Username }}
       </h1>
-      <span class="text-gray-400 text-sm text-center">{{ stuInfo.Age }}岁</span>
+      <span class="text-white font-bold text-sm text-center"
+        >{{ stuInfo.Age }}岁</span
+      >
     </div>
 
     <div class="info-card flex flex-row items-center mt-1 w-11/12">
@@ -68,7 +70,7 @@
       </div>
       <div class="card p-5 w-1/3 flex justify-center flex-col items-center">
         <h2
-          class="text-md font-bold underline text-[#F65625]"
+          class="text-md font-bold underline text-[#00bfff]"
           @click="seeBodyForm"
         >
           体检表
@@ -437,16 +439,16 @@ const initData = async () => {
       return uni.hideLoading();
     response.data.data.forEach((item: any) => {
       let temp = {
-        title: item["PlanTitle"] || "私教课",
-        day: item["PlanTime"],
-        status: item["Complete"] ? 1 : 0,
-        id: item["ID"],
+        PlanTitle: item["PlanTitle"] || "私教课",
+        PlanTime: item["PlanTime"],
+        Complete: item["Complete"] ? 1 : 0,
+        ID: item["ID"],
 
         actionGroups: item["ActionGroups"].map((it: any, ind: number) => {
           return {
             title: it["ActionGroupTitle"] || `动作${ind + 1}`,
             date: "",
-            status: it["Complete"] || 0,
+            status: it["Complete"],
             List: it["PlanActions"],
             type: it["ContentType"],
           };
@@ -543,9 +545,10 @@ onMounted(() => {
 .bg {
   // background-color: skyblue;
   width: 100%;
-  height: 300px;
+  height: 270px;
   z-index: -1;
   position: absolute;
+  opacity: 0.7;
   top: 0;
   left: 0;
   // -webkit-clip-path: polygon(

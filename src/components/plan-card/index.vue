@@ -17,7 +17,8 @@
           class="flex justify-between actionGroup-item"
           v-for="(plan, index) in planList"
           @click="getOrderDetail(plan)"
-          :key="index">
+          :key="index"
+        >
           <span class="flex flex-nowrap">
             <div @click.stop="handlePunchIn(plan.ID, plan.Complete, index)">
               <van-checkbox
@@ -25,14 +26,19 @@
                 checked-color="#1cbbb4"
                 icon-size="24px"
                 :value="plan.Complete"
-                :checked="plan.Complete" />
+                :checked="plan.Complete"
+              />
             </div>
 
             <view class="title ml-3">
-              {{ plan.PlanTitle === '' ? `私教课第 ${index + 1} 节` : plan.PlanTitle }}</view
+              {{
+                plan.PlanTitle === ""
+                  ? `私教课第 ${index + 1} 节`
+                  : plan.PlanTitle
+              }}</view
             >
           </span>
-          <span>{{ plan.PlanTime.split(' ')[0] }}</span>
+          <span>{{ plan.PlanTime.split(" ")[0] }}</span>
         </li>
       </ul>
     </div>
@@ -42,17 +48,23 @@
       class="flex justify-between actionGroup-item"
       v-for="(plan, index) in planList"
       :key="index"
-      @click="getOrderDetail(plan)">
+      @click="getOrderDetail(plan)"
+    >
       <span class="flex flex-nowrap">
         <div @click.stop="handlePunchIn(plan.ID, plan.Complete, index)">
-        <van-checkbox
-          class="round cyan"
-          checked-color="#1cbbb4"
-          icon-size="24px"
-          :value="plan.Complete"
-          :checked="plan.Complete" />
+          <van-checkbox
+            class="round cyan"
+            checked-color="#1cbbb4"
+            icon-size="24px"
+            :value="plan.Complete"
+            :checked="plan.Complete"
+          />
         </div>
-        <view class="title ml-3">  {{ plan.PlanTitle === '' ? `私教课第 ${index + 1}节` : plan.PlanTitle }}</view>
+        <view class="title ml-3">
+          {{
+            plan.PlanTitle === "" ? `私教课第 ${index + 1}节` : plan.PlanTitle
+          }}</view
+        >
       </span>
       <span>{{ plan.PlanTime }}</span>
     </li>
@@ -105,23 +117,23 @@ const planList = ref<ActionGroupType[]>(props.actionGroups);
 const router = useRouter();
 
 const formatDateRange = (startDate?: string, endDate?: string) => {
-  if (!startDate) return '';
-  
-  const formatDate = (date: string) => date.split(' ')[0];
+  if (!startDate) return "";
+
+  const formatDate = (date: string) => date.split(" ")[0];
   const start = formatDate(startDate);
-  
+
   if (!endDate) {
     return `创建于 ${start}`;
   }
-  
+
   return `${start} - ${formatDate(endDate)}`;
 };
 
 const getOrderDetail = (item: any) => {
   console.log(item, "item");
   useActionsStore().setPlanList(item);
-  useActionsStore().setTime(item.day);
-  useActionsStore().setChooseActionId(item.id);
+  useActionsStore().setTime(item.PlanTime);
+  useActionsStore().setChooseActionId(item.ID);
   router.push({
     path: "/subpackages/calender/index",
   });

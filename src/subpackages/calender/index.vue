@@ -520,8 +520,11 @@ const dragEnd = () => {
   right: 50% !important;
   transform: translateX(50%) !important;
 }
-:deeo(.uni-calendar-item__weeks-box-text) {
+:deep(.uni-calendar-item__weeks-box-text) {
   font-size: 19px;
   font-weight: 700;
+}
+:deep(.uni-calendar__backtoday) {
+  display: none;
 }
 </style>
