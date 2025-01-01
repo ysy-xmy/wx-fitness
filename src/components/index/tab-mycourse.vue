@@ -1,123 +1,78 @@
 <template>
   <div class="tab-mycourse w-full pb-28 flex flex-wrap justify-center">
-    <van-collapse
-      :value="activeName"
-      v-if="Object.keys(list).length > 0"
-      @change="onChange"
-      style="width: 100vw"
-    >
-      <van-collapse-item
-        :name="item"
+    <div v-if="Object.keys(list).length > 0" style="width: 100vw">
+      <div
         v-for="(item, index) in Object.keys(list)"
+        :key="index"
       >
-        <template v-slot:title
-          ><div style="background: rgba(59, 213, 221, 1)">
-            {{ item }}
-          </div></template
-        >
         <div
-          style="display: flex; justify-content: space-between; flex-wrap: wrap"
+          v-for="it in list[item]"
+          :key="it.ID"
+          class="course-card"
+          style="
+            width: 85%;
+            height: 125px;
+            padding: 10px;
+            background-color: #ffffff;
+            margin: 10px auto;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+          "
         >
           <div
-            v-for="it in list[item]"
             style="
-              width: 190px;
-              height: 110px;
-              padding: 2px;
-              background-color: rgba(15, 98, 56, 1);
-              margin: 5px 0;
-              border-radius: 20px;
-              display: flex;
-              align-items: center;
+              width: 15px;
+              height: 100%;
+              background-color: #51b2a7;
+              position: absolute;
+              left: 0;
+              top: 0;
+              border-top-left-radius: 15px;
+              border-bottom-left-radius: 15px;
             "
+          ></div>
+          <div
+            class="flex-1"
+            style="display: flex; flex-direction: column; justify-content: center; padding-left: 15px;"
           >
-            <div
-              class="flex-[1.5]"
-              style="display: flex; flex-direction: column; align-items: center"
-            >
-              <div style="font-size: 12px; color: #ffffff">私教</div>
-              <div
-                style="
-                  font-size: 18px;
-                  color: #ffffff;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-              >
-                {{ it.Name }}
-              </div>
-              <div style="font-size: 12px; color: #ffffff; margin-top: 10px">
-                教练: {{ it.CoachName }}
-              </div>
+            <div style="font-size: 18px;width: 180px; font-weight: bold; color: #333333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">私教课程 ({{ it.CourseType==='lesson'?it.LessonCount+'节':'包月' }})</div>
+            <div style="font-size: 14px; color: #666666; margin-top: 5px;margin-left: 10px;">
+              教练员: {{ it.CoachName }}
             </div>
-            <div
-              class="flex-1 mr-2"
-              style="display: flex; flex-direction: column; align-items: center"
-            >
-              <van-circle :value="100 - it.Percentage" size="60"
-                ><span style="color: white">
-                  {{ 100 - it.Percentage + "%" }}</span
-                ></van-circle
-              >
-              <div
-                @click="
-                  tomycourse(it.ID, it.Percentage, it.Name, it.Description, it.CoachName, String(it.LessonCount), it.EndTime, it.CreatedAt)
-                "
-                style="
-                  width: 60px;
-                  height: 25px;
-                  border: 1.5px solid #ffffff;
-                  color: #ffffff;
-                  text-align: center;
-                  border-radius: 12px;
-                "
-              >
-                查 看
-              </div>
+            <div style="font-size: 14px; color: #666666; margin-top: 5px;margin-left: 10px;">
+              课程进度: {{ 100 - it.Percentage }}%
             </div>
           </div>
-        </div>
-      </van-collapse-item>
-    </van-collapse>
-    <!-- 我的课程 -->
-    <!-- <div
-    v-if="list.length > 0"
-      class="course-card mt-5 text-[#303440] rounded-lg w-11/12 bg-[#f7f9fb] relative flex flex-row h-36"
-      v-for="(item, index) in list"
-    >
-      <img class="w-1/3 h-full rounded-l-lg" :src="item.Img" />
-      <div class="main-content py-3 w-2/3 h-full content-evenly flex flex-wrap">
-        <div class="w-full top flex justify-between">
-          <h1 class="text-2xl px-2 text-ellipsis flex-1 overflow-hidden whitespace-nowrap">{{ item.Name }}</h1>
-          <div class="w-10 mr-2">
-            <van-circle
-              stroke-width="4"
-              size="45"
-              color="#6eaaac"
-              :value="item.Percentage"
-              :text="item.Percentage + '%'"
-              style="font-size: 13px!important;"
-            />
+          <div
+            class="flex-1 "
+            style="display: flex; justify-content: center; align-items: center"
+          >
+            <img src='https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250101/1735724206120.png' alt="icon" style="height:100px; width:100px;" />
           </div>
-        </div>
-        <div class="mt-2 middle w-full flex justify-center">
-          <span>教练：{{ item.CoachName }}</span>
-        </div>
-        <div class="main-btn mt-4 flex px-8 w-full justify-end">
           <van-button
-            class="custom-class"
             @click="
-              tomycourse(item.ID, item.Percentage, item.Name, item.Description)
+              tomycourse(it.ID, it.Percentage, it.Name, it.Description, it.CoachName, String(it.LessonCount), it.EndTime, it.CreatedAt)
             "
-            round
-            type="warning"
-            color="#ffffff"
+            plain
             size="small"
-            ><span class="text-lg tracking-widest text-[#6eaaac]">查 看</span>
+            style="
+              position: absolute;
+              right: 10px;
+              bottom: 10px;
+              border: none;
+            "
+            color="#6bafa6"
+          >
+            查 看
           </van-button>
+
         </div>
       </div>
-    </div> -->
+    </div>
     <!-- 没有数据空状态 -->
     <div
       class="nodata-card flex flex-col justify-center items-center w-full"
