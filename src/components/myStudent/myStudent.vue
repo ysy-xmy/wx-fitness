@@ -11,7 +11,7 @@
         <template v-for="(item, index) in list">
           <div class="bg-white coachlist p-2">
             <div
-              class="lists-item flex flex-nowrap items-center justify-between p-1"
+              class="lists-item flex flex-nowrap items-start justify-between p-1"
             >
               <div class="w-14 h-14 mr-2">
                 <img
@@ -25,13 +25,13 @@
                 />
               </div>
               <div
-                class="flex-1 flex pl-2 flex-row items-center justify-between"
+                class="flex-1 flex pl-2 flex-row items-start justify-between"
               >
                 <div class="text-box">
                   <div class="title">
-                    <h1 class="w-full flex text-lg font-bold py-2">
+                    <h1 class="w-full flex text-lg font-bold pt-2">
                       <span
-                        class="max-w-[130px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden"
+                        class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden"
                       >
                         {{ item.Username }}
                       </span>
@@ -48,23 +48,14 @@
                       ></text>
                     </h1>
 
-                    <p class="text-[#6b7280] text-[12px]">
-                      私教课 {{ handleCourseType(item.CourseType) }}
+                    <p class="text-[#6b7280] text-[14px] w-max-[180px] break-all">
+                      {{item.Name}} {{ handleCourseType(item.CourseType) }}
                       {{ item.LessonCount ? item.LessonCount + "节" : "" }}
                     </p>
                   </div>
                 </div>
 
-                <div class="btn h-full flex flex-row items-center">
-                  <van-circle
-                    class="mr-4 text-sm"
-                    stroke-width="4"
-                    size="50"
-                    layer-color="#ebedf0"
-                    color="#ec6853"
-                    :value="item.Percentage"
-                    :text="item.Percentage + '%'"
-                  />
+                <div class="btn h-full mt-[17px] flex flex-row items-start">
                   <van-button
                     @click="
                       todetail(
@@ -74,7 +65,7 @@
                         item.Name
                       )
                     "
-                    color="#fd7d46"
+                    color="#5ccee0"
                     size="small"
                     round
                     type="primary"
