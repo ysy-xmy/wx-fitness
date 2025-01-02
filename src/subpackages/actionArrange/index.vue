@@ -330,7 +330,6 @@ import {
   addActionToGroupAction,
 } from "@/api/action/action";
 import { useAuthStore } from "@/state/modules/auth";
-import { postPlan } from "@/api/course/index";
 import { useRouter } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
 import type {

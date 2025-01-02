@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 export const useActionsStore = defineStore({
   id: "actions",
   state: () => ({
+    findActionData: {},
     classname: "",
     time: "",
     planList: {},
@@ -13,6 +14,9 @@ export const useActionsStore = defineStore({
     chooseActionId: -Infinity,
   }),
   getters: {
+    getFindActionData(): any {
+      return this.findActionData;
+    },
     getPlanList(): any {
       return this.planList;
     },
@@ -30,6 +34,9 @@ export const useActionsStore = defineStore({
     },
   },
   actions: {
+    setFindActionData(data: any) {
+      this.findActionData = data;
+    },
     setPlanList(list: any) {
       this.planList = list;
     },

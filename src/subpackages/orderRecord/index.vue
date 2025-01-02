@@ -60,7 +60,7 @@
                 </div>
                 <div class="flex items-end justify-end mb-14px mr-15px">
                   <button
-                    class="cu-btn bg-[#F22F5C] text-white w-[72px] h-[32px] rounded-md"
+                    class="cu-btn bg-[#5adade] text-white w-[72px] h-[32px] rounded-md"
                   >
                     详情
                   </button>

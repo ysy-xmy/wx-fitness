@@ -156,7 +156,7 @@ import { useRouter } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
 import { useAuthStore } from "@/state/modules/auth";
 import { addActionToGroup, deleteActionFromGroup } from "@/api/action/action";
-import uniCalendar from "@dcloudio/uni-ui/lib/uni-calendar/uni-calendar.vue";
+// import uniCalendar from "@dcloudio/uni-ui/lib/uni-calendar/uni-calendar.vue";
 const router = useRouter();
 const authStore = useAuthStore();
 const selected = ref<any[]>([]);
@@ -316,6 +316,7 @@ watch(
   }
 );
 onMounted(() => {
+  console.log(actionsStore.getFindActionData, "actionsStore.getFindActionData");
   nextTick(() => {
     showCalendar.value = true;
     // 获取今天的日期

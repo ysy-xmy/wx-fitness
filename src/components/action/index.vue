@@ -3,29 +3,42 @@
     <view class="cu-bar relative search bg-white">
       <view class="search-form round">
         <text class="cuIcon-search"></text>
-        <input v-model="searchValue" :adjust-position="false" type="text" placeholder="搜索二级类目、动作"
-          confirm-type="search" />
+        <input
+          v-model="searchValue"
+          :adjust-position="false"
+          type="text"
+          placeholder="搜索二级类目、动作"
+          confirm-type="search"
+        />
       </view>
     </view>
 
-    <view v-if="props.ifChoose" style="
+    <view
+      v-if="props.ifChoose"
+      style="
         width: 100vw;
         height: 30px;
         margin: 5px 0;
         display: flex;
         justify-content: space-between;
         padding-right: 20px;
-      ">
-      <div style="
+      "
+    >
+      <div
+        style="
           height: 30px;
           line-height: 30px;
           margin-left: 30px;
           margin-left: 30px;
-        ">
+        "
+      >
         正在为{{ props.name }}的课程选课
       </div>
       <view class="cu-item" @click="showPopup = true">
-        <div class="cuIcon-apps" style="position: relative; width: 30px; font-size: 30px; height: 30px">
+        <div
+          class="cuIcon-apps"
+          style="position: relative; width: 30px; font-size: 30px; height: 30px"
+        >
           <view class="cu-tag badge">{{ chooseList.length }}</view>
         </div>
       </view>
@@ -35,44 +48,119 @@
       <cu-custom :isBack="false" bgColor="bg-shadeTop text-white"> </cu-custom>
     </view>
 
-    <view style="overflow: hidden;flex:1;height: 0;" class="VerticalBox bg-[#f7f8fc]">
-      <scroll-view class="mx-1 rounded-md VerticalNav nav" scroll-y scroll-with-animation
-        :scroll-top="verticalNavTop" style="height: calc(100vh - 375upx)">
-        <view  class="cu-item truncate"
-          :style="{ backgroundColor: index == tabCur ? '#5adade' : '#f7f8fc', color: index == tabCur ? '#ffffff' : '', fontWeight: index == tabCur ? 'bold' : '', borderRadius: index == tabCur ? '5px' : '' }" v-for="(item, index) in actionrouterList" :key="index"
-          @tap="TabSelect" :data-id="index">
+    <view
+      style="overflow: hidden; flex: 1; height: 0"
+      class="VerticalBox bg-[#f7f8fc]"
+    >
+      <scroll-view
+        class="mx-1 rounded-md VerticalNav nav"
+        scroll-y
+        scroll-with-animation
+        :scroll-top="verticalNavTop"
+        style="height: calc(100vh - 375upx)"
+      >
+        <view
+          class="cu-item truncate"
+          :style="{
+            backgroundColor: index == tabCur ? '#5adade' : '#f7f8fc',
+            color: index == tabCur ? '#ffffff' : '',
+            fontWeight: index == tabCur ? 'bold' : '',
+            borderRadius: index == tabCur ? '5px' : '',
+          }"
+          v-for="(item, index) in actionrouterList"
+          :key="index"
+          @tap="TabSelect"
+          :data-id="index"
+        >
           {{ item.name }}
         </view>
       </scroll-view>
-      <scroll-view scroll-y scroll-with-animation style="background-color: white"
-        :scroll-into-view="'main-' + mainCur" @scroll="VerticalMain">
+      <scroll-view
+        scroll-y
+        scroll-with-animation
+        style="background-color: white"
+        :scroll-into-view="'main-' + mainCur"
+        @scroll="VerticalMain"
+      >
         <div v-if="secMenu.length > 0">
-          <view class="padding-top" v-for="(item1, index1) in secMenu" :key="index1" :id="'main-' + index1">
-            <view @click="secMenuSelect(item1, index1)" class="cu-bar text-black font-extrabold solid-bottom bg-white">
-              <view style="font-size: 45rpx" class="text-2xl action truncate ...">
+          <view
+            class="padding-top"
+            v-for="(item1, index1) in secMenu"
+            :key="index1"
+            :id="'main-' + index1"
+          >
+            <view
+              @click="secMenuSelect(item1, index1)"
+              class="cu-bar text-black font-extrabold solid-bottom bg-white"
+            >
+              <view
+                style="font-size: 45rpx"
+                class="text-2xl action truncate ..."
+              >
                 <text class="cuIcon-title"></text> {{ item1.name }}
               </view>
               <div class="curight-icon mr-5">
-                <van-icon v-show="actionrouterList[mainCur].children[index1].active" name="arrow-down" />
-                <van-icon v-show="!actionrouterList[mainCur].children[index1].active" name="arrow-up" />
+                <van-icon
+                  v-show="actionrouterList[mainCur].children[index1].active"
+                  name="arrow-down"
+                />
+                <van-icon
+                  v-show="!actionrouterList[mainCur].children[index1].active"
+                  name="arrow-up"
+                />
               </div>
             </view>
-            <view v-if="actionrouterList[mainCur].children[index1].active"
-              class="cu-list menu-avatar flex flex-wrap bg-white pt-3">
-              <template v-for="(item2, index2) in actionrouterList[mainCur].children[index1].children" :key="index2">
-                <view class="felx flex-wrap w-full  items-center justify-center content-center px-2 mb-3"
-                  style="position: relative">
-                  <van-checkbox v-if="ifChoose" :value="item2.ifcheck" @change="(e: any) => chooseAction(e, item2, mainCur, index1)
-          " checked-color="#f60422" style="position: absolute; right: 1px; top: 1px; z-index: 5" />
-                    <view @click="toggleActive(item2,actionrouterList[mainCur].children[index1].children)" class="content pb-1 w-full">
-                        <view class="text-black tracking-wider pr-2 font-bold text-right text-lg opacity-100">{{ item2.name }}
-                        </view>
+            <view
+              v-if="actionrouterList[mainCur].children[index1].active"
+              class="cu-list menu-avatar flex flex-wrap bg-white pt-3"
+            >
+              <template
+                v-for="(item2, index2) in actionrouterList[mainCur].children[
+                  index1
+                ].children"
+                :key="index2"
+              >
+                <view
+                  class="felx flex-wrap w-full items-center justify-center content-center px-2 mb-3"
+                  style="position: relative"
+                >
+                  <van-checkbox
+                    v-if="ifChoose"
+                    :value="item2.ifcheck"
+                    @change="
+                      (e: any) => chooseAction(e, item2, mainCur, index1)
+                    "
+                    checked-color="#f60422"
+                    style="position: absolute; right: 1px; top: 1px; z-index: 5"
+                  />
+                  <view
+                    @click="
+                      toggleActive(
+                        item2,
+                        actionrouterList[mainCur].children[index1].children
+                      )
+                    "
+                    class="content pb-1 w-full"
+                  >
+                    <view
+                      class="text-black tracking-wider pr-2 font-bold text-right text-lg opacity-100"
+                      >{{ item2.name }}
                     </view>
+                  </view>
                   <transition name="fade">
-                    <div v-if="item2.active"  class="flex flex-row w-full  justify-center flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
-                      @click="toDetail(item2)">
-                      <img  class="w-28 h-28 rounded-l-md lg" :src="getImageUrl(item2.Imgs, 0)" />
-                      <img  class="w-28 h-28 rounded-r-md lg" :src=" getImageUrl(item2.Imgs, 1)" />
+                    <div
+                      v-if="item2.active"
+                      class="flex flex-row w-full justify-center flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
+                      @click="toDetail(item2)"
+                    >
+                      <img
+                        class="w-28 h-28 rounded-l-md lg"
+                        :src="getImageUrl(item2.Imgs, 0)"
+                      />
+                      <img
+                        class="w-28 h-28 rounded-r-md lg"
+                        :src="getImageUrl(item2.Imgs, 1)"
+                      />
                     </div>
                   </transition>
                 </view>
@@ -88,25 +176,39 @@
       </scroll-view>
     </view>
 
-    <van-index-bar v-if="searchResult.length > 0" class="w-screen fixed z-1000 top-10 bg-[#f2f2f2] shadow-sm"
-      :index-list="indexList">
+    <van-index-bar
+      v-if="searchResult.length > 0"
+      class="w-screen fixed z-1000 top-10 bg-[#f2f2f2] shadow-sm"
+      :index-list="indexList"
+    >
       <!-- 遍历搜索结果 -->
       <view class="cu-list menu sm-border card-menu">
         <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa' }">
           搜索结果
         </van-divider>
-        <view v-for="(item, index) in searchResult" :key="index"
-          class="w-screen flex flex-col items-start content-start">
-          <view @click="
-          handlelocation(
-            item.children.length > 0 ? item.children[0].id : item.id
-          )
-          " class="border-none padding-tb-sm w-full">
-            <view class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold">
+        <view
+          v-for="(item, index) in searchResult"
+          :key="index"
+          class="w-screen flex flex-col items-start content-start"
+        >
+          <view
+            @click="
+              handlelocation(
+                item.children.length > 0 ? item.children[0].id : item.id
+              )
+            "
+            class="border-none padding-tb-sm w-full"
+          >
+            <view
+              class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold"
+            >
               <text class="text-black"> 索引至： {{ item.name }}</text>
               <text class="cuIcon-right text-lg text-blue mr-10"></text>
             </view>
-            <view v-if="item.children && item.children.length > 0" v-for="(item1, index1) in item.children">
+            <view
+              v-if="item.children && item.children.length > 0"
+              v-for="(item1, index1) in item.children"
+            >
               <view class="cu-item pl-16">
                 <view class="content">
                   <view>{{ item1.name }}</view>
@@ -118,24 +220,36 @@
         </view>
       </view>
     </van-index-bar>
-    <van-popup custom-style="max-height: 500px;" :show="showPopup" position="bottom" overlay="false"
-      @close="onCloseopup">
-      <div style="
+    <van-popup
+      custom-style="max-height: 500px;"
+      :show="showPopup"
+      position="bottom"
+      overlay="false"
+      @close="onCloseopup"
+    >
+      <div
+        style="
           margin-top: 5px;
           width: 100vw;
           display: flex;
           justify-content: flex-end;
           padding-right: 10px;
-        ">
+        "
+      >
         <van-icon name="close" size="30px" @click="onCloseopup" />
       </div>
       <div style="max-height: 460px; margin: 15px auto; overflow-y: auto">
-        <div class="nodata-card flex flex-col justify-center items-center w-full" v-if="chooseList.length == 0">
+        <div
+          class="nodata-card flex flex-col justify-center items-center w-full"
+          v-if="chooseList.length == 0"
+        >
           <van-empty description="暂未选择动作" />
         </div>
         <div v-for="item in chooseList">
           <div style="width: 100vw; padding: 0 20px">
-            <div class="card" style="
+            <div
+              class="card"
+              style="
                 height: 50px;
                 line-height: 50px;
                 display: flex;
@@ -145,24 +259,35 @@
                 background-color: rgba(255, 255, 255, 0.4);
                 border-bottom: 1px solid gray;
                 border-radius: 5px;
-              ">
+              "
+            >
               <div class="title">{{ item.name }}</div>
-              <van-stepper :value="item.num" integer min="0" step="1" @change="(e) => changeNum(item, e)" />
+              <van-stepper
+                :value="item.num"
+                integer
+                min="0"
+                step="1"
+                @change="(e) => changeNum(item, e)"
+              />
             </div>
           </div>
         </div>
       </div>
-      <div style="
+      <div
+        style="
           margin-top: 5px;
           width: 100vw;
           display: flex;
           justify-content: flex-end;
           padding-right: 30px;
-        ">
-        <van-button type="info" size="normal" round @click="subitClass">提交</van-button>
+        "
+      >
+        <van-button type="info" size="normal" round @click="subitClass"
+          >提交</van-button
+        >
       </div>
     </van-popup>
-</view>
+  </view>
 </template>
 
 <script setup lang="ts">
@@ -176,12 +301,13 @@ import {
 import { useAuthStore } from "@/state/modules/auth";
 import { postPlan } from "@/api/course/index";
 import { useRouter } from "uni-mini-router";
-import type{
+import type {
   SourceCategory,
   TargetCategory,
   ActionItem,
   ListItem,
 } from "@/components/action/types";
+import dayjs from "dayjs";
 
 const props = defineProps<{
   stuid?: number;
@@ -193,7 +319,6 @@ const props = defineProps<{
 
 const showPopup = ref(false);
 const AuthStore = useAuthStore();
-
 
 const router = useRouter();
 const firstmenu = ref<ListItem[]>([
@@ -224,34 +349,34 @@ type TreeNode = {
   children: TreeNode[];
 };
 
-const changeNum = (item : any, e: any) => {
+const changeNum = (item: any, e: any) => {
   if (chooseList.value) {
-    const selectedItem = chooseList.value.find((it:any) => it.id == item.id);
+    const selectedItem = chooseList.value.find((it: any) => it.id == item.id);
     if (selectedItem) {
       Reflect.set(selectedItem, "num", e.detail);
     }
   }
 };
 
-const toggleActive = (item: any,Array: any) => {
-  Array.map((item:any)=>{
+const toggleActive = (item: any, Array: any) => {
+  Array.map((item: any) => {
     item.active = false;
-  })
+  });
   item.active = !item.active;
 };
 
 const subitClass = () => {
   //发布课程
   let temp = chooseList.value;
-  temp = temp.filter((item:any) => item.num != 0);
+  temp = temp.filter((item: any) => item.num != 0);
   if (temp.length == 0) {
     uni.showToast({
       title: "当前没有动作",
       icon: "error",
     });
   } else {
-    let classes:any = [];
-    chooseList.value.forEach((item:any) => {
+    let classes: any = [];
+    chooseList.value.forEach((item: any) => {
       classes.push({
         ExerciseActionID: item.id,
         ActionName: item.name,
@@ -260,9 +385,9 @@ const subitClass = () => {
     });
     let data = {
       UserID: Number(props.stuid),
-      CourseID: Number(AuthStore.getClass),
+      UserCourseID: Number(AuthStore.getClass),
       Type: props.type,
-      PlanTime: getCurrentDateTime(),
+      PlanTime: dayjs(getCurrentDateTime()).format("YYYY-MM-DD"),
       Actions: classes,
     };
     postPlan(data)
@@ -296,16 +421,17 @@ function getCurrentDateTime() {
 }
 
 const getImageUrl = (images: any[], index: number) => {
-  const defaultUrl = 'https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241007/1728284282969.png';
+  const defaultUrl =
+    "https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241007/1728284282969.png";
   return images && images[index] ? images[index].URL : defaultUrl;
-}
+};
 
 const onCloseopup = () => {
   showPopup.value = false;
 };
 
 // 递归搜索函数
-function findItemAndChildren(items : TreeNode[], id: number | string) {
+function findItemAndChildren(items: TreeNode[], id: number | string) {
   for (let i = 0; i < items.length; i++) {
     if (items[i].id === id) {
       // 如果找到匹配的项，返回该项及其子项
@@ -313,7 +439,7 @@ function findItemAndChildren(items : TreeNode[], id: number | string) {
     }
     // 如果当前项有子项，则递归搜索
     if (items[i].children && items[i].children.length > 0) {
-      const result:any = findItemAndChildren(items[i].children, id);
+      const result: any = findItemAndChildren(items[i].children, id);
       if (result) {
         return result; // 如果在子项中找到匹配项，返回结果
       }
@@ -323,14 +449,14 @@ function findItemAndChildren(items : TreeNode[], id: number | string) {
 }
 
 // 查找id的索引
-function findIndexById(data : TreeNode[], id : number | string) {
+function findIndexById(data: TreeNode[], id: number | string) {
   for (let i = 0; i < data.length; i++) {
     if (data[i].id === id) {
       return i; // 找到id，返回索引
     }
     // 如果当前项有子项，递归地在子项中查找
     if (data[i].children && data[i].children.length > 0) {
-      const childIndex : number = findIndexById(data[i].children, id);
+      const childIndex: number = findIndexById(data[i].children, id);
       if (childIndex !== -1) {
         return childIndex; // 在子项中找到id，返回索引
       }
@@ -409,7 +535,7 @@ function transformCategories(source: SourceCategory[]): TargetCategory[] {
   return target;
 }
 
-function findCategoryIds(menuItems : TreeNode[], actionId : number) {
+function findCategoryIds(menuItems: TreeNode[], actionId: number) {
   for (let i = 0; i < menuItems.length; i++) {
     const firstCategory = menuItems[i];
     if (firstCategory.children && firstCategory.children.length > 0) {
@@ -467,13 +593,13 @@ const toDetail = (item: ActionItem) => {
     router.push({
       name: "actionDetail",
       params: {
-        itemid:  String(item.id),
+        itemid: String(item.id),
       },
     });
 };
 
 //处理搜索点击事件
-const handlelocation = (actionid : number) => {
+const handlelocation = (actionid: number) => {
   const { firstCategoryId, secondCategoryId } = findCategoryIds(
     actionrouterList.value,
     actionid
@@ -594,37 +720,39 @@ onMounted(() => {
   uni.showLoading({ title: "加载中...", mask: true });
 
   // 获取一级目录
-  getFirstmenulist().then((res) => {
-    if (res.data.data.length > 0) {
-      // 遍历存到总数组中
-      for (let item of res.data.data) {
-        let data: ListItem = {
-          name: item.Name,
-          id: item.ID,
-          OrderNum: item.OrderNum,
-          children: [],
-        };
-        actionrouterList.value.push(data);
+  getFirstmenulist()
+    .then((res) => {
+      if (res.data.data.length > 0) {
+        // 遍历存到总数组中
+        for (let item of res.data.data) {
+          let data: ListItem = {
+            name: item.Name,
+            id: item.ID,
+            OrderNum: item.OrderNum,
+            children: [],
+          };
+          actionrouterList.value.push(data);
+        }
+
+        // 排序
+        const sortedItems = sortByOrderNumDescending(actionrouterList.value);
+        actionrouterList.value = sortedItems;
+
+        // 默认选择第一项
+        if (actionrouterList.value.length > 0) {
+          tabCur.value = 0;
+          mainCur.value = 0;
+          verticalNavTop.value = 0;
+          getSelection(actionrouterList.value[0]);
+        }
       }
 
-      // 排序
-      const sortedItems = sortByOrderNumDescending(actionrouterList.value);
-      actionrouterList.value = sortedItems;
-
-      // 默认选择第一项
-      if (actionrouterList.value.length > 0) {
-        tabCur.value = 0;
-        mainCur.value = 0;
-        verticalNavTop.value = 0;
-        getSelection(actionrouterList.value[0]);
-      }
-    }
-
-    uni.hideLoading();
-  }).catch(() => {
-    uni.hideLoading();
-    uni.showToast({ title: "加载失败", icon: "error" });
-  });
+      uni.hideLoading();
+    })
+    .catch(() => {
+      uni.hideLoading();
+      uni.showToast({ title: "加载失败", icon: "error" });
+    });
 
   // 获取全部完整的信息
   getActionAll().then((res) => {
@@ -658,7 +786,7 @@ const chooseAction = (
 const getSelection = (item: ListItem) => {
   var firstmenuid = item.id;
   if (item.children.length > 0) {
-    console.log(item)
+    console.log(item);
     toSecmenu(item);
   } else {
     uni.showLoading({
@@ -727,11 +855,10 @@ const VerticalMain = (e: any) => {
   // #ifdef MP-ALIPAY
   return false; // 支付宝小程序暂时不支持双向联动
   // #endif
-  
 };
 
 // 动态导入 PlanCard 组件
-const PlanCard = () => import('@/components/plan-card/index.vue')
+const PlanCard = () => import("@/components/plan-card/index.vue");
 </script>
 
 <style>
@@ -785,7 +912,6 @@ const PlanCard = () => import('@/components/plan-card/index.vue')
   color: white;
   display: none;
 }
-
 
 .fade-enter-from {
   opacity: 0;

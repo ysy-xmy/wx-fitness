@@ -223,7 +223,7 @@
         position: absolute;
         bottom: 10px;
         right: 50px;
-        background-color: rgba(109, 132, 185, 0.85);
+        background-color: #5adade;
         color: white;
         float: right;
         border-radius: 20px;
@@ -377,7 +377,7 @@
             type="primary"
             round
             class="btn-gradient mt-5"
-            color="linear-gradient(90deg, #FF6243 0%, #FF0072 100%)"
+            color="linear-gradient(90deg, #3ed2de 0%, #5aa6f4 100%)"
           >
             <span>添 加</span>
           </van-button>
