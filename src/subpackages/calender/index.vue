@@ -156,6 +156,7 @@ import { useRouter } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
 import { useAuthStore } from "@/state/modules/auth";
 import { addActionToGroup, deleteActionFromGroup } from "@/api/action/action";
+import uniCalendar from "@dcloudio/uni-ui/lib/uni-calendar/uni-calendar.vue";
 const router = useRouter();
 const authStore = useAuthStore();
 const selected = ref<any[]>([]);
@@ -526,5 +527,11 @@ const dragEnd = () => {
 }
 :deep(.uni-calendar__backtoday) {
   display: none;
+}
+</style>
+<style>
+.uni-calendar-item--checked {
+  background-color: #3bd5dd !important;
+  border-radius: 50% !important;
 }
 </style>
