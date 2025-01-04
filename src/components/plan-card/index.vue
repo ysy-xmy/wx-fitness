@@ -131,6 +131,10 @@ const formatDateRange = (startDate?: string, endDate?: string) => {
 
 const getOrderDetail = (item: any) => {
   console.log(item, "item");
+  // useActionsStore().setFindActionData({
+  //   ID: item["ID"],
+  //   Type: item["Type"].toUpperCase(),
+  // });
   useActionsStore().setPlanList(item);
   useActionsStore().setTime(item.PlanTime);
   useActionsStore().setChooseActionId(item.ID);

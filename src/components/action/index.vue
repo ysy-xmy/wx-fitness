@@ -28,7 +28,8 @@
           line-height: 30px;
           margin-left: 30px;
           margin-left: 30px;
-        ">
+        "
+      >
         正在为{{ props.name }}的课程选课
       </div>
       <view class="cu-item" @click="showPopup = true">
@@ -144,23 +145,19 @@
                       v-if="item2.active"
                       class="flex flex-row w-full justify-center flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
                       @click="toDetail(item2)">
-                      <div v-if="item2.Imgs && item2.Imgs.length > 0">
                         <img
                           class="w-28 h-28 rounded-l-md lg"
                           :src="getImageUrl(item2.Imgs, 0)" />
                         <img
                           class="w-28 h-28 rounded-r-md lg"
                           :src="getImageUrl(item2.Imgs, 1)" />
-                      </div>
-                      <div v-else>
-                        <div class="w-full flex justify-center">
-                          <text class="text-gray-500">该目录暂无具体动作</text>
-                        </div>
-                      </div>
                     </div>
                   </transition>
                 </view>
               </template>
+              <div v-if="actionrouterList[mainCur].children[index1].children.length == 0" class="w-full flex justify-center">
+                <text class="text-gray-500">该目录暂无具体动作</text>
+              </div>
             </view>
           </view>
         </div>
@@ -224,7 +221,8 @@
           display: flex;
           justify-content: flex-end;
           padding-right: 10px;
-        ">
+        "
+      >
         <van-icon name="close" size="30px" @click="onCloseopup" />
       </div>
       <div style="max-height: 460px; margin: 15px auto; overflow-y: auto">
@@ -247,7 +245,8 @@
                 background-color: rgba(255, 255, 255, 0.4);
                 border-bottom: 1px solid gray;
                 border-radius: 5px;
-              ">
+              "
+            >
               <div class="title">{{ item.name }}</div>
               <van-stepper
                 :value="item.num"
@@ -292,6 +291,7 @@ import type {
   ActionItem,
   ListItem,
 } from "@/components/action/types";
+import dayjs from "dayjs";
 
 const props = defineProps<{
   stuid?: number;
@@ -369,9 +369,9 @@ const subitClass = () => {
     });
     let data = {
       UserID: Number(props.stuid),
-      CourseID: Number(AuthStore.getClass),
+      UserCourseID: Number(AuthStore.getClass),
       Type: props.type,
-      PlanTime: getCurrentDateTime(),
+      PlanTime: dayjs(getCurrentDateTime()).format("YYYY-MM-DD"),
       Actions: classes,
     };
     postPlan(data)

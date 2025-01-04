@@ -21,9 +21,9 @@
         v-if="tagsList.length < 6"
         color="#F0FFFF"
         class="tag"
-        style="border-radius: 75%; width: 15px; height: 15px"
+        style="border-radius: 75%"
         @click="showDialogAddTags = true"
-        ><van-icon name="plus" color="black" size="16"
+        ><van-icon name="plus" color="black" size="12"
       /></van-button>
     </div>
     <div class="tags-right" v-if="tagsList.length >= 6">
@@ -42,16 +42,16 @@
         v-if="tagsList.length < 12"
         color="#F0FFFF"
         class="tag"
-        style="border-radius: 75%; width: 15px; height: 15px"
+        style="border-radius: 75%"
         @click="showDialogAddTags = true"
-        ><van-icon name="plus" color="black" size="16"
+        ><van-icon name="plus" color="black" size="12"
       /></van-button>
     </div>
     <div class="info mt-5 flex flex-col items-center">
       <div class="avatar">
         <img class="w-28 h-28 rounded-full" :src="stuInfo.Avatar" alt="" />
       </div>
-      <h1 class="my-3 text-2xl text-center font-bold">
+      <h1 class="my-3 text-2xl text-center font-bold text-white">
         {{ stuInfo.Username }}
       </h1>
       <span class="text-white font-bold text-sm text-center"
@@ -202,9 +202,11 @@
         @change="onChangeAddClassName"
       />
       <van-field
-        type="datetime"
+        type="date"
         :value="actionTime"
-        placeholder="请输入时间"
+        placeholder="请输入日期"
+        min-date="minDate"
+        max-date="maxDate"
         border="true"
         @focus="showSelectTime = true"
         @change="(e: any) => (currentDate = e.detail)"
@@ -213,7 +215,7 @@
     <van-datetime-picker
       style="z-index: 10000; width: 100vw; position: absolute; bottom: 0"
       v-if="showSelectTime"
-      type="datetime"
+      type="date"
       :value="currentDate"
       :min-date="minDate"
       :max-date="maxDate"
@@ -237,6 +239,7 @@
       <van-field
         :value="addTagVal"
         placeholder="输入标签"
+        maxlength="7"
         @change="changeDialogAddTags"
       />
     </van-dialog>
@@ -251,7 +254,11 @@ import { getstudentInfobyId } from "@/api/coach/index";
 import { useRouter } from "uni-mini-router";
 import { onMounted } from "vue";
 import { useAppStore } from "@/state/app";
-import { actionClok } from "@/api/courses/courses";
+import {
+  actionClok,
+  getCourseStudentTag,
+  sendCourseStudentTag,
+} from "@/api/courses/courses";
 import dayjs from "dayjs";
 import { useActionsStore } from "@/state/modules/actions";
 const AppStore = useAppStore();
@@ -274,7 +281,7 @@ const maxDate = new Date(
   new Date().setFullYear(new Date().getFullYear() + 1)
 ).getTime();
 const tagsList = ref<{ content: string; color: string }[]>([]);
-const tagsColor = ["#00FF7F", "#FF0000", "#FFD700"];
+const tagsColor = ["rgb(144,199,97)", "rgb(226,198,29)", "rgb(217,9,84)"];
 const tabStatus = ref("finish");
 const columns = ref(["私教课"]);
 const showSelectTime = ref(false);
@@ -300,7 +307,34 @@ const addTags = () => {
     content: addTagVal.value,
     color: tagsColor[Math.floor(Math.random() * tagsColor.length)],
   });
-  showDialogAddTags.value = false;
+  changeTags("add");
+};
+const changeTags = (type: "add" | "delete") => {
+  let data = {
+    UserCourseID: Number(query.value.courseId),
+    Labels: tagsList.value.map((item) => item.content),
+  };
+  sendCourseStudentTag(data)
+    .then((res) => {
+      console.log(res, "res");
+      if (res.data.code === 200) {
+        uni.showToast({
+          title: type == "add" ? "添加成功" : "删除成功",
+        });
+        showDialogAddTags.value = false;
+      } else {
+        uni.showToast({
+          title: type == "add" ? "添加失败" : "删除失败",
+          icon: "none",
+        });
+      }
+    })
+    .catch((err) => {
+      uni.showToast({
+        title: type == "add" ? "添加失败" : "删除失败",
+        icon: "none",
+      });
+    });
 };
 const onChange = (val: any) => {
   console.log(val, "onChange");
@@ -311,7 +345,7 @@ const toAddClass = () => {
   showDialog.value = true;
 };
 const actionTime = computed(() => {
-  return dayjs(currentDate.value).format("YYYY-MM-DD HH:mm:ss");
+  return dayjs(currentDate.value).format("YYYY-MM-DD");
 });
 const onChangeAddClassName = (e: any) => {
   addClassName.value = e.detail;
@@ -328,6 +362,7 @@ const plansList = ref<any>({
 const deleteTag = (item: any) => {
   console.log(item, "deleteTag");
   tagsList.value = tagsList.value.filter((tag) => tag !== item);
+  changeTags("delete");
 };
 const onCloseDialog = () => {
   showDialog.value = false;
@@ -359,7 +394,7 @@ const goChooseAction = () => {
     UserCourseID: Number(query.value.courseId),
     Type: radioType.value,
     PlanTitle: addClassName.value,
-    PlanTime: actionTime.value,
+    PlanTime: dayjs(actionTime.value).format("YYYY-MM-DD"),
   };
   postPlan(data)
     .then((res) => {
@@ -461,6 +496,10 @@ const initData = async () => {
         actionsStore.setPlanList(temp);
         console.log(actionsStore.setPlanList, "actionsStore.getChooseActions");
       }
+      // actionsStore.setFindActionData({
+      //   ID: item["ID"],
+      //   Type: item["Type"].toUpperCase(),
+      // });
       plansList.value[item["Type"].toLowerCase()].push(temp);
       if (item["Complete"]) {
         plansList.value["finish"].push(temp);
@@ -482,10 +521,23 @@ function formatDateString(dateStr: string) {
   // 返回格式化的字符串
   return `${month}月${day}`;
 }
-
+//获取标签
+const getTags = async () => {
+  const res = await getCourseStudentTag(query.value.courseId);
+  console.log(res, "res");
+  tagsList.value = [];
+  res.data.data.Labels.forEach((item: any) => {
+    if (item)
+      tagsList.value.push({
+        content: item,
+        color: tagsColor[Math.floor(Math.random() * tagsColor.length)],
+      });
+  });
+};
 onMounted(() => {
   query.value = router.route.value.query;
   initData();
+  getTags();
   uni.$on("getNew", () => {
     initData();
   });
@@ -599,7 +651,7 @@ onMounted(() => {
   height: 220px;
   position: absolute;
   top: 10px;
-  left: 20px;
+  left: 0px;
   display: flex;
   flex-direction: column;
 
@@ -632,7 +684,7 @@ onMounted(() => {
   height: 220px;
   position: absolute;
   top: 10px;
-  right: 40px;
+  right: 0px;
   display: flex;
   flex-direction: column;
   .tag {
@@ -659,5 +711,8 @@ onMounted(() => {
 }
 :deep(.van-tabs__line) {
   background-color: #00bfff;
+}
+:deep(.van-button--normal) {
+  padding: 0 10px !important;
 }
 </style>

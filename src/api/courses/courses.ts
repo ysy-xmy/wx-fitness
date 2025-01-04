@@ -80,3 +80,13 @@ export const actionClok = (id: string) => {
 export const getCoachClass = (id: string) => {
   return request.get(`/api/coach/getCourseInfo/${id}`);
 };
+
+//获取对应课程学员标签
+export const getCourseStudentTag = (id: string) => {
+  return request.get(`/api/course/getLabels/${id}`);
+};
+
+//发送对应课程学员标签
+export const sendCourseStudentTag = (data: any) => {
+  return request.post(`/api/course/saveUpdateLabels`, data);
+};

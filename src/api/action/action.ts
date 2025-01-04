@@ -37,3 +37,8 @@ export const addActionToGroup = (data: any) => {
 export const deleteActionFromGroup = (data: any) => {
   return request.delete("/api/course/deleteAtionGroup", data);
 };
+
+//获取日期下的动作
+export const getActionByDate = (data: any) => {
+  return request.get("/api/course/getActionGroup", data);
+};
