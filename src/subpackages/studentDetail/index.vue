@@ -281,7 +281,7 @@ const maxDate = new Date(
   new Date().setFullYear(new Date().getFullYear() + 1)
 ).getTime();
 const tagsList = ref<{ content: string; color: string }[]>([]);
-const tagsColor = ["#00FF7F", "#FF0000", "#FFD700"];
+const tagsColor = ["rgb(144,199,97)", "rgb(226,198,29)", "rgb(217,9,84)"];
 const tabStatus = ref("finish");
 const columns = ref(["私教课"]);
 const showSelectTime = ref(false);
