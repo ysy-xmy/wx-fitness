@@ -12,10 +12,9 @@
                         <input v-model="form.passWord" placeholder="Password" />
                     </view>
                 </view> -->
-
+        <!-- open-type="getPhoneNumber" -->
         <view class="btns">
           <button
-            open-type="getPhoneNumber"
             class="bg-green-500 w-auto rounded-lg text-zinc-50"
             @click="login"
           >
