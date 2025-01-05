@@ -478,7 +478,7 @@ const initData = async () => {
         PlanTime: item["PlanTime"],
         Complete: item["Complete"] ? 1 : 0,
         ID: item["ID"],
-
+        Type: item["Type"],
         actionGroups: item["ActionGroups"].map((it: any, ind: number) => {
           return {
             title: it["ActionGroupTitle"] || `动作${ind + 1}`,

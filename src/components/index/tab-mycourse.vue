@@ -1,10 +1,7 @@
 <template>
   <div class="tab-mycourse w-full pb-28 flex flex-wrap justify-center">
     <div v-if="Object.keys(list).length > 0" style="width: 100vw">
-      <div
-        v-for="(item, index) in Object.keys(list)"
-        :key="index"
-      >
+      <div v-for="(item, index) in Object.keys(list)" :key="index">
         <div
           v-for="it in list[item]"
           :key="it.ID"
@@ -37,39 +34,79 @@
           ></div>
           <div
             class="flex-1"
-            style="display: flex; flex-direction: column; justify-content: center; padding-left: 15px;"
+            style="
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              padding-left: 15px;
+            "
           >
-            <div style="font-size: 18px;width: 180px; font-weight: bold; color: #333333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">私教课程 ({{ it.CourseType==='lesson'?it.LessonCount+'节':'包月' }})</div>
-            <div style="font-size: 14px; color: #666666; margin-top: 5px;margin-left: 10px;">
+            <div
+              style="
+                font-size: 18px;
+                width: 180px;
+                font-weight: bold;
+                color: #333333;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              "
+            >
+              私教课程 ({{
+                it.CourseType === "lesson" ? it.LessonCount + "节" : "包月"
+              }})
+            </div>
+            <div
+              style="
+                font-size: 14px;
+                color: #666666;
+                margin-top: 5px;
+                margin-left: 10px;
+              "
+            >
               教练员: {{ it.CoachName }}
             </div>
-            <div style="font-size: 14px; color: #666666; margin-top: 5px;margin-left: 10px;">
+            <div
+              style="
+                font-size: 14px;
+                color: #666666;
+                margin-top: 5px;
+                margin-left: 10px;
+              "
+            >
               课程进度: {{ 100 - it.Percentage }}%
             </div>
           </div>
           <div
-            class="flex-1 "
+            class="flex-1"
             style="display: flex; justify-content: center; align-items: center"
           >
-            <img src='https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250101/1735724206120.png' alt="icon" style="height:100px; width:100px;" />
+            <img
+              src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250101/1735724206120.png"
+              alt="icon"
+              style="height: 100px; width: 100px"
+            />
           </div>
           <van-button
             @click="
-              tomycourse(it.ID, it.Percentage, it.Name, it.Description, it.CoachName, String(it.LessonCount), it.EndTime, it.CreatedAt)
+              tomycourse(
+                it.ID,
+                it.Percentage,
+                it.Name,
+                it.Description,
+                it.CoachName,
+                String(it.LessonCount),
+                it.EndTime,
+                it.CreatedAt
+              )
             "
             plain
             size="small"
-            style="
-              position: absolute;
-              right: 10px;
-              bottom: 10px;
-              border: none;
-            "
+            style="position: absolute; right: 10px; bottom: 10px; border: none"
             color="#6bafa6"
           >
             查 看
           </van-button>
-
         </div>
       </div>
     </div>
@@ -78,7 +115,11 @@
       class="nodata-card flex flex-col justify-center items-center w-full"
       v-else
     >
-      <van-empty description="您还没有课程哦~，可以前往购买添加课程哦~" />
+      <van-empty
+        description="您还没有课程哦~，可以前往购买添加课程哦~"
+        v-if="useAuthStore().getToken"
+      />
+      <van-empty description="您还没登录，请先登录" v-else />
     </div>
   </div>
 </template>
@@ -86,6 +127,7 @@
 import { useRouter } from "uni-mini-router";
 import { getMycourese } from "@/api/courses/courses";
 import { onMounted, reactive, ref } from "vue";
+import { useAuthStore } from "@/state/modules/auth";
 import { getOrderlist } from "@/subpackages/apis/order";
 import dayjs from "dayjs";
 const props = defineProps<{
@@ -134,7 +176,7 @@ const tomycourse = (
       CoachName: encodeURIComponent(CoachName),
       LessonCount: LessonCount,
       EndTime: EndTime,
-      CreatedAt: CreatedAt
+      CreatedAt: CreatedAt,
     },
   });
 };

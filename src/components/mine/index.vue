@@ -8,11 +8,22 @@
 
       <div class="user-info z-10 p-5 w-full h-32 flex items-center">
         <view
+          v-if="useAuthStore().getToken"
           class="cu-avatar round lg"
           :style="{ backgroundImage: `url(${Avatar})` }"
         ></view>
+        <view
+          v-else
+          class="cu-avatar round lg"
+          :style="{
+            backgroundImage: `url('https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250101')`,
+          }"
+        ></view>
         <div class="flex flex-wrap z-10">
-          <div class="text-xl w-full z-10 text-white pl-4">
+          <div
+            class="text-xl w-full z-10 text-white pl-4"
+            v-if="useAuthStore().getToken"
+          >
             {{ Username }}
             <text
               v-if="Sex === 1"
@@ -26,8 +37,18 @@
               class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
             ></text>
           </div>
-          <p class="text-sm z-10 text-white pl-4">
+          <p
+            class="text-sm z-10 text-white pl-4"
+            v-if="useAuthStore().getToken"
+          >
             {{ Age ? Age + "岁" : "未填写" }}
+          </p>
+          <p
+            class="text-m z-10 text-white pl-4"
+            v-else
+            @click="router.push({ name: 'login' })"
+          >
+            请先登录
           </p>
         </div>
       </div>
@@ -44,8 +65,15 @@
         <div class="mine-indicator bg-white" v-if="roleName === 'student'">
           <div class="indicator-left flex flex-col">
             <span class="title text-gray-500 tracking-wider mb-3">身高</span>
-            <span class="num text-2xl text-black font-bold tracking-wider"
+            <span
+              class="num text-2xl text-black font-bold tracking-wider"
+              v-if="useAuthStore().getToken"
               >{{ showTab1 }}cm</span
+            >
+            <span
+              class="num text-2xl text-black font-bold tracking-wider"
+              v-else
+              >暂无</span
             >
           </div>
         </div>
@@ -62,8 +90,15 @@
         <div class="mine-indicator bg-white" v-if="roleName === 'student'">
           <div class="indicator-left flex flex-col">
             <span class="title text-gray-500 tracking-wider mb-3">体重</span>
-            <span class="num text-2xl text-black font-bold tracking-wider"
+            <span
+              class="num text-2xl text-black font-bold tracking-wider"
+              v-if="useAuthStore().getToken"
               >{{ showTab2 }}kg</span
+            >
+            <span
+              class="num text-2xl text-black font-bold tracking-wider"
+              v-else
+              >暂无</span
             >
           </div>
         </div>

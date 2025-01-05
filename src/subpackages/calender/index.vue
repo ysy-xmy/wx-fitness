@@ -155,7 +155,12 @@ import { ref, nextTick, onMounted, computed, watch } from "vue";
 import { useRouter } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
 import { useAuthStore } from "@/state/modules/auth";
-import { addActionToGroup, deleteActionFromGroup } from "@/api/action/action";
+import {
+  addActionToGroup,
+  deleteActionFromGroup,
+  getActionByDate,
+} from "@/api/action/action";
+import dayjs from "dayjs";
 // import uniCalendar from "@dcloudio/uni-ui/lib/uni-calendar/uni-calendar.vue";
 const router = useRouter();
 const authStore = useAuthStore();
@@ -315,6 +320,17 @@ watch(
     deep: true,
   }
 );
+const getAction = (data: any) => {
+  const temp = {
+    id: useActionsStore().getFindActionData.ID,
+    date: dayjs(data).format("YYYY-MM-DD"),
+    type: useActionsStore().getFindActionData.Type,
+  };
+  getActionByDate(temp).then((res: any) => {
+    console.log(res, "resssssss");
+    // planListType.value = res.data.data;
+  });
+};
 onMounted(() => {
   console.log(actionsStore.getFindActionData, "actionsStore.getFindActionData");
   nextTick(() => {
@@ -324,7 +340,7 @@ onMounted(() => {
     currentSelectDay.value = changeTime(actionsStore.getTime);
     startDate.value = getDate(new Date(), -60).fullDate;
     endDate.value = getDate(new Date(), 30).fullDate;
-
+    // getAction(dayjs(actionsStore.getTime).format("YYYY-MM-DD"));
     // 初始化打卡数据
     selected.value = [
       {

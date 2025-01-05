@@ -40,5 +40,6 @@ export const deleteActionFromGroup = (data: any) => {
 
 //获取日期下的动作
 export const getActionByDate = (data: any) => {
-  return request.get("/api/course/getActionGroup", data);
+  console.log(data, "data");
+  return request.get("/api/course/getActionGroup", { params: data });
 };
