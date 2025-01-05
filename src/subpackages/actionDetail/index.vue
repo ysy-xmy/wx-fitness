@@ -17,7 +17,7 @@
                     </div>
                     <div class="intro-image w-1/2">
                         <template v-if="actionInfo.Imgs && actionInfo.Imgs.length > 0">
-                            <swiper class="screen-swiper" :indicator-dots="true" :circular="true"
+                            <swiper class="screen-swiper h-full" :indicator-dots="true" :circular="true"
                                 interval="5000" duration="500">
                                 <template v-for="(item, index) in actionInfo.Imgs" :key="index">
                                     <swiper-item @click="preview(index)">
@@ -263,8 +263,12 @@ onMounted(() => {
 }
 
 .intro-image {
+    padding: 20rpx;
     border-radius: 16rpx;
     box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
 }
 
