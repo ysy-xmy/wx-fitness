@@ -49,12 +49,13 @@ function login() {
         success: (res: any) => {
           let OpenID = res.data.data.OpenID;
           console.log("登录返回信息", OpenID);
+ 
           if (res.data.code === 200) {
             const token = res.data.data.Token;
             uni.setStorageSync("token", token);
             authStore.setUser({
               OpenID: res.data.data.OpenID,
-              name: res.data.data.Username || "微信用户",
+              name: res.data.data.Username,
               id: res.data.data.ID,
               phone: res.data.data.phone,
               Sex: res.data.data.Sex || 0,
@@ -90,6 +91,11 @@ function login() {
               updateUserInfo(userInfo)
                 .then(() => {
                   console.log("更新用户信息成功");
+                  uni.showToast({
+                    title: "登录成功",
+                    icon: "success",
+                    duration: 2000
+                  });
                   authStore.setUserInfo(userInfo);
                 })
                 .catch((error) => {
