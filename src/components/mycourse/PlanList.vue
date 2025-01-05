@@ -18,15 +18,14 @@
         >
           <div class="card-left w-full flex items-center mb-2">
             <div @click.stop="handlePunchIn(plan.ID, plan.Complete, index)">
-            <van-checkbox
-              class="round cyan"
-              checked-color="#1cbbb4"
-              icon-size="24px"
-              :value="plan.Complete"
-              :checked="plan.Complete"
-              
-            />
-          </div>
+              <van-checkbox
+                class="round cyan"
+                checked-color="#1cbbb4"
+                icon-size="24px"
+                :value="plan.Complete"
+                :checked="plan.Complete"
+              />
+            </div>
             <h1 class="font-normal text-base text-gray-700">
               {{
                 plan.PlanTitle === ""
@@ -35,7 +34,9 @@
               }}
             </h1>
             <span class="ml-auto text-sm text-gray-500">{{
-              LessonCount !== "" ? "共" + LessonCount + "节" : EndTime
+              props.LessonCount && props.LessonCount !== "null"
+                ? "共" + props.LessonCount + "节"
+                : props.EndTime
             }}</span>
           </div>
           <div
@@ -94,14 +95,16 @@ const initPlanList = (data: actionGroup[]) => {
   planList.value = data.filter((item) => item.Type === props.type);
 };
 const seePlan = (plan: actionGroup) => {
-  console.log(plan);
-
+  console.log(plan, "plan");
+  useActionsStore().setFindActionData({
+    // ID: item["ID"],
+    Type: plan["Type"].toUpperCase(),
+  });
   let temp = {
     title: plan["PlanTitle"] || "私教课",
     day: plan["PlanTime"],
     status: plan["Complete"] ? 1 : 0,
     id: plan["ID"],
-
     actionGroups: plan["ActionGroups"].map((it: any, ind: number) => {
       return {
         title: it["ActionGroupTitle"] || `动作${ind + 1}`,

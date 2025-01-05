@@ -48,8 +48,10 @@
                       ></text>
                     </h1>
 
-                    <p class="text-[#6b7280] text-[14px] w-max-[180px] break-all">
-                      {{item.Name}} {{ handleCourseType(item.CourseType) }}
+                    <p
+                      class="text-[#6b7280] text-[14px] w-max-[180px] break-all"
+                    >
+                      {{ item.Name }} {{ handleCourseType(item.CourseType) }}
                       {{ item.LessonCount ? item.LessonCount + "节" : "" }}
                     </p>
                   </div>
@@ -141,6 +143,7 @@ const todetail = (
   name: any
 ) => {
   console.log("查看");
+  useActionsStore().setClassID(courseId);
   useActionsStore().setClassname(name);
   router.push({
     name: "studentDetail",

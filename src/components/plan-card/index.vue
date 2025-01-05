@@ -132,7 +132,7 @@ const formatDateRange = (startDate?: string, endDate?: string) => {
 const getOrderDetail = (item: any) => {
   console.log(item, "item");
   useActionsStore().setFindActionData({
-    ID: item["ID"],
+    // ID: item["ID"],
     Type: item["Type"].toUpperCase(),
   });
   console.log(useActionsStore().getFindActionData, "useActionsStore");

@@ -95,7 +95,7 @@
                 it.Name,
                 it.Description,
                 it.CoachName,
-                String(it.LessonCount),
+                it.LessonCount,
                 it.EndTime,
                 it.CreatedAt
               )
@@ -130,6 +130,7 @@ import { onMounted, reactive, ref } from "vue";
 import { useAuthStore } from "@/state/modules/auth";
 import { getOrderlist } from "@/subpackages/apis/order";
 import dayjs from "dayjs";
+import { useActionsStore } from "@/state/modules/actions";
 const props = defineProps<{
   change: () => void;
 }>();
@@ -160,12 +161,8 @@ const tomycourse = (
   EndTime: string,
   CreatedAt: string
 ) => {
-  console.log({
-    id,
-    Percentage,
-    name,
-    desc,
-  });
+  console.log(id, Percentage, name, desc, LessonCount, EndTime, CreatedAt);
+  useActionsStore().setClassID(id);
   router.push({
     name: "mycourse",
     params: {
@@ -203,7 +200,7 @@ const getList = () => {
         }
         list.value[dayjs(item.CreatedAt).format("YYYY-MM")].push(dispose(item));
       });
-      console.log(list.value);
+      console.log(list.value, "938842387487");
       uni.hideLoading();
     })
     .catch((err) => {

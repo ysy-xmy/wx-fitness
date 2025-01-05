@@ -43,3 +43,7 @@ export const getActionByDate = (data: any) => {
   console.log(data, "data");
   return request.get("/api/course/getActionGroup", { params: data });
 };
+//获取哪些日期有动作
+export const getActionDate = (data: any) => {
+  return request.get("/api/course/getPlanDates", { params: data });
+};

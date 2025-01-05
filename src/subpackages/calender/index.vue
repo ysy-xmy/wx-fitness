@@ -37,7 +37,7 @@
         <view class="drag-line"></view>
       </view>
     </view>
-    <div v-for="(item, index) in ifshow" :key="index">
+    <div v-for="(item, index) in planListType" :key="index">
       <div class="plan-container" v-if="item.type === 'weight'">
         <div class="top" style="background-color: rgba(59, 213, 221, 1)">
           <div class="title">{{ item.title }}</div>
@@ -103,7 +103,7 @@
     </div>
     <div
       style="text-align: center; margin-top: 20px; width: 100%"
-      v-if="ifshow.length === 0"
+      v-if="planListType.length === 0"
     >
       暂无计划
     </div>
@@ -159,6 +159,7 @@ import {
   addActionToGroup,
   deleteActionFromGroup,
   getActionByDate,
+  getActionDate,
 } from "@/api/action/action";
 import dayjs from "dayjs";
 // import uniCalendar from "@dcloudio/uni-ui/lib/uni-calendar/uni-calendar.vue";
@@ -258,7 +259,26 @@ const radioType = ref<string>("");
 const chooseType = (type: string) => {
   radioType.value = type;
 };
-
+const getWhichDate = () => {
+  getActionDate({
+    id: useActionsStore().getClassID,
+    type: useActionsStore().getFindActionData.Type,
+  }).then((res: any) => {
+    console.log(res, "res");
+    if (res.data.code === 200 && res.data.data) {
+      selected.value = res.data.data.map((date: string) => ({
+        date: dayjs(date).format("YYYY-MM-DD"),
+      }));
+      // 强制更新日历组件
+      nextTick(() => {
+        showCalendar.value = false;
+        nextTick(() => {
+          showCalendar.value = true;
+        });
+      });
+    }
+  });
+};
 const onCloseDialog = () => {
   radioType.value = "";
   showDialog.value = false;
@@ -289,30 +309,21 @@ const goChooseAction = () => {
     name: "actionArrange",
   });
 };
-const ifshow = computed(() => {
-  console.log(currentSelectDay.value, "currentSelectDay", planListType.value);
-  return currentSelectDay.value === changeTime(actionsStore.getTime)
-    ? planListType.value
-    : [];
-});
+// const planListType = computed(() => {
+//   console.log(currentSelectDay.value, "currentSelectDay", planListType.value);
+//   return currentSelectDay.value === changeTime(actionsStore.getTime)
+//     ? planListType.value
+//     : [];
+// });
 
 const toActionArrange = () => {
   showDialog.value = true;
 };
 watch(
-  () => actionsStore.getPlanList,
+  () => currentSelectDay.value,
   (newVal) => {
-    if (newVal && actionsStore.getTime) {
-      planListType.value = [];
-      console.log(newVal.actionGroups, "newVal");
-      newVal.actionGroups.forEach((item: any) => {
-        planListType.value.push({
-          planActions: item["List"],
-          title: item["title"],
-          type: item["type"],
-        });
-      });
-      console.log(planListType.value, "planListType");
+    if (newVal) {
+      getAction(newVal);
     }
   },
   {
@@ -322,14 +333,34 @@ watch(
 );
 const getAction = (data: any) => {
   const temp = {
-    id: useActionsStore().getFindActionData.ID,
+    id: useActionsStore().getClassID,
     date: dayjs(data).format("YYYY-MM-DD"),
     type: useActionsStore().getFindActionData.Type,
   };
-  getActionByDate(temp).then((res: any) => {
-    console.log(res, "resssssss");
-    // planListType.value = res.data.data;
-  });
+
+  getActionByDate(temp)
+    .then((res: any) => {
+      planListType.value = [];
+      console.log(res.data, "res");
+      if (res.data.code === 200 && res.data.data) {
+        res.data.data.forEach((it: any, ind: number) => {
+          planListType.value.push({
+            planActions: it["PlanActions"],
+            title: it["ActionGroupTitle"] || `动作${ind + 1}`,
+            type: it["ContentType"],
+          });
+        });
+      } else {
+      }
+      // planListType.value = res.data.data;
+    })
+    .catch((err) => {
+      console.log(err, "err");
+      uni.showToast({
+        title: "获取动作失败",
+        icon: "none",
+      });
+    });
 };
 onMounted(() => {
   console.log(actionsStore.getFindActionData, "actionsStore.getFindActionData");
@@ -340,14 +371,15 @@ onMounted(() => {
     currentSelectDay.value = changeTime(actionsStore.getTime);
     startDate.value = getDate(new Date(), -60).fullDate;
     endDate.value = getDate(new Date(), 30).fullDate;
-    // getAction(dayjs(actionsStore.getTime).format("YYYY-MM-DD"));
+    getAction(dayjs(actionsStore.getTime).format("YYYY-MM-DD"));
+    getWhichDate();
     // 初始化打卡数据
-    selected.value = [
-      {
-        date: changeTime(actionsStore.getTime),
-      },
-    ];
-
+    // selected.value = [
+    //   {
+    //     date: changeTime(actionsStore.getTime),
+    //   },
+    // ];
+    console.log(selected.value, "selected");
     // 检查今天是否已打卡
     // const todayChecked = selected.value.find((item) => item.date === today);
     // if (todayChecked) {
