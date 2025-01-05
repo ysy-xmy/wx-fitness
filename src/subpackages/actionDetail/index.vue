@@ -132,7 +132,7 @@ onMounted(() => {
                 actionInfo.value.Attention = response.ActionInfos.Attention || "暂无";
                 actionInfo.value.ReadyWorkContent = response.ActionInfos.ReadyWorkContent || "暂无";
                 actionInfo.value.Step = response.ActionInfos.Step || "暂无";
-                // actionInfo.value.Imgs =  [{ URL: "https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241229/1735406600865.png" }];
+                actionInfo.value.Imgs = response.ActionImgInfos || [];
                 actionInfo.value.Videos = response.ActionVideoInfos || [];
                 uni.hideLoading();
             });
@@ -253,8 +253,8 @@ onMounted(() => {
 .intro-description {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 7;
-    line-clamp: 7;
+    -webkit-line-clamp: 8;
+    line-clamp: 8;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.5;
