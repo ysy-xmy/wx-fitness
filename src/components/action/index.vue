@@ -143,7 +143,7 @@
                   <transition name="fade">
                     <div
                       v-if="item2.active"
-                      class="flex flex-row w-full justify-center flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
+                      class="flex flex-row w-full justify-center gap-3 flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
                       @click="toDetail(item2)">
                         <img
                           class="w-28 h-28 rounded-l-md lg"
