@@ -2,6 +2,7 @@
   <div class="mine-page w-screen relative min-h-screen bg-[#fafafa]">
     <div class="mine-header w-full h-64 relative">
       <img
+        @click="router.push({ name: 'login' })"
         class="w-screen z-0 absolute top-0"
         src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20241231/1735586047169.png"
       />
@@ -48,7 +49,7 @@
             v-else
             @click="router.push({ name: 'login' })"
           >
-            请先登录
+            未登录，点击登录
           </p>
         </div>
       </div>
@@ -64,22 +65,22 @@
       >
         <div class="mine-indicator bg-white" v-if="roleName === 'student'">
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3">身高</span>
+            <span class="title text-gray-500 tracking-wider mb-3 text-center">身高</span>
             <span
               class="num text-2xl text-black font-bold tracking-wider"
-              v-if="useAuthStore().getToken"
+              v-if="useAuthStore().getToken && showTab1 != '0'"
               >{{ showTab1 }}cm</span
             >
             <span
-              class="num text-2xl text-black font-bold tracking-wider"
+              class="num text-xl  font-bold tracking-wider"
               v-else
-              >暂无</span
+              >暂无数据</span
             >
           </div>
         </div>
         <div class="mine-indicator bg-white" v-else>
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3"
+            <span class="title text-gray-500 tracking-wider mb-3 text-center"
               >售课次数</span
             >
             <span class="num text-2xl text-black font-bold tracking-wider">{{
@@ -89,22 +90,22 @@
         </div>
         <div class="mine-indicator bg-white" v-if="roleName === 'student'">
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3">体重</span>
+            <span class="title text-gray-500 tracking-wider mb-3 text-center">体重</span>
             <span
               class="num text-2xl text-black font-bold tracking-wider"
-              v-if="useAuthStore().getToken"
+              v-if="useAuthStore().getToken && showTab2 != '0'"
               >{{ showTab2 }}kg</span
             >
             <span
-              class="num text-2xl text-black font-bold tracking-wider"
+              class="num text-xl text-black font-bold tracking-wider"
               v-else
-              >暂无</span
+              >暂无数据</span
             >
           </div>
         </div>
         <div class="mine-indicator bg-white" v-else>
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3"
+            <span class="title text-gray-500 tracking-wider mb-3 text-center"
               >学员数量</span
             >
             <span class="num text-2xl text-black font-bold tracking-wider">{{
