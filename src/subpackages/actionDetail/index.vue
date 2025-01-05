@@ -28,6 +28,7 @@
                         </template>
                         <template v-else>
                             <van-empty
+                                style="height: 100%;"
                                 class="custom-empty"
                                 description="暂无图片"
                                 image-size="200"

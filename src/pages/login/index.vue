@@ -4,6 +4,7 @@
       <view class="content rounded-lg">
         <view class="title text-2xl text-teal-500 my-4"> 请先登录 </view>
 
+<<<<<<< HEAD
         <!-- <view class="ip-info">
                     <view class="inps">
                         <input v-model="form.name" placeholder="Username" />
@@ -13,6 +14,8 @@
                     </view>
                 </view> -->
         <!-- open-type="getPhoneNumber" -->
+=======
+>>>>>>> 398069fb4f218cfb7c4e3e5106a02559d536cb48
         <view class="btns">
           <button
             class="bg-green-500 w-auto rounded-lg text-zinc-50"

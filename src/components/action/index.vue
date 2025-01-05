@@ -8,8 +8,7 @@
           :adjust-position="false"
           type="text"
           placeholder="搜索二级类目、动作"
-          confirm-type="search"
-        />
+          confirm-type="search" />
       </view>
     </view>
 
@@ -22,8 +21,7 @@
         display: flex;
         justify-content: space-between;
         padding-right: 20px;
-      "
-    >
+      ">
       <div
         style="
           height: 30px;
@@ -37,8 +35,12 @@
       <view class="cu-item" @click="showPopup = true">
         <div
           class="cuIcon-apps"
-          style="position: relative; width: 30px; font-size: 30px; height: 30px"
-        >
+          style="
+            position: relative;
+            width: 30px;
+            font-size: 30px;
+            height: 30px;
+          ">
           <view class="cu-tag badge">{{ chooseList.length }}</view>
         </div>
       </view>
@@ -50,15 +52,13 @@
 
     <view
       style="overflow: hidden; flex: 1; height: 0"
-      class="VerticalBox bg-[#f7f8fc]"
-    >
+      class="VerticalBox bg-[#f7f8fc]">
       <scroll-view
         class="mx-1 rounded-md VerticalNav nav"
         scroll-y
         scroll-with-animation
         :scroll-top="verticalNavTop"
-        style="height: calc(100vh - 375upx)"
-      >
+        style="height: calc(100vh - 375upx)">
         <view
           class="cu-item truncate"
           :style="{
@@ -70,8 +70,7 @@
           v-for="(item, index) in actionrouterList"
           :key="index"
           @tap="TabSelect"
-          :data-id="index"
-        >
+          :data-id="index">
           {{ item.name }}
         </view>
       </scroll-view>
@@ -80,50 +79,41 @@
         scroll-with-animation
         style="background-color: white"
         :scroll-into-view="'main-' + mainCur"
-        @scroll="VerticalMain"
-      >
+        @scroll="VerticalMain">
         <div v-if="secMenu.length > 0">
           <view
             class="padding-top"
             v-for="(item1, index1) in secMenu"
             :key="index1"
-            :id="'main-' + index1"
-          >
+            :id="'main-' + index1">
             <view
               @click="secMenuSelect(item1, index1)"
-              class="cu-bar text-black font-extrabold solid-bottom bg-white"
-            >
+              class="cu-bar text-black font-extrabold solid-bottom bg-white">
               <view
                 style="font-size: 45rpx"
-                class="text-2xl action truncate ..."
-              >
+                class="text-2xl action truncate ...">
                 <text class="cuIcon-title"></text> {{ item1.name }}
               </view>
               <div class="curight-icon mr-5">
                 <van-icon
                   v-show="actionrouterList[mainCur].children[index1].active"
-                  name="arrow-down"
-                />
+                  name="arrow-down" />
                 <van-icon
                   v-show="!actionrouterList[mainCur].children[index1].active"
-                  name="arrow-up"
-                />
+                  name="arrow-up" />
               </div>
             </view>
             <view
               v-if="actionrouterList[mainCur].children[index1].active"
-              class="cu-list menu-avatar flex flex-wrap bg-white pt-3"
-            >
+              class="cu-list menu-avatar flex flex-wrap bg-white pt-3">
               <template
                 v-for="(item2, index2) in actionrouterList[mainCur].children[
                   index1
                 ].children"
-                :key="index2"
-              >
+                :key="index2">
                 <view
                   class="felx flex-wrap w-full items-center justify-center content-center px-2 mb-3"
-                  style="position: relative"
-                >
+                  style="position: relative">
                   <van-checkbox
                     v-if="ifChoose"
                     :value="item2.ifcheck"
@@ -131,8 +121,12 @@
                       (e: any) => chooseAction(e, item2, mainCur, index1)
                     "
                     checked-color="#f60422"
-                    style="position: absolute; right: 1px; top: 1px; z-index: 5"
-                  />
+                    style="
+                      position: absolute;
+                      right: 1px;
+                      top: 1px;
+                      z-index: 5;
+                    " />
                   <view
                     @click="
                       toggleActive(
@@ -140,8 +134,7 @@
                         actionrouterList[mainCur].children[index1].children
                       )
                     "
-                    class="content pb-1 w-full"
-                  >
+                    class="content pb-1 w-full">
                     <view
                       class="text-black tracking-wider pr-2 font-bold text-right text-lg opacity-100"
                       >{{ item2.name }}
@@ -151,20 +144,20 @@
                     <div
                       v-if="item2.active"
                       class="flex flex-row w-full justify-center flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
-                      @click="toDetail(item2)"
-                    >
-                      <img
-                        class="w-28 h-28 rounded-l-md lg"
-                        :src="getImageUrl(item2.Imgs, 0)"
-                      />
-                      <img
-                        class="w-28 h-28 rounded-r-md lg"
-                        :src="getImageUrl(item2.Imgs, 1)"
-                      />
+                      @click="toDetail(item2)">
+                        <img
+                          class="w-28 h-28 rounded-l-md lg"
+                          :src="getImageUrl(item2.Imgs, 0)" />
+                        <img
+                          class="w-28 h-28 rounded-r-md lg"
+                          :src="getImageUrl(item2.Imgs, 1)" />
                     </div>
                   </transition>
                 </view>
               </template>
+              <div v-if="actionrouterList[mainCur].children[index1].children.length == 0" class="w-full flex justify-center">
+                <text class="text-gray-500">该目录暂无具体动作</text>
+              </div>
             </view>
           </view>
         </div>
@@ -179,8 +172,7 @@
     <van-index-bar
       v-if="searchResult.length > 0"
       class="w-screen fixed z-1000 top-10 bg-[#f2f2f2] shadow-sm"
-      :index-list="indexList"
-    >
+      :index-list="indexList">
       <!-- 遍历搜索结果 -->
       <view class="cu-list menu sm-border card-menu">
         <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa' }">
@@ -189,26 +181,22 @@
         <view
           v-for="(item, index) in searchResult"
           :key="index"
-          class="w-screen flex flex-col items-start content-start"
-        >
+          class="w-screen flex flex-col items-start content-start">
           <view
             @click="
               handlelocation(
                 item.children.length > 0 ? item.children[0].id : item.id
               )
             "
-            class="border-none padding-tb-sm w-full"
-          >
+            class="border-none padding-tb-sm w-full">
             <view
-              class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold"
-            >
+              class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold">
               <text class="text-black"> 索引至： {{ item.name }}</text>
               <text class="cuIcon-right text-lg text-blue mr-10"></text>
             </view>
             <view
               v-if="item.children && item.children.length > 0"
-              v-for="(item1, index1) in item.children"
-            >
+              v-for="(item1, index1) in item.children">
               <view class="cu-item pl-16">
                 <view class="content">
                   <view>{{ item1.name }}</view>
@@ -225,8 +213,7 @@
       :show="showPopup"
       position="bottom"
       overlay="false"
-      @close="onCloseopup"
-    >
+      @close="onCloseopup">
       <div
         style="
           margin-top: 5px;
@@ -241,8 +228,7 @@
       <div style="max-height: 460px; margin: 15px auto; overflow-y: auto">
         <div
           class="nodata-card flex flex-col justify-center items-center w-full"
-          v-if="chooseList.length == 0"
-        >
+          v-if="chooseList.length == 0">
           <van-empty description="暂未选择动作" />
         </div>
         <div v-for="item in chooseList">
@@ -267,8 +253,7 @@
                 integer
                 min="0"
                 step="1"
-                @change="(e) => changeNum(item, e)"
-              />
+                @change="(e) => changeNum(item, e)" />
             </div>
           </div>
         </div>
@@ -280,8 +265,7 @@
           display: flex;
           justify-content: flex-end;
           padding-right: 30px;
-        "
-      >
+        ">
         <van-button type="info" size="normal" round @click="subitClass"
           >提交</van-button
         >
