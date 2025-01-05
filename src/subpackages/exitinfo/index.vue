@@ -163,7 +163,9 @@ onMounted(async () => {
   const res = await getUserInfo();
   username.value = res.data.data.Username;
   ageindex.value = Number(res.data.data.Age) - 14 || 0;
-  avatarUrl.value = res.data.data.Avatar || "../../static/user.png";
+  avatarUrl.value =
+    res.data.data.Avatar ||
+    "https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250105/1736063470137.png";
   sexindex.value = res.data.data.Sex || 0;
   userId.value = res.data.data.ID;
   wximg.value = res.data.data.WeChatBusinessImg
@@ -184,7 +186,9 @@ const preview = (index: number, list: string[]) => {
 const username = ref("微信用户");
 const coachcert = ref([]);
 const ageindex = ref<number>(0);
-const avatarUrl = ref("../../static/user.png");
+const avatarUrl = ref(
+  "https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250105/1736063470137.png"
+);
 const sexindex = ref<number>(0);
 const userId = ref("");
 const sexs = ref(["男", "女"]);
