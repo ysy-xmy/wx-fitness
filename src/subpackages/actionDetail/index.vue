@@ -15,20 +15,20 @@
                         <h2 class="intro-title flex items-center mb-3"><span class="title-bar"></span>{{ actionInfo.Name }}</h2>
                         <p class="intro-description text-ellipsis">{{ actionInfo.Description }}</p>
                     </div>
-                    <div class="intro-image w-1/2">
+                    <div class="intro-image rounded-md w-1/2">
                         <template v-if="actionInfo.Imgs && actionInfo.Imgs.length > 0">
-                            <swiper class="screen-swiper h-full" :indicator-dots="true" :circular="true"
+                            <swiper class="screen-swiper h-full rounded-md" :indicator-dots="true" :circular="true"
                                 interval="5000" duration="500">
                                 <template v-for="(item, index) in actionInfo.Imgs" :key="index">
                                     <swiper-item @click="preview(index)">
-                                        <image :src="item.URL" mode="aspectFill"></image>
+                                        <image :src="item.URL" mode="aspectFill" class="rounded-md"></image>
                                     </swiper-item>
                                 </template>
                             </swiper>
                         </template>
                         <template v-else>
                             <van-empty
-                                style="height: 100%;"
+                                style="height: 100%;width: 100%;"
                                 class="custom-empty"
                                 description="暂无图片"
                                 image-size="200"
@@ -132,7 +132,7 @@ onMounted(() => {
                 actionInfo.value.Attention = response.ActionInfos.Attention || "暂无";
                 actionInfo.value.ReadyWorkContent = response.ActionInfos.ReadyWorkContent || "暂无";
                 actionInfo.value.Step = response.ActionInfos.Step || "暂无";
-                actionInfo.value.Imgs = response.ActionImgInfos || [];
+                actionInfo.value.Imgs = response.ActionImgInfos.slice(2) || [];
                 actionInfo.value.Videos = response.ActionVideoInfos || [];
                 uni.hideLoading();
             });
@@ -231,10 +231,8 @@ onMounted(() => {
 
 .screen-swiper {
     width: 100%;
-    height: 300rpx;
-    border-radius: 16rpx;
+    height: 100%;
     overflow: hidden;
-
 }
 
 .screen-swiper image {
@@ -263,7 +261,6 @@ onMounted(() => {
 }
 
 .intro-image {
-    padding: 20rpx;
     border-radius: 16rpx;
     box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
     display: flex;
