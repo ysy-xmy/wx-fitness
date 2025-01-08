@@ -27,94 +27,14 @@
 </template>
 
 <script lang="ts" setup name="login">
-import { onMounted, reactive } from "vue";
-import { useAuthStore } from "@/state/modules/auth";
 import { useRouter } from "uni-mini-router";
-import { updateUserInfo } from "./wx_session";
-const router = useRouter();
-const authStore = useAuthStore();
-function login() {
-  uni.login({
-    provider: "weixin",
-    // onlyAuthorize: true, // 微信登录仅请求授权认证
-    success: function (event) {
-      console.log(event, "event");
-      const { code } = event;
-      console.log("code", code);
+import { loginWithWeChat } from "@/api/login/index.ts";
 
-      //客户端成功获取授权临时票据（code）,向业务服务器发起登录请求。
-      uni.request({
-        url: `https://api.2018ctjs.cn/api/user/wx-login?code=${code}`,
-        method: "POST",
-        success: (res: any) => {
-          let OpenID = res.data.data.OpenID;
-          console.log("登录返回信息", OpenID);
- 
-          if (res.data.code === 200) {
-            const token = res.data.data.Token;
-            uni.setStorageSync("token", token);
-            authStore.setUser({
-              OpenID: res.data.data.OpenID,
-              name: res.data.data.Username,
-              id: res.data.data.ID,
-              phone: res.data.data.phone,
-              Sex: res.data.data.Sex || 0,
-              img: res.data.data.Avatar,
-              RoleName: res.data.data.RoleName,
-              Age: res.data.data.Age || "18",
-            });
-            authStore.setToken(token);
-            router.replace({
-              name: "home",
-            });
-          }
-          new Promise((resolve, reject) => {
-            uni.getUserInfo({
-              success: (res) => {
-                console.log("suceess", res);
-                resolve(res);
-              },
-              fail: (error) => {
-                console.error("获取用户信息失败：", error);
-                reject(error);
-              },
-            });
-          })
-            .then((res: any) => {
-              const { nickName, avatarUrl, gender } = res.userInfo;
-              const userInfo = {
-                OpenID: OpenID,
-                Username: nickName,
-                Avatar: avatarUrl,
-                Sex: gender,
-              } as UserInfo;
-              updateUserInfo(userInfo)
-                .then(() => {
-                  console.log("更新用户信息成功");
-                  uni.showToast({
-                    title: "登录成功",
-                    icon: "success",
-                    duration: 2000
-                  });
-                  authStore.setUserInfo(userInfo);
-                })
-                .catch((error) => {
-                  console.error("更新用户信息失败：", error);
-                });
-            })
-            .catch((error) => {
-              console.error("获取用户信息失败：", error);
-            });
-        },
-        fail: (error) => {
-          console.error("登录失败：", error);
-          uni.showToast({
-            title: "登录失败",
-            icon: "none",
-          });
-        },
-      });
-    },
+const router = useRouter();
+
+function login() {
+  loginWithWeChat((token, userInfo) => {
+    router.replace({ name: "home" });
   });
 }
 </script>
