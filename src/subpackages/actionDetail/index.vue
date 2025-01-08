@@ -124,7 +124,7 @@ onMounted(() => {
         if (query.itemid) {
             uni.showLoading({ title: "加载中...", mask: true });
             getActionById(query.itemid).then((res) => {
-                console.log(res.data.data);
+                uni.hideLoading();
                 let response = res.data.data;
                 actionInfo.value.ID = response.ActionInfos.ID;
                 actionInfo.value.Name = response.ActionInfos.Name;
@@ -132,9 +132,8 @@ onMounted(() => {
                 actionInfo.value.Attention = response.ActionInfos.Attention || "暂无";
                 actionInfo.value.ReadyWorkContent = response.ActionInfos.ReadyWorkContent || "暂无";
                 actionInfo.value.Step = response.ActionInfos.Step || "暂无";
-                actionInfo.value.Imgs = response.ActionImgInfos.slice(2) || [];
+                actionInfo.value.Imgs = response.ActionImgInfos.length > 2 ? response.ActionImgInfos.slice(2) : [];
                 actionInfo.value.Videos = response.ActionVideoInfos || [];
-                uni.hideLoading();
             });
         }
     }
