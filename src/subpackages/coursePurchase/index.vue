@@ -24,7 +24,7 @@
       <div @click="toLocation" class="px-5 pb-5 pt-0 flex justify-between">
         <span class="mr-2">
           店铺详细地址：<span class="cuIcon-locationfill text-blue"> </span>
-          广东省湛江市霞山区海滨东二号
+          广东省湛江市霞山区海滨东二路常态健身俱乐部
         </span>
         <span
           class="cu-btn whitespace-nowrap rounded-md bg-green-500 text-white"
