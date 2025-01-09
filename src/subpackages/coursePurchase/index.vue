@@ -271,6 +271,7 @@ type Data = {
   UserRealName: number;
   Amount: number;
   LessonCount?: number;
+  UserID: number;
 };
 const computedPrice = () => {
   console.log(pitchNumber.value, "num");
@@ -403,8 +404,9 @@ const pay = async () => {
       UserPhone: inputName.value,
       UserRealName: inputPhone.value,
       Amount: Number(courseInfo.price),
+      UserID: AuthStore.user.id,
     };
-
+    console.log(data, "123", AuthStore.user);
     if (packageNo.value === "LESSON") {
       data.LessonCount = Number(pitchNumber.value);
     }

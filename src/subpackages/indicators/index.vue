@@ -77,18 +77,20 @@
     >
       <!-- 上面卡片 -->
       <div class="w-[90%] h-[100px] bg-[#f2f6ff] mx-auto rounded-[20px] p-4">
-        <div class="flex card-top mb-2">
-          <span class="text-[#6D819C] text-[17px] font-bold"
+        <div class="flex card-top mb-1">
+          <span class="text-[#6D819C] text-[14px]"
             >更新于: {{ dataList.timeMonth }} 月 {{ dataList.timeDay }} 日,
             {{ dataList.beginYear }}</span
           >
         </div>
 
-        <div class="flex items-center">
-          <span class="text-[#6D819C] text-[17px] font-bold mr-5">{{
+        <div class="flex items-center mt-3">
+          <span class="text-[#6D819C] text-[15px] mr-5">{{
             dataList.type
           }}</span>
-          <span class="text-black text-[20px]">{{ dataList.data }}</span>
+          <span class="text-[#282C37] text-[20px] tracking-wide">{{
+            dataList.data
+          }}</span>
         </div>
       </div>
 
@@ -96,17 +98,17 @@
       <div class="w-[90%] h-[100px] bg-[#f2f6ff] mx-auto rounded-[20px] p-4">
         <div class="flex justify-between">
           <div class="flex-2">
-            <span class="text-[#6D819C] text-[17px] font-bold block mb-2"
+            <span class="text-[#6D819C] text-[14px] block mb-1"
               >{{ dataList.sententce }}{{ dataList.beginMonth }} 月
               {{ dataList.beginDay }} 日，{{ dataList.beginYear }}</span
             >
-            <span class="text-black text-[20px]">{{ dataList.beginData }}</span>
+            <span class="text-[#282C37] text-[20px] tracking-wide mt-3">{{
+              dataList.beginData
+            }}</span>
           </div>
           <div class="flex-1 text-right">
-            <span class="text-[#6D819C] text-[17px] font-bold block mb-2"
-              >变化</span
-            >
-            <span class="text-[#FF8D1A] text-[20px]">{{
+            <span class="text-[#6D819C] text-[15px] block mb-1">变化</span>
+            <span class="text-[#FF8D1A] text-[20px] tracking-wide mt-3">{{
               dataList.change
             }}</span>
           </div>
@@ -141,7 +143,7 @@
         <div class="card-content py-[8px] flex items-center">
           <div class="mr-5">
             <p class="text-[#6D819C] text-[15px] mr-5 mb-1">
-              <span class="text-[#44DB5E] text-[15px] mr-2 font-bold">·</span
+              <span class="text-[#44DB5E] mr-2 font-bold text-[15px]">·</span
               >胸围
             </p>
             <p class="text-[#282C37] text-[20px] tracking-wide">
@@ -355,10 +357,31 @@
               <input
                 class="text-right"
                 v-model="addData.BMI"
-                placeholder="请添加BMI(kg/m²)"
+                placeholder="请添加BMI"
                 name="input"
               />
-              <span>kg/m²</span>
+              <span></span>
+            </view>
+            <div class="mt-4"></div>
+            <!-- <view class="cu-form-group">
+              <view class="title">日期</view>
+              <picker mode="date" :value="date" @change="DateChange">
+                <view class="picker">
+                  {{ date }}
+                </view>
+              </picker>
+            </view> -->
+          </div>
+          <div v-if="typeVal == 4">
+            <view class="cu-form-group margin-top">
+              <view class="title">身高</view>
+              <input
+                class="text-right"
+                v-model="addData.HEIGHT"
+                placeholder="请添加身高(cm)"
+                name="input"
+              />
+              <span>cm</span>
             </view>
             <div class="mt-4"></div>
             <!-- <view class="cu-form-group">
@@ -403,9 +426,11 @@ const weight = ref("");
 const today = dayjs().format("YYYY-MM-DD"); //今天日期
 onMounted(() => {
   uni.$on("changeBotData", (val) => {
+    console.log(val, "123");
     if (typeVal.value != 1) {
       const TO = val.oldTime.split("-");
       const TN = val.newTime.split("-");
+      console.log(val, typeVal.value, "1234");
       dataList.value = {
         timeYear: TN[0],
         timeMonth: TN[1],
@@ -419,6 +444,7 @@ onMounted(() => {
         beginData: val.oldVal + unitList[typeVal.value],
         change: `${Number(val.newVal) - Number(val.oldVal)}${unitList[typeVal.value]}`,
       };
+      console.log(dataList.value, "123");
     } else {
       const TO = val.old.time.split("-");
       const TN = val.new.time.split("-");
@@ -470,14 +496,20 @@ const TabList = [
     title: "BMI",
     content: "bmi",
   },
+  {
+    title: "身高",
+    content: "height",
+  },
 ];
 function tabSelect(e: any) {
   const id = e.currentTarget.dataset.id;
+  console.log(id, e.currentTarget.dataset, "123");
   TabCur.value = parseInt(id);
   temp.value = TabList[TabCur.value]["content"];
+  console.log(temp.value, "123");
   uni.$emit("change", temp.value);
   typeVal.value = id;
-
+  console.log(typeVal.value, "123");
   uni.$emit("changeType", id);
 }
 function showModal() {
@@ -488,9 +520,9 @@ function hideModal() {
 }
 const typeVal = ref(0);
 const temp = ref(TabList[TabCur.value]["content"]); //临时储存一下content
-const typeList = ["体重", "三维", "体脂率", "BMI"];
-const enTypeList = ["WEIGHT", "THREE", "BODY_FAT", "BMI"];
-const unitList = ["KG", "cm", "%", "kg/m²"];
+const typeList = ["体重", "三维", "体脂率", "BMI", "身高"];
+const enTypeList = ["WEIGHT", "THREE", "BODY_FAT", "BMI", "HEIGHT"];
+const unitList = ["KG", "cm", "%", "", "cm"];
 let dataList = ref({
   timeYear: "",
   timeMonth: "",
@@ -525,11 +557,13 @@ let addData = reactive({
   HIP: "",
   BODY_FAT: "",
   BMI: "",
+  HEIGHT: "",
 });
 const addNewData = async () => {
   uni.showLoading();
   if (typeVal.value != 1) {
     //不是三维
+    console.log(typeVal.value, "123");
     let data = {
       Type: enTypeList[typeVal.value],
       Value: Number(addData[enTypeList[typeVal.value]]),
@@ -551,6 +585,7 @@ const addNewData = async () => {
             HIP: "",
             BODY_FAT: "", //存疑
             BMI: "",
+            HEIGHT: "",
           };
         } else {
           uni.showToast({

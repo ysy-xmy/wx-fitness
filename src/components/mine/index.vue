@@ -63,17 +63,21 @@
         style="width: 90%"
         class="shadow-md rounded-lg px-10 bg-white flex justify-around flex-row py-5"
       >
-        <div class="mine-indicator bg-white" v-if="roleName === 'student'">
+        <div
+          class="mine-indicator bg-white"
+          v-if="roleName === 'student'"
+          @click="bodyinfo"
+        >
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3 text-center">身高</span>
+            <span class="title text-gray-500 tracking-wider mb-3 text-center"
+              >身高</span
+            >
             <span
               class="num text-2xl text-black font-bold tracking-wider"
               v-if="useAuthStore().getToken && showTab1 != '0'"
               >{{ showTab1 }}cm</span
             >
-            <span
-              class="num text-xl  font-bold tracking-wider"
-              v-else
+            <span class="num text-xl font-bold tracking-wider" v-else
               >暂无数据</span
             >
           </div>
@@ -88,17 +92,21 @@
             }}</span>
           </div>
         </div>
-        <div class="mine-indicator bg-white" v-if="roleName === 'student'">
+        <div
+          class="mine-indicator bg-white"
+          v-if="roleName === 'student'"
+          @click="bodyinfo"
+        >
           <div class="indicator-left flex flex-col">
-            <span class="title text-gray-500 tracking-wider mb-3 text-center">体重</span>
+            <span class="title text-gray-500 tracking-wider mb-3 text-center"
+              >体重</span
+            >
             <span
               class="num text-2xl text-black font-bold tracking-wider"
               v-if="useAuthStore().getToken && showTab2 != '0'"
               >{{ showTab2 }}kg</span
             >
-            <span
-              class="num text-xl text-black font-bold tracking-wider"
-              v-else
+            <span class="num text-xl text-black font-bold tracking-wider" v-else
               >暂无数据</span
             >
           </div>
@@ -211,6 +219,13 @@ onMounted(async () => {
     Age.value = ress.Age;
     Sex.value = ress.Sex;
     Username.value = ress.Username;
+  });
+  uni.$on("changeBody", (val) => {
+    console.log("变");
+    getHWInfo().then((res) => {
+      showTab1.value = res.data.data.Height.toString();
+      showTab2.value = res.data.data.Weight.toString();
+    });
   });
   const ress = await (await getUserInfo()).data.data;
   Avatar.value = ress.Avatar;

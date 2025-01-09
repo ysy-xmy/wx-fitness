@@ -119,6 +119,7 @@ onMounted(() => {
     type.value = val;
   });
   uni.$on("change", (val) => {
+    console.log(val, "123");
     temp.value = val;
     changeType(val);
   });
@@ -341,7 +342,7 @@ const changeBotDay = async () => {
     };
   } else {
     const Type = temp.value;
-    // console.log(Type);
+    console.log();
     const dataAsc = {
       Type,
       Count: 1,
@@ -361,14 +362,18 @@ const changeBotDay = async () => {
       getBodydata(dataDesc),
     ]);
     const [ascRes, descRes] = responses;
-    console.log(responses, "res");
+    console.log(responses, "res", "123");
     res = {
-      oldVal: ascRes.data.data[0].Value,
-      oldTime: dayjs(ascRes.data.data[0].CreatedAt).format("YYYY-MM-DD"),
-      newVal: descRes.data.data[0].Value,
-      newTime: dayjs(descRes.data.data[0].CreatedAt).format("YYYY-MM-DD"),
+      oldVal: ascRes.data.data[0]?.Value || 0,
+      oldTime: dayjs(ascRes.data.data[0]?.CreatedAt).format("YYYY-MM-DD"),
+      newVal: descRes.data.data[0]?.Value || 0,
+      newTime: dayjs(descRes.data.data[0]?.CreatedAt).format("YYYY-MM-DD"),
     };
+    console.log("发送" + Type);
+    if (Type == "weight" || Type === "height")
+      uni.$emit("changeBody", { Type, val: res.newVal });
   }
+
   uni.$emit("changeBotData", res);
   console.log(res);
 };
