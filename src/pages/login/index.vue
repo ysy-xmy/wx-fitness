@@ -1,25 +1,31 @@
 <template>
   <view class="contain">
     <view class="con">
-      <view class="content rounded-lg">
-        <view class="title text-2xl text-teal-500 my-4"> 请先登录 </view>
+      <view class="content rounded-2xl shadow-lg">
+        <view class="logo-area">
+          <image src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250111/1736527585770.jpg" mode="aspectFit" class="logo-image" />
+          <text class="brand-name text-3xl font-bold">轻律健身</text>
+        </view>
 
-        <!-- <view class="ip-info">
-                    <view class="inps">
-                        <input v-model="form.name" placeholder="Username" />
-                    </view>
-                    <view class="inps">
-                        <input v-model="form.passWord" placeholder="Password" />
-                    </view>
-                </view> -->
-        <!-- open-type="getPhoneNumber" -->
+        <view class="subtitle text-gray-500 mb-8">
+          请使用微信账号登录
+        </view>
+
         <view class="btns">
           <button
-            class="bg-green-500 w-auto rounded-lg text-zinc-50"
+            class="login-btn"
             @click="login"
           >
-            微信登录
+            <text class="iconfont icon-weixin mr-2"></text>
+            微信一键登录
           </button>
+        </view>
+
+        <view class="mt-6 text-gray-400 text-sm">
+          登录即表示同意
+          <text class="text-teal-500">服务条款</text>
+          和
+          <text class="text-teal-500">隐私政策</text>
         </view>
       </view>
     </view>
@@ -43,41 +49,78 @@ function login() {
 .contain {
   width: 100%;
   height: 100vh;
-  background-size: cover;
-
+  background: linear-gradient(135deg, #5bd0e1 0%, #40b5c5 100%);
+  
   .con {
     width: 100%;
     height: 100%;
-    background: rgb(0 0 0 / 40%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 30rpx;
 
     .content {
-      position: absolute;
-      top: 200px;
-      right: 30rpx;
-      left: 30rpx;
-      padding: 30rpx;
-      background: #fff;
+      width: 100%;
+      padding: 50rpx 40rpx;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
-      justify-content: space-evenly;
       align-items: center;
-      .ip-info {
-        margin-bottom: 50rpx;
+      animation: slideUp 0.5s ease-out;
 
-        .inps {
-          padding: 20rpx;
-          border-bottom: 2rpx solid rgb(204 204 204 / 100%);
+      .logo-area {
+        margin-bottom: 20rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        
+        .logo-image {
+          width: 180rpx;
+          height: 180rpx;
+          border-radius: 24rpx;
+        }
+
+        .brand-name {
+          margin-top: 16rpx;
+          font-size: 36rpx;
+          font-weight: bold;
+          background: linear-gradient(to right, #5bd0e1, #40b5c5);
+          -webkit-background-clip: text;
+          color: transparent;
         }
       }
 
-      .btns {
-        margin-bottom: 30rpx;
-      }
+      .login-btn {
+        background: linear-gradient(to right, #5bd0e1, #40b5c5);
+        color: white;
+        padding: 25rpx 60rpx;
+        border-radius: 100rpx;
+        font-size: 32rpx;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(91, 208, 225, 0.3);
 
-      .desc {
-        text-align: center;
+        &:active {
+          transform: scale(0.98);
+          box-shadow: 0 2px 8px rgba(91, 208, 225, 0.2);
+        }
       }
     }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
