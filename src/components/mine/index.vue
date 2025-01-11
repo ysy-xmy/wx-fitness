@@ -37,6 +37,11 @@
               style="font-size: 25px; color: #16a9fa"
               class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
             ></text>
+            <text
+              @click="clearStorage"
+              style="font-size: 25px; color: #ffffff"
+              class="cuIcon-delete ml-2"
+            ></text>
           </div>
           <p
             class="text-sm z-10 text-white pl-4"
@@ -260,6 +265,15 @@ const bodyinfo = () => {
 
 const diyTab = () => {
   router.push({ name: "diyTable" });
+};
+
+const clearStorage = () => {
+  uni.clearStorageSync();
+  uni.showToast({
+    title: '存储已清除',
+    icon: 'success'
+  });
+  router.push({ name: 'login' });
 };
 </script>
 
