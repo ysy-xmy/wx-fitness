@@ -218,6 +218,9 @@ onMounted(() => {
   uni.$on("alreadyBuy", () => {
     getList();
   });
+  setTimeout(() => {
+    uni.hideLoading();
+  }, 3000);
 });
 </script>
 <style scoped>

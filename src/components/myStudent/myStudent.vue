@@ -107,6 +107,9 @@ onMounted(() => {
     }
   });
   getListData();
+  setTimeout(() => {
+    uni.hideLoading();
+  }, 3000);
 });
 const handleCourseType = (type: any) => {
   switch (type) {

@@ -102,6 +102,9 @@ let list = ref<any[]>([]);
 onMounted(() => {
   uni.showLoading({ title: "数据加载中" });
   getListData();
+  setTimeout(() => {
+    uni.hideLoading();
+  }, 3000);
 });
 const lowerBottom = () => {
   uni.showLoading();
