@@ -46,7 +46,7 @@ const state = reactive<stateType>({
       if (res.data.data instanceof Array) temp = res.data.data;
       else if (res.data.data.OrderInfos instanceof Array)
         temp = res.data.data.OrderInfos;
-      this.total = res.data.Total || res.data.data.Total || temp.length;
+      this.total = res.data.Total | res.data.data.Total | temp.length | 0;
       temp.forEach((item: any) => {
         console.log(item, "item");
         this.list.push(props.dispose ? props.dispose(item) : item);
