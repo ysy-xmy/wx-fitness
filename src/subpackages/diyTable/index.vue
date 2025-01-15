@@ -49,9 +49,10 @@ const AuthStore = useAuthStore();
 const user = AuthStore.getUser;
 console.log(user, "user");
 onShareAppMessage((res) => {
+  console.log(res, user, form.num, form.money, "res");
   return {
-    title: `${user.name}的课程`,
-    path: `/subpackages/coursePurchase/index?name=${user.name}&&phone=${user.phone ? user.phone : "暂无联系方式"}&&img=${user.img}&&count=${form.num}&&price=${form.money}&&ifDiy=true`,
+    title: `${user.name}分享的课程`,
+    path: `/subpackages/coursePurchase/index?name=${user.name}&&phone=${user.phone ? user.phone : "暂无联系方式"}&&img=${user.img}&&count=${form.num}&&price=${form.money}&&ifDiy=true&&id=${user.id}&&sex=${user.sex}`,
   };
 });
 

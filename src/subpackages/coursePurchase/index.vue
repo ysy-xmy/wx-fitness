@@ -149,7 +149,7 @@
 
       <div
         class="lists-item flex flex-nowrap items-center content-center justify-between p-1 py-3"
-        v-if="coachForm.ifFind"
+        v-if="coachForm.ifFind || ifDiy"
       >
         <div class="w-1/6 mx-2">
           <img class="w-12 h-12 rounded-full" :src="coachForm.avatar" alt="" />
@@ -240,7 +240,7 @@
 
     <view class="cu-bar bg-white tabbar flex justify-between shop foot">
       <view class="text-[#e4595c] text-xl font-bold px-8">{{
-        coachForm.ifFind ? "￥" + courseInfo.price : ""
+        coachForm.ifFind || ifDiy ? "￥" + courseInfo.price : ""
       }}</view>
 
       <view class="px-4 flex justify-end">
@@ -319,16 +319,16 @@ onMounted(() => {
     if (router.route.value.query.ifDiy == "true") {
       const query = router.route.value.query;
       // =query.name
-      courseInfo.title = decodeURIComponent(query.name) + "的私教课";
       courseInfo.price = decodeURIComponent(query.price);
       coachForm.mount = decodeURIComponent(query.count);
       ifDiy.value = true;
       coachForm.avatar = decodeURIComponent(query.img);
       coachForm.phone = decodeURIComponent(query.phone);
       coachForm.name = decodeURIComponent(query.name);
+      coachForm.id = decodeURIComponent(query.id);
+      coachForm.sex = Number(decodeURIComponent(query.sex));
     } else {
       ifDiy.value = false;
-      courseInfo.title = "私教课";
     }
   }
   //   console.log(router.route.value.query);
