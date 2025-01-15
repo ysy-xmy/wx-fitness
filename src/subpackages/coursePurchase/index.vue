@@ -376,7 +376,7 @@ const toLocation = () => {
 const pay = async () => {
   try {
     // 验证教练是否已选择
-    if (!coachForm.ifFind) {
+    if (!coachForm.ifFind && !ifDiy.value) {
       uni.showToast({
         title: "请先选择教练",
         icon: "error",
