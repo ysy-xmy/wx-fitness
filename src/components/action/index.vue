@@ -145,12 +145,18 @@
                       v-if="item2.active"
                       class="flex flex-row w-full justify-center gap-3 flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
                       @click="toDetail(item2)">
-                        <img
-                          class="w-24 h-24 rounded-md lg"
-                          :src="getImageUrl(item2.Imgs, 0)" />
-                        <img
-                          class="w-24 h-24 rounded-md lg"
-                          :src="getImageUrl(item2.Imgs, 1)" />
+                        <div class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
+                          <image
+                            class="w-full h-full"
+                            mode="aspectFill"
+                            :src="getImageUrl(item2.Imgs, 0)" />
+                        </div>
+                        <div class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
+                          <image
+                            class="w-full h-full"
+                            mode="aspectFill"
+                            :src="getImageUrl(item2.Imgs, 1)" />
+                        </div>
                     </div>
                   </transition>
                 </view>
