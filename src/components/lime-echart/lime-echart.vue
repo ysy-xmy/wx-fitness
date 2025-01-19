@@ -17,21 +17,21 @@
         :class="timeKind == 'month' ? 'text-[#FF5E3A] cur' : ''"
         @tap="() => changeTimeList({ detail: { name: 'month' } })"
       >
-        月
+        年
       </view>
       <view
         class="cu-item flex-sub"
         :class="timeKind == 'week' ? 'text-[#FF5E3A] cur' : ''"
         @tap="() => changeTimeList({ detail: { name: 'week' } })"
       >
-        周
+        月
       </view>
       <view
         class="cu-item flex-sub"
         :class="timeKind == 'day' ? 'text-[#FF5E3A] cur' : ''"
         @tap="() => changeTimeList({ detail: { name: 'day' } })"
       >
-        日
+        周
       </view>
     </view>
   </scroll-view>
@@ -153,22 +153,23 @@ const changeType = (active) => {
     xAxis.value = [];
     yAxis.value = [];
     changeBotDay();
+    //这里已经改了，日是7天为间隔，月是1月为间隔，年是12月为间隔
     if (timeKind.value == "day" || temp.value == "three") {
-      getLastValuePerDay(res.data.data, props.beginTime, props.endTime).then(
-        () => {
-          init();
-          uni.hideLoading();
-        }
-      );
-    } else if (timeKind.value == "week" && temp.value != "three") {
       getLastValuePerWeek(res.data.data, props.beginTime, props.endTime).then(
         () => {
           init();
           uni.hideLoading();
         }
       );
-    } else if (timeKind.value == "month" && temp.value != "three") {
+    } else if (timeKind.value == "week" && temp.value != "three") {
       getLastValuePerMonth(res.data.data, props.beginTime, props.endTime).then(
+        () => {
+          init();
+          uni.hideLoading();
+        }
+      );
+    } else if (timeKind.value == "month" && temp.value != "three") {
+      getLastValuePerYear(res.data.data, props.beginTime, props.endTime).then(
         () => {
           init();
           uni.hideLoading();
@@ -328,16 +329,16 @@ const changeBotDay = async () => {
     const [BUSTAsc, BUSTDesc, WAISTAsc, WAISTDesc, HIPAsc, HIPDesc] = responses;
     res = {
       old: {
-        BUST: BUSTDesc.data.data[0].Value,
-        WAIST: WAISTDesc.data.data[0].Value,
-        HIP: HIPDesc.data.data[0].Value,
-        time: dayjs(BUSTAsc.data.data[0].CreatedAt).format("YYYY-MM-DD"), //都是统一录入的时间应该是一样的
+        BUST: BUSTDesc.data.data[0]?.Value || 0,
+        WAIST: WAISTDesc.data.data[0]?.Value || 0,
+        HIP: HIPDesc.data.data[0]?.Value || 0,
+        time: dayjs(BUSTAsc.data.data[0]?.CreatedAt).format("YYYY-MM-DD"), //都是统一录入的时间应该是一样的
       },
       new: {
-        BUST: BUSTAsc.data.data[0].Value,
-        WAIST: WAISTAsc.data.data[0].Value,
-        HIP: HIPAsc.data.data[0].Value,
-        time: dayjs(BUSTAsc.data.data[0].CreatedAt).format("YYYY-MM-DD"), //都是统一录入的时间应该是一样的
+        BUST: BUSTAsc.data.data[0]?.Value || 0,
+        WAIST: WAISTAsc.data.data[0]?.Value || 0,
+        HIP: HIPAsc.data.data[0]?.Value || 0,
+        time: dayjs(BUSTAsc.data.data[0]?.CreatedAt).format("YYYY-MM-DD"), //都是统一录入的时间应该是一样的
       },
     };
   } else {
@@ -394,60 +395,7 @@ const getLastVal = async (len) => {
   lastValue.value = resData.length === len ? 0 : resData[0]?.Value || 0;
 };
 
-//数据处理
-const disposeDay = (data) => {
-  const tempObj = {};
-  const res = {};
-  data.forEach((item) => {
-    const day = dayjs(item.CreatedAt).format("YYYY-MM-DD");
-    const time = dayjs(item.CreatedAt).unix();
-    if (!tempObj[day] || tempObj[day].time < time)
-      tempObj[day] = {
-        value: item.Value,
-        time,
-      };
-  });
-  for (let item of Object.keys(tempObj)) res[item] = tempObj[item]["value"];
-  return res;
-};
-
-// 按天计算：移除不必要的操作，并行获取数据和初始化日期
-const getLastValuePerDay = async (data, startDateString, endDateString) => {
-  return new Promise(async (resolve, reject) => {
-    const list = data || [];
-    const dateObj = {};
-    let currentDate = dayjs(startDateString);
-    const endDate = dayjs(endDateString);
-
-    // 并发获取上次的值和初始化日期范围
-    await Promise.all([
-      getLastVal(data.length), // 获取上一次的值
-      (async () => {
-        while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
-          dateObj[currentDate.format("YYYY-MM-DD")] = 0;
-          currentDate = currentDate.add(1, "day");
-        }
-      })(),
-    ]);
-
-    const resData = disposeDay(list);
-    const xAxisKeys = Object.keys(dateObj);
-
-    // 优化填充过程：减少重复计算
-    xAxis.value = xAxisKeys;
-    yAxis.value = xAxisKeys.map((key) => {
-      const value = resData[key] || lastValue.value;
-      if (resData[key]) {
-        lastValue.value = value;
-      }
-      return value;
-    });
-
-    resolve(true);
-  });
-};
-
-//// 数据处理 - 按周计算最后一天的值
+// 数据处理 - 按周计算最后一天的值
 const disposeWeek = (data) => {
   const tempObj = {};
   const res = {};
@@ -479,14 +427,23 @@ const getLastValuePerWeek = async (data, startDateString, endDateString) => {
     let currentDate = dayjs(startDateString);
     const endDate = dayjs(endDateString);
 
-    // 并发获取上次的值和初始化日期范围
+    // 并发处理获取上次的值和初始化周范围
     await Promise.all([
       getLastVal(data.length), // 获取上一次的值
       (async () => {
         while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
           const weekStart = currentDate.startOf("week").format("YYYY-MM-DD");
-          dateObj[weekStart] = 0; // 用周的开始日期作为键
-          currentDate = currentDate.add(1, "week"); // 每次加一周
+          dateObj[weekStart] = 0;
+
+          // 检查下一周是否超过结束日期
+          const nextWeek = currentDate.add(1, "week");
+          if (nextWeek.isAfter(endDate)) {
+            // 如果超过，使用结束日期作为最后一个点
+            dateObj[endDate.format("YYYY-MM-DD")] = 0;
+            break;
+          }
+
+          currentDate = nextWeek;
         }
       })(),
     ]);
@@ -494,7 +451,7 @@ const getLastValuePerWeek = async (data, startDateString, endDateString) => {
     const resData = disposeWeek(list);
     const xAxisKeys = Object.keys(dateObj);
 
-    // 优化填充过程：减少重复计算
+    // 填充结果：按周对数据进行映射
     xAxis.value = xAxisKeys;
     yAxis.value = xAxisKeys.map((key) => {
       const value = resData[key] || lastValue.value;
@@ -541,12 +498,24 @@ const getLastValuePerMonth = async (data, startDateString, endDateString) => {
 
     // 并发获取上次的值和初始化日期范围
     await Promise.all([
-      getLastVal(data.length), // 获取上一次的值
+      getLastVal(data.length),
       (async () => {
         while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
           const monthStart = currentDate.startOf("month").format("YYYY-MM");
-          dateObj[monthStart] = 0; // 用月的开始日期作为键
-          currentDate = currentDate.add(1, "month"); // 每次加一月
+          dateObj[monthStart] = 0;
+
+          // 检查下一个月是否超过结束日期
+          const nextMonth = currentDate.add(1, "month");
+          if (nextMonth.isAfter(endDate)) {
+            // 如果超过，使用结束日期的月份作为最后一个点
+            const endMonth = endDate.format("YYYY-MM");
+            if (endMonth !== monthStart) {
+              dateObj[endMonth] = 0;
+            }
+            break;
+          }
+
+          currentDate = nextMonth;
         }
       })(),
     ]);
@@ -555,6 +524,77 @@ const getLastValuePerMonth = async (data, startDateString, endDateString) => {
     const xAxisKeys = Object.keys(dateObj);
 
     // 优化填充过程：减少重复计算
+    xAxis.value = xAxisKeys;
+    yAxis.value = xAxisKeys.map((key) => {
+      const value = resData[key] || lastValue.value;
+      if (resData[key]) {
+        lastValue.value = value;
+      }
+      return value;
+    });
+
+    resolve(true);
+  });
+};
+
+// 数据处理 - 按年计算最后一天的值
+const disposeYear = (data) => {
+  const tempObj = {};
+  const res = {};
+  data.forEach((item) => {
+    const yearStart = dayjs(item.CreatedAt).startOf("year").format("YYYY"); // 获取年的开始日期
+    const time = dayjs(item.CreatedAt).unix();
+
+    // 记录每年内最后一天的值
+    if (!tempObj[yearStart] || tempObj[yearStart].time < time) {
+      tempObj[yearStart] = {
+        value: item.Value,
+        time,
+      };
+    }
+  });
+
+  for (let item of Object.keys(tempObj)) {
+    res[item] = tempObj[item]["value"];
+  }
+  return res;
+};
+
+// 按年计算：移除不必要的操作，并行获取数据和初始化日期
+const getLastValuePerYear = async (data, startDateString, endDateString) => {
+  return new Promise(async (resolve, reject) => {
+    const list = data || [];
+    const dateObj = {};
+    let currentDate = dayjs(startDateString);
+    const endDate = dayjs(endDateString);
+
+    await Promise.all([
+      getLastVal(data.length),
+      (async () => {
+        while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
+          const yearStart = currentDate.startOf("year").format("YYYY");
+          dateObj[yearStart] = 0;
+
+          // 检查下一年是否超过结束日期
+          const nextYear = currentDate.add(1, "year");
+          if (nextYear.isAfter(endDate)) {
+            // 如果超过，使用结束日期的年份作为最后一个点
+            const endYear = endDate.format("YYYY");
+            if (endYear !== yearStart) {
+              dateObj[endYear] = 0;
+            }
+            break;
+          }
+
+          currentDate = nextYear;
+        }
+      })(),
+    ]);
+
+    const resData = disposeYear(list);
+    const xAxisKeys = Object.keys(dateObj);
+
+    // 填充结果：按年份对数据进行映射
     xAxis.value = xAxisKeys;
     yAxis.value = xAxisKeys.map((key) => {
       const value = resData[key] || lastValue.value;
