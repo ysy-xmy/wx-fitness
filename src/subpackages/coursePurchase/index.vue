@@ -398,6 +398,7 @@ const pay = async () => {
     const data = {
       Description: AuthStore.user.id + "购买" + coachForm.id + "的课程",
       Amount: (Number(courseInfo.price) * 100) | 1,
+      // Amount: 1,
       OpenID: AuthStore.user.OpenID,
     };
     // 获取支付签名
@@ -416,21 +417,21 @@ const pay = async () => {
       paySign: paymentData.Sign,
       success: async () => {
         try {
-          const data: Data2 = {
-            CoachID: coachForm.id,
+          const data2 = {
+            CoachID: Number(coachForm.id),
             CourseType: packageNo.value,
             PaymentType: "WECHAT",
             PaymentFor: "OTHER",
             PaymentTo: "OTHER",
             Remark: "",
-            UserPhone: inputName.value,
-            UserRealName: inputPhone.value,
+            UserPhone: inputPhone.value,
+            UserRealName: inputName.value,
             Amount: Number(courseInfo.price),
-            UserID: AuthStore.user.id,
+            UserID: Number(AuthStore.user.id),
           };
           console.log(data, "123", AuthStore.user);
           if (packageNo.value === "LESSON") {
-            data.LessonCount = Number(pitchNumber.value);
+            data2.LessonCount = Number(pitchNumber.value);
           }
           const buyResponse = await buyCourse(data2);
           if (buyResponse.data.code === 200) {
