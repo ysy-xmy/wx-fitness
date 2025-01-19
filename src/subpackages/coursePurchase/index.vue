@@ -393,28 +393,19 @@ const pay = async () => {
       return;
     }
 
-    // 准备请求数据
-    const data: Data = {
-      CoachID: coachForm.id,
-      CourseType: packageNo.value,
-      PaymentType: "WECHAT",
-      PaymentFor: "OTHER",
-      PaymentTo: "OTHER",
-      Remark: "",
-      UserPhone: inputName.value,
-      UserRealName: inputPhone.value,
-      Amount: Number(courseInfo.price),
-      UserID: AuthStore.user.id,
-    };
-    console.log(data, "123", AuthStore.user);
-    if (packageNo.value === "LESSON") {
-      data.LessonCount = Number(pitchNumber.value);
-    }
+    // // 准备请求数据
 
+    const data = {
+      Description: AuthStore.user.id + "购买" + coachForm.id + "的课程",
+      Amount: (Number(courseInfo.price) * 100) | 1,
+      OpenID: AuthStore.user.OpenID,
+    };
     // 获取支付签名
     const signatureRes = await getPaySignature(data);
     const paymentData = signatureRes.data.data;
-
+    console.log(signatureRes, 123);
+    console.log(signatureRes.data, 123);
+    console.log(paymentData, 123);
     // 发起支付
     uni.requestPayment({
       provider: "wxpay",
@@ -425,7 +416,23 @@ const pay = async () => {
       paySign: paymentData.Sign,
       success: async () => {
         try {
-          const buyResponse = await buyCourse(data);
+          const data: Data2 = {
+            CoachID: coachForm.id,
+            CourseType: packageNo.value,
+            PaymentType: "WECHAT",
+            PaymentFor: "OTHER",
+            PaymentTo: "OTHER",
+            Remark: "",
+            UserPhone: inputName.value,
+            UserRealName: inputPhone.value,
+            Amount: Number(courseInfo.price),
+            UserID: AuthStore.user.id,
+          };
+          console.log(data, "123", AuthStore.user);
+          if (packageNo.value === "LESSON") {
+            data.LessonCount = Number(pitchNumber.value);
+          }
+          const buyResponse = await buyCourse(data2);
           if (buyResponse.data.code === 200) {
             uni.$emit("alreadyBuy");
             uni.showToast({
