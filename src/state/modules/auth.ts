@@ -31,7 +31,7 @@ export const useAuthStore = defineStore({
   id: "auth",
   state: (): AuthState => ({
     token: uni.getStorageSync("token"), //
-    user: Object, // user 类型为对象而不是数组
+    user: {}, // user 类型为对象而不是数组
     RoleName: "", // 角色名称
     classID: "", //教练端才有的课程ID
   }),

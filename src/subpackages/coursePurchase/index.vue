@@ -258,6 +258,7 @@ import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 import { useAuthStore } from "@/state/modules/auth";
 import { buyCourse, getPaySignature, ifCanBuy } from "../apis/pay/index";
+import { getUserInfo } from "@/api/user";
 const router = useRouter();
 const AuthStore = useAuthStore();
 type Data = {
@@ -306,6 +307,7 @@ const computedPrice = () => {
   }
 };
 onMounted(() => {
+  uni.setStorageSync("toBuy", "");
   uni.$on("chooseCoach", (val) => {
     coachForm.id = val.ID;
     coachForm.avatar = val.Avatar;
@@ -315,10 +317,12 @@ onMounted(() => {
     coachForm.ifFind = true;
     computedPrice();
   });
+
   if (router.route.value.query) {
     if (router.route.value.query.ifDiy == "true") {
-      const query = router.route.value.query;
+      query = router.route.value.query;
       // =query.name
+
       courseInfo.price = decodeURIComponent(query.price);
       coachForm.mount = decodeURIComponent(query.count);
       ifDiy.value = true;
@@ -359,7 +363,7 @@ const choosecoach = () => {
     path: "/subpackages/coachcontact/index?ifChoose=true",
   });
 };
-
+let query: any = {};
 const latitude = 21.2353;
 const longitude = 110.4195;
 const addr = "常态健身俱乐部";
@@ -374,6 +378,41 @@ const toLocation = () => {
   });
 };
 const pay = async () => {
+  // 修改登录状态判断逻辑
+  if (!uni.getStorageSync("token")) {
+    uni.setStorageSync("toBuy", JSON.stringify(query));
+    router.push({
+      name: "login",
+    });
+    return;
+  }
+  console.log("身份验证");
+  if (!AuthStore.user || Object.keys(AuthStore.user).length === 0) {
+    uni.showLoading("正在获取用户信息...");
+    getUserInfo()
+      .then((res) => {
+        uni.hideLoading();
+        AuthStore.setUser({
+          OpenID: res.data.data.OpenID,
+          name: res.data.data.Username || "微信用户",
+          id: res.data.data.ID,
+          phone: res.data.data.phone,
+          Sex: res.data.data.Sex || 0,
+          img: res.data.data.Avatar,
+          RoleName: res.data.data.RoleName,
+          Age: res.data.data.Age || "18",
+        });
+        pay();
+      })
+      .catch((err) => {
+        uni.hideLoading();
+        uni.showToast({
+          icon: "error",
+          title: "获取用户身份失败！",
+        });
+      });
+    return;
+  }
   try {
     // 验证教练是否已选择
     if (!coachForm.ifFind && !ifDiy.value) {
