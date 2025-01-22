@@ -8,17 +8,17 @@ onLaunch(() => {
   if (uni.getStorageSync("token")) {
     refreshToken().then((res) => {
       // console.log(res.data.data);
-      if (res.data.data[0].Remove) {
+      if (res.data.data.Remove) {
         //Remove为true，删除本地存储
         uni.clearStorage();
         authStore.clearStore();
         return;
-      } else if (!res.data.data[0].Remove && !res.data.data[0].Refresh) {
+      } else if (!res.data.data.Remove && !res.data.data.Refresh) {
         //如果没有Remove而且Refresh为true,啥都不做
         return;
       } else {
         //刷新token
-        let token = res.data.data[0].Token;
+        let token = res.data.data.Token;
         authStore.setToken(token);
         uni.setStorageSync("token", token);
         return;

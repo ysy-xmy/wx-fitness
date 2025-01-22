@@ -60,8 +60,18 @@ export function userRouternext(router: Router) {
         });
       }
     } else if (authStore.isLogin && to && to.name === "login") {
-      // 如果已经登录且目标页面是登录页面则跳转至首页
-      router.replaceAll({ name: "home" });
+      if (uni.getStorageSync("token")) {
+        // 如果已经登录且目标页面是登录页面则跳转至首页
+        const query = uni.getStorageSync("toBuy");
+        console.log(query, 7890);
+        if (query) {
+          // router.push('')
+          uni.navigateTo({
+            path: "/subpackages/coursePurchase/index",
+            query: JSON.parse(query),
+          });
+        }
+      } else router.replaceAll({ name: "home" });
     }
   });
 }

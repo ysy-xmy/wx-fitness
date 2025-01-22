@@ -3,19 +3,18 @@
     <view class="con">
       <view class="content rounded-2xl shadow-lg">
         <view class="logo-area">
-          <image src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250111/1736527585770.jpg" mode="aspectFit" class="logo-image" />
+          <image
+            src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250111/1736527585770.jpg"
+            mode="aspectFit"
+            class="logo-image"
+          />
           <text class="brand-name text-3xl font-bold">轻律健身</text>
         </view>
 
-        <view class="subtitle text-gray-500 mb-8">
-          请使用微信账号登录
-        </view>
+        <view class="subtitle text-gray-500 mb-8"> 请使用微信账号登录 </view>
 
         <view class="btns">
-          <button
-            class="login-btn"
-            @click="login"
-          >
+          <button class="login-btn" @click="login">
             <text class="iconfont icon-weixin mr-2"></text>
             微信一键登录
           </button>
@@ -50,7 +49,7 @@ function login() {
   width: 100%;
   height: 100vh;
   background: linear-gradient(135deg, #5bd0e1 0%, #40b5c5 100%);
-  
+
   .con {
     width: 100%;
     height: 100%;
@@ -74,7 +73,7 @@ function login() {
         display: flex;
         flex-direction: column;
         align-items: center;
-        
+
         .logo-image {
           width: 180rpx;
           height: 180rpx;

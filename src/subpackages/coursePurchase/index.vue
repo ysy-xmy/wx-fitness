@@ -258,6 +258,7 @@ import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 import { useAuthStore } from "@/state/modules/auth";
 import { buyCourse, getPaySignature, ifCanBuy } from "../apis/pay/index";
+import { getUserInfo } from "@/api/user";
 const router = useRouter();
 const AuthStore = useAuthStore();
 type Data = {
@@ -306,6 +307,7 @@ const computedPrice = () => {
   }
 };
 onMounted(() => {
+  uni.setStorageSync("toBuy", "");
   uni.$on("chooseCoach", (val) => {
     coachForm.id = val.ID;
     coachForm.avatar = val.Avatar;
@@ -315,10 +317,12 @@ onMounted(() => {
     coachForm.ifFind = true;
     computedPrice();
   });
+
   if (router.route.value.query) {
     if (router.route.value.query.ifDiy == "true") {
-      const query = router.route.value.query;
+      query = router.route.value.query;
       // =query.name
+
       courseInfo.price = decodeURIComponent(query.price);
       coachForm.mount = decodeURIComponent(query.count);
       ifDiy.value = true;
@@ -359,7 +363,7 @@ const choosecoach = () => {
     path: "/subpackages/coachcontact/index?ifChoose=true",
   });
 };
-
+let query: any = {};
 const latitude = 21.2353;
 const longitude = 110.4195;
 const addr = "常态健身俱乐部";
@@ -374,6 +378,41 @@ const toLocation = () => {
   });
 };
 const pay = async () => {
+  // 修改登录状态判断逻辑
+  if (!uni.getStorageSync("token")) {
+    uni.setStorageSync("toBuy", JSON.stringify(query));
+    router.push({
+      name: "login",
+    });
+    return;
+  }
+  console.log("身份验证");
+  if (!AuthStore.user || Object.keys(AuthStore.user).length === 0) {
+    uni.showLoading("正在获取用户信息...");
+    getUserInfo()
+      .then((res) => {
+        uni.hideLoading();
+        AuthStore.setUser({
+          OpenID: res.data.data.OpenID,
+          name: res.data.data.Username || "微信用户",
+          id: res.data.data.ID,
+          phone: res.data.data.phone,
+          Sex: res.data.data.Sex || 0,
+          img: res.data.data.Avatar,
+          RoleName: res.data.data.RoleName,
+          Age: res.data.data.Age || "18",
+        });
+        pay();
+      })
+      .catch((err) => {
+        uni.hideLoading();
+        uni.showToast({
+          icon: "error",
+          title: "获取用户身份失败！",
+        });
+      });
+    return;
+  }
   try {
     // 验证教练是否已选择
     if (!coachForm.ifFind && !ifDiy.value) {
@@ -393,28 +432,20 @@ const pay = async () => {
       return;
     }
 
-    // 准备请求数据
-    const data: Data = {
-      CoachID: coachForm.id,
-      CourseType: packageNo.value,
-      PaymentType: "WECHAT",
-      PaymentFor: "OTHER",
-      PaymentTo: "OTHER",
-      Remark: "",
-      UserPhone: inputName.value,
-      UserRealName: inputPhone.value,
-      Amount: Number(courseInfo.price),
-      UserID: AuthStore.user.id,
-    };
-    console.log(data, "123", AuthStore.user);
-    if (packageNo.value === "LESSON") {
-      data.LessonCount = Number(pitchNumber.value);
-    }
+    // // 准备请求数据
 
+    const data = {
+      Description: AuthStore.user.id + "购买" + coachForm.id + "的课程",
+      Amount: (Number(courseInfo.price) * 100) | 1,
+      // Amount: 1,
+      OpenID: AuthStore.user.OpenID,
+    };
     // 获取支付签名
     const signatureRes = await getPaySignature(data);
     const paymentData = signatureRes.data.data;
-
+    console.log(signatureRes, 123);
+    console.log(signatureRes.data, 123);
+    console.log(paymentData, 123);
     // 发起支付
     uni.requestPayment({
       provider: "wxpay",
@@ -425,7 +456,23 @@ const pay = async () => {
       paySign: paymentData.Sign,
       success: async () => {
         try {
-          const buyResponse = await buyCourse(data);
+          const data2 = {
+            CoachID: Number(coachForm.id),
+            CourseType: packageNo.value,
+            PaymentType: "WECHAT",
+            PaymentFor: "OTHER",
+            PaymentTo: "OTHER",
+            Remark: "",
+            UserPhone: inputPhone.value,
+            UserRealName: inputName.value,
+            Amount: Number(courseInfo.price),
+            UserID: Number(AuthStore.user.id),
+          };
+          console.log(data, "123", AuthStore.user);
+          if (packageNo.value === "LESSON") {
+            data2.LessonCount = Number(pitchNumber.value);
+          }
+          const buyResponse = await buyCourse(data2);
           if (buyResponse.data.code === 200) {
             uni.$emit("alreadyBuy");
             uni.showToast({

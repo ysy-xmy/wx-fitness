@@ -49,13 +49,20 @@
     </div>
     <div class="info mt-5 flex flex-col items-center">
       <div class="avatar">
-        <img class="w-28 h-28 rounded-full" :src="stuInfo.Avatar" alt="" />
+        <img
+          class="w-28 h-28 rounded-full"
+          :src="
+            stuInfo.Avatar ||
+            'https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250105/1736063470137.png'
+          "
+          alt=""
+        />
       </div>
       <h1 class="my-3 text-2xl text-center font-bold text-white">
-        {{ stuInfo.Username }}
+        {{ stuInfo.Username || "默认用户" }}
       </h1>
       <span class="text-white font-bold text-sm text-center"
-        >{{ stuInfo.Age }}岁</span
+        >{{ stuInfo.Age || "暂未填写" }}岁</span
       >
     </div>
 
