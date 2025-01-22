@@ -266,8 +266,8 @@ const actionsStore = useActionsStore();
 //获取路由参数
 const router = useRouter();
 const stuInfo = ref();
-const addClassName = ref("");
-const radioType = ref("");
+const addClassName = ref();
+const radioType = ref('OUTLINE');
 const title = ref(actionsStore.getClassname || "私教课");
 const addTagVal = ref(""); //添加标签
 const showDialogAddTags = ref(false); //是否展示弹窗输入标签
@@ -275,7 +275,7 @@ const courseInfo = ref();
 const showDialog = ref(false); //显示弹窗
 const CoachPunchInAuth = ref(false); //是否授权
 const activeName = ref([]);
-const currentDate = ref();
+const currentDate = ref(new Date().getTime());
 const minDate = new Date().getTime();
 const maxDate = new Date(
   new Date().setFullYear(new Date().getFullYear() + 1)
@@ -337,7 +337,6 @@ const changeTags = (type: "add" | "delete") => {
     });
 };
 const onChange = (val: any) => {
-  console.log(val, "onChange");
   activeName.value = val.detail;
 };
 const toAddClass = () => {
@@ -366,8 +365,9 @@ const deleteTag = (item: any) => {
 };
 const onCloseDialog = () => {
   showDialog.value = false;
-  radioType.value = "";
+  radioType.value = 'OUTLINE';
   addClassName.value = "";
+  currentDate.value = new Date().getTime();
 };
 const chooseType = (val: string) => {
   //选择课程类型
@@ -378,42 +378,56 @@ const changeDialogAddTags = (e: any) => {
   addTagVal.value = e.detail;
 };
 const goChooseAction = () => {
-  if (
-    radioType.value == "" ||
-    addClassName.value == "" ||
-    actionTime.value == ""
-  ) {
+  // 更详细的参数验证
+  if (!radioType.value) {
     uni.showToast({
-      title: "请完善信息！",
-      icon: "error",
+      title: "请选择课程类型",
+      icon: "error"
     });
     return;
   }
-  let data = {
+  
+  if (!addClassName.value?.trim()) {
+    uni.showToast({
+      title: "请输入课程名称",
+      icon: "error"
+    });
+    return;
+  }
+  
+  if (!currentDate.value) {
+    uni.showToast({
+      title: "请选择日期",
+      icon: "error"
+    });
+    return;
+  }
+
+  const data = {
     UserID: Number(query.value.studentId),
     UserCourseID: Number(query.value.courseId),
     Type: radioType.value,
-    PlanTitle: addClassName.value,
-    PlanTime: dayjs(actionTime.value).format("YYYY-MM-DD"),
+    PlanTitle: addClassName.value.trim(),
+    PlanTime: dayjs(currentDate.value).format("YYYY-MM-DD"),
   };
   postPlan(data)
     .then((res) => {
-      console.log(data, "res");
       if (res.data.code === 200) {
         uni.showToast({
           title: "添加成功！",
         });
+        onCloseDialog();
         initData();
       } else {
         uni.showToast({
-          title: "添加失败！",
+          title: res.data.msg || "添加失败！", // 显示后端返回的错误信息
           icon: "error",
         });
       }
     })
     .catch((err) => {
       uni.showToast({
-        title: "添加失败！",
+        title: err.response?.data?.msg || "网络请求失败！", // 显示错误信息
         icon: "error",
       });
     });
@@ -533,6 +547,10 @@ const getTags = async () => {
         color: tagsColor[Math.floor(Math.random() * tagsColor.length)],
       });
   });
+};
+const onConfirmDate = (value: any) => {
+  currentDate.value = value;
+  showSelectTime.value = false;
 };
 onMounted(() => {
   query.value = router.route.value.query;
