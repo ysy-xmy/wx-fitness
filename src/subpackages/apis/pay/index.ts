@@ -10,3 +10,7 @@ export const getPaySignature = (data: any) => {
 export const ifCanBuy = (data: any) => {
   return request.post("/api/pay/check/courseExist", data);
 };
+
+export const checkPay = (data: any) => {
+  return request.post("/api/pay/buy/check", data);
+};

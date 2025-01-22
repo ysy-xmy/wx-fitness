@@ -244,7 +244,11 @@
       }}</view>
 
       <view class="px-4 flex justify-end">
-        <button @click="pay" class="cu-btn w-28 bg-cyan round text-white">
+        <button
+          @click="pay"
+          class="cu-btn w-28 bg-cyan round text-white"
+          :disabled="loading"
+        >
           立即支付
         </button>
       </view>
@@ -257,7 +261,12 @@ import { getPrice } from "../apis/api";
 import { useRouter } from "uni-mini-router";
 import dayjs from "dayjs";
 import { useAuthStore } from "@/state/modules/auth";
-import { buyCourse, getPaySignature, ifCanBuy } from "../apis/pay/index";
+import {
+  buyCourse,
+  checkPay,
+  getPaySignature,
+  ifCanBuy,
+} from "../apis/pay/index";
 import { getUserInfo } from "@/api/user";
 const router = useRouter();
 const AuthStore = useAuthStore();
@@ -322,7 +331,6 @@ onMounted(() => {
     if (router.route.value.query.ifDiy == "true") {
       query = router.route.value.query;
       // =query.name
-
       courseInfo.price = decodeURIComponent(query.price);
       coachForm.mount = decodeURIComponent(query.count);
       ifDiy.value = true;
@@ -351,6 +359,7 @@ const pitchNumber = ref("10");
 const packageNo = ref("LESSON"); //套餐类型，
 const inputName = ref<string>();
 const inputPhone = ref<number>();
+const loading = ref(false);
 const courseInfo = reactive({
   title: "私教课",
   price: "0",
@@ -378,17 +387,34 @@ const toLocation = () => {
   });
 };
 const pay = async () => {
+  if (loading.value) return;
+
   // 修改登录状态判断逻辑
   if (!uni.getStorageSync("token")) {
-    uni.setStorageSync("toBuy", JSON.stringify(query));
-    router.push({
-      name: "login",
+    const params = {
+      name: coachForm.name,
+      phone: coachForm.phone,
+      img: coachForm.avatar,
+      count: pitchNumber.value,
+      price: courseInfo.price,
+      ifDiy: true,
+      id: coachForm.id,
+      sex: coachForm.sex,
+    };
+
+    const query = Object.keys(params)
+      .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+      .join("&");
+
+    router.replace({
+      path: `/pages/login/index?${query}`,
     });
     return;
   }
   console.log("身份验证");
   if (!AuthStore.user || Object.keys(AuthStore.user).length === 0) {
     uni.showLoading("正在获取用户信息...");
+
     getUserInfo()
       .then((res) => {
         uni.hideLoading();
@@ -413,6 +439,7 @@ const pay = async () => {
       });
     return;
   }
+
   try {
     // 验证教练是否已选择
     if (!coachForm.ifFind && !ifDiy.value) {
@@ -433,10 +460,11 @@ const pay = async () => {
     }
 
     // // 准备请求数据
-
+    loading.value = true;
+    uni.showLoading();
     const data = {
       Description: AuthStore.user.id + "购买" + coachForm.id + "的课程",
-      Amount: (Number(courseInfo.price) * 100) | 1,
+      Amount: Number(courseInfo.price) * 100,
       // Amount: 1,
       OpenID: AuthStore.user.OpenID,
     };
@@ -446,6 +474,29 @@ const pay = async () => {
     console.log(signatureRes, 123);
     console.log(signatureRes.data, 123);
     console.log(paymentData, 123);
+    const data2 = {
+      CoachID: Number(coachForm.id),
+      CourseType: packageNo.value,
+      PaymentType: "WECHAT",
+      PaymentFor: "OTHER",
+      PaymentTo: "OTHER",
+      Remark: "",
+      UserPhone: inputPhone.value,
+      UserRealName: inputName.value,
+      Amount: Number(courseInfo.price),
+      UserID: Number(AuthStore.user.id),
+    };
+    if (packageNo.value === "LESSON") {
+      data2.LessonCount = Number(pitchNumber.value);
+    }
+    const checkRes = await checkPay(data2);
+    if (checkRes.data.code !== 200) {
+      uni.showToast({
+        title: checkRes.data.msg,
+        icon: "error",
+      });
+      return;
+    }
     // 发起支付
     uni.requestPayment({
       provider: "wxpay",
@@ -456,22 +507,6 @@ const pay = async () => {
       paySign: paymentData.Sign,
       success: async () => {
         try {
-          const data2 = {
-            CoachID: Number(coachForm.id),
-            CourseType: packageNo.value,
-            PaymentType: "WECHAT",
-            PaymentFor: "OTHER",
-            PaymentTo: "OTHER",
-            Remark: "",
-            UserPhone: inputPhone.value,
-            UserRealName: inputName.value,
-            Amount: Number(courseInfo.price),
-            UserID: Number(AuthStore.user.id),
-          };
-          console.log(data, "123", AuthStore.user);
-          if (packageNo.value === "LESSON") {
-            data2.LessonCount = Number(pitchNumber.value);
-          }
           const buyResponse = await buyCourse(data2);
           if (buyResponse.data.code === 200) {
             uni.$emit("alreadyBuy");
@@ -481,7 +516,7 @@ const pay = async () => {
             });
             setTimeout(() => {
               router.push({ name: "home" });
-            }, 2000);
+            }, 3000);
           } else {
             uni.showToast({
               title: buyResponse.data.msg,
@@ -489,6 +524,7 @@ const pay = async () => {
             });
           }
         } catch (err) {
+          console.log(err);
           uni.showToast({
             title: "购买失败!请联系工作人员",
             icon: "error",
@@ -509,6 +545,11 @@ const pay = async () => {
       title: "支付异常，请稍后重试",
       icon: "error",
     });
+  } finally {
+    setTimeout(() => {
+      loading.value = false;
+      uni.hideLoading();
+    }, 2500);
   }
 };
 

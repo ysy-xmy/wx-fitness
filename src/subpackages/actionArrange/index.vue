@@ -244,13 +244,13 @@
           <van-empty description="暂未选择动作" />
         </div>
         <div v-for="item in chooseList">
-          <div style="width: 100vw; padding: 0 20px">
+          <div style="width: 100%; padding: 0 20px">
             <div
               v-if="props.type == 'stretch'"
               class="card"
               style="
-                height: 50px;
-                line-height: 50px;
+                height: 60px;
+                line-height: 60px;
                 display: flex;
                 justify-content: space-between;
                 padding: 0 20px;
@@ -260,7 +260,17 @@
                 border-radius: 5px;
               "
             >
-              <div class="title">{{ item.name }}</div>
+              <div
+                class="title"
+                style="
+                  max-width: 60%;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+              >
+                {{ item.name }}
+              </div>
               <van-stepper
                 :value="item.second"
                 integer
@@ -284,8 +294,19 @@
                 border-radius: 5px;
               "
             >
-              <div class="title">{{ item.name }}</div>
+              <div
+                class="title"
+                style="
+                  max-width: 20%;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+              >
+                {{ item.name }}
+              </div>
               <van-stepper
+                style="max-width: 40%"
                 :value="item.weight"
                 integer
                 min="0"
@@ -293,6 +314,7 @@
                 @change="(e) => changeNum(item, e, 'weight')"
               />Kg
               <van-stepper
+                style="max-width: 40%"
                 :value="item.num"
                 integer
                 min="0"

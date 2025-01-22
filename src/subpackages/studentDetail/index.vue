@@ -180,7 +180,7 @@
       @confirm="goChooseAction"
       @close="onCloseDialog"
     >
-      <van-radio-group v-model="radioType">
+      <van-radio-group :value="radioType">
         <van-cell-group>
           <van-cell
             title="在线任务"
@@ -208,16 +208,35 @@
         border="true"
         @change="onChangeAddClassName"
       />
-      <van-field
+      <!-- <van-field
         type="date"
         :value="actionTime"
         placeholder="请输入日期"
         min-date="minDate"
         max-date="maxDate"
         border="true"
-        @focus="showSelectTime = true"
+        disabled
+        @tap="selectTime"
         @change="(e: any) => (currentDate = e.detail)"
-      />
+        @blur="showSelectTime = false"
+
+
+           start="minDate"
+          end="maxDate"
+      /> -->
+
+      <view class="cu-form-group">
+        <view class="title">日期选择</view>
+        <picker
+          mode="date"
+          :value="actionTime"
+          @change="(e: any) => (currentDate = e.detail.value)"
+        >
+          <view class="picker">
+            {{ actionTime }}
+          </view>
+        </picker>
+      </view>
     </van-dialog>
     <van-datetime-picker
       style="z-index: 10000; width: 100vw; position: absolute; bottom: 0"
@@ -274,7 +293,7 @@ const actionsStore = useActionsStore();
 const router = useRouter();
 const stuInfo = ref();
 const addClassName = ref();
-const radioType = ref('OUTLINE');
+const radioType = ref("");
 const title = ref(actionsStore.getClassname || "私教课");
 const addTagVal = ref(""); //添加标签
 const showDialogAddTags = ref(false); //是否展示弹窗输入标签
@@ -283,10 +302,8 @@ const showDialog = ref(false); //显示弹窗
 const CoachPunchInAuth = ref(false); //是否授权
 const activeName = ref([]);
 const currentDate = ref(new Date().getTime());
-const minDate = new Date().getTime();
-const maxDate = new Date(
-  new Date().setFullYear(new Date().getFullYear() + 1)
-).getTime();
+const minDate = dayjs().format("YYYY-MM-DD");
+const maxDate = dayjs().add(1, "year").format("YYYY-MM-DD");
 const tagsList = ref<{ content: string; color: string }[]>([]);
 const tagsColor = ["rgb(144,199,97)", "rgb(226,198,29)", "rgb(217,9,84)"];
 const tabStatus = ref("finish");
@@ -372,9 +389,14 @@ const deleteTag = (item: any) => {
 };
 const onCloseDialog = () => {
   showDialog.value = false;
-  radioType.value = 'OUTLINE';
+  radioType.value = "OUTLINE";
   addClassName.value = "";
   currentDate.value = new Date().getTime();
+};
+const selectTime = (e: any) => {
+  // e.preventDefault();
+  uni.hideKeyboard();
+  showSelectTime.value = true;
 };
 const chooseType = (val: string) => {
   //选择课程类型
@@ -389,23 +411,23 @@ const goChooseAction = () => {
   if (!radioType.value) {
     uni.showToast({
       title: "请选择课程类型",
-      icon: "error"
+      icon: "error",
     });
     return;
   }
-  
+
   if (!addClassName.value?.trim()) {
     uni.showToast({
       title: "请输入课程名称",
-      icon: "error"
+      icon: "error",
     });
     return;
   }
-  
+
   if (!currentDate.value) {
     uni.showToast({
       title: "请选择日期",
-      icon: "error"
+      icon: "error",
     });
     return;
   }
@@ -424,7 +446,9 @@ const goChooseAction = () => {
           title: "添加成功！",
         });
         onCloseDialog();
-        initData();
+        setTimeout(() => {
+          initData();
+        }, 2500);
       } else {
         uni.showToast({
           title: res.data.msg || "添加失败！", // 显示后端返回的错误信息
@@ -555,10 +579,10 @@ const getTags = async () => {
       });
   });
 };
-const onConfirmDate = (value: any) => {
-  currentDate.value = value;
-  showSelectTime.value = false;
-};
+// const onConfirmDate = (value: any) => {
+//   currentDate.value = value;
+//   showSelectTime.value = false;
+// };
 onMounted(() => {
   query.value = router.route.value.query;
   initData();

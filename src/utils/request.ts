@@ -16,6 +16,8 @@ http.interceptors.request.use(
   (config: any) => {
     // 可使用async await 做异步操作
     const token = uni.getStorageSync("token");
+    // const token =
+    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjYsIk9wZW5JRCI6ImNvYWNoMSIsIlVzZXJuYW1lIjoi5oiR5piv5pWZ57uDIiwiQXV0aG9yaXR5SWQiOlszXSwiQnVmZmVyVGltZSI6ODY0MDAsImlzcyI6IlBPU1RFUiIsImF1ZCI6WyJDQyJdLCJleHAiOjE3MzgxNjY3ODYsIm5iZiI6MTczNzU2MTk4Nn0.M-SD7Gpjj0cfM4EYCzQLHS8JJSzqS85UGBTjxmDhnDc";
     if (token) {
       config.header["Authorization"] = token;
     }

@@ -119,7 +119,7 @@
     @confirm="goChooseAction"
     @close="onCloseDialog"
   >
-    <van-radio-group v-model="radioType">
+    <van-radio-group :value="radioType">
       <van-cell-group>
         <van-cell
           title="放松训练"
@@ -162,6 +162,7 @@ import {
   getActionDate,
 } from "@/api/action/action";
 import dayjs from "dayjs";
+import { onShow } from "@dcloudio/uni-app";
 // import uniCalendar from "@dcloudio/uni-ui/lib/uni-calendar/uni-calendar.vue";
 const router = useRouter();
 const authStore = useAuthStore();
@@ -182,6 +183,9 @@ const addClassName = ref<string>("");
 const onChangeAddClassName = (e: any) => {
   addClassName.value = e.detail;
 };
+onShow(() => {
+  getAction(currentSelectDay.value);
+});
 const roleName = computed(() => {
   return authStore.user.RoleName;
 });
@@ -227,9 +231,9 @@ const deleteAction = (item: any) => {
       if (res.data.code == 200) {
         uni.showToast({
           title: "删除成功",
-          icon: "none",
+          icon: "success",
         });
-        uni.$emit("reload");
+        getAction(currentSelectDay.value);
       } else {
         uni.showToast({
           title: "删除失败",
@@ -280,6 +284,7 @@ const getWhichDate = () => {
   });
 };
 const onCloseDialog = () => {
+  addClassName.value = "";
   radioType.value = "";
   showDialog.value = false;
 };
@@ -305,6 +310,7 @@ const goChooseAction = () => {
     name: addClassName.value,
   };
   actionsStore.setChooseActions(temp);
+  onCloseDialog();
   router.push({
     name: "actionArrange",
   });

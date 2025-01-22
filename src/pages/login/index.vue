@@ -32,13 +32,50 @@
 </template>
 
 <script lang="ts" setup name="login">
-import { useRouter } from "uni-mini-router";
+import { useRouter, useRoute } from "uni-mini-router";
 import { loginWithWeChat } from "@/api/login/index.ts";
-
+import { onMounted } from "vue";
+let query: any = {};
 const router = useRouter();
-
+const route = useRoute();
+onMounted(() => {
+  if (route.query) {
+    query = {
+      name: route.query.name ? decodeURIComponent(route.query.name) : "",
+      phone: route.query.phone ? decodeURIComponent(route.query.phone) : "",
+      img: route.query.img ? decodeURIComponent(route.query.img) : "",
+      count: route.query.count ? decodeURIComponent(route.query.count) : "",
+      price: route.query.price ? decodeURIComponent(route.query.price) : "",
+      id: route.query.id ? decodeURIComponent(route.query.id) : "",
+      sex: route.query.sex ? decodeURIComponent(route.query.sex) : "",
+    };
+    console.log("decoded query:", query);
+  }
+});
 function login() {
   loginWithWeChat((token, userInfo) => {
+    // if (Object.keys(query).length > 0) {
+    //   const params = {
+    //     name: query.name,
+    //     phone: query.phone,
+    //     img: query.img,
+    //     count: query.count,
+    //     price: query.price,
+    //     ifDiy: true,
+    //     id: query.id,
+    //     sex: query.sex,
+    //   };
+
+    //   const queryString = Object.keys(params)
+    //     .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+    //     .join("&");
+
+    //   router.replace({
+    //     path: `/subpackages/coursePurchase/index?${queryString}`,
+    //   });
+    // } else {
+    //   router.replace({ name: "home" });
+    // }
     router.replace({ name: "home" });
   });
 }
