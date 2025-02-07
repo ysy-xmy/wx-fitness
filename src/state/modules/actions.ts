@@ -8,6 +8,7 @@ export const useActionsStore = defineStore({
     time: "",
     planList: {},
     classID: "", //最外层的课程的ID
+    coachId: 0, //教练的ID
     chooseActions: {
       type: "",
       name: "",
@@ -36,6 +37,9 @@ export const useActionsStore = defineStore({
     getClassID(): string {
       return this.classID;
     },
+    getCoachID(): number {
+      return this.coachId;
+    },
   },
   actions: {
     setClassID(id: string) {
@@ -58,6 +62,9 @@ export const useActionsStore = defineStore({
     },
     setChooseActionId(id: number) {
       this.chooseActionId = id;
+    },
+    setCoachID(id: number) {
+      this.coachId = id;
     },
   },
 });

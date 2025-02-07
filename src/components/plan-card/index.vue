@@ -66,7 +66,24 @@
           }}</view
         >
       </span>
-      <span>{{ plan.PlanTime }}</span>
+      <div class="flex items-center">
+        <span class="mr-2">{{ plan.PlanTime }}</span>
+        <div
+          v-if="!plan.Complete"
+          style="
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ff4d4f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          @click.stop="handleDelete(plan)"
+        >
+          <van-icon name="minus" size="14px" color="#fff" />
+        </div>
+      </div>
     </li>
   </ul>
 </template>
@@ -76,7 +93,10 @@ import { ref, PropType, watch } from "vue";
 import { useRouter } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
 import { actionClok } from "@/api/courses/courses";
+import { deletePlan } from "@/api/action/action";
+import dayjs from "dayjs";
 
+const emit = defineEmits(["del"]);
 type ActionGroupType = {
   ID: number;
   Type: string;
@@ -120,13 +140,13 @@ const formatDateRange = (startDate?: string, endDate?: string) => {
   if (!startDate) return "";
 
   const formatDate = (date: string) => date.split(" ")[0];
-  const start = formatDate(startDate);
+  const start = dayjs(startDate).format("YYYY-MM-DD");
 
   if (!endDate) {
     return `创建于 ${start}`;
   }
 
-  return `${start} - ${formatDate(endDate)}`;
+  return `${start} - ${dayjs(endDate).format("YYYY-MM-DD")}`;
 };
 
 const getOrderDetail = (item: any) => {
@@ -140,12 +160,13 @@ const getOrderDetail = (item: any) => {
   useActionsStore().setTime(item.PlanTime);
   useActionsStore().setChooseActionId(item.ID);
   router.push({
-    path: "/subpackages/calender/index",
+    path: "/subpackages/calender/index?id=" + item.ID,
   });
 };
 
 const handlePunchIn = (id: any, status: boolean, index: number) => {
-  if (status) {
+  //todo 如果是自己的话直接取消打卡就行
+  if (status && useActionsStore().getCoachID !== 0) {
     uni.showToast({
       title: "已完成打卡，如需取消请联系对应教练取消取消",
       icon: "none",
@@ -156,46 +177,112 @@ const handlePunchIn = (id: any, status: boolean, index: number) => {
     planList.value = [...planList.value];
     return;
   }
-
-  uni.showModal({
-    title: "日常打卡",
-    content: "是否进行打卡？",
-    confirmText: "确定",
-    cancelText: "取消",
-    success: (res) => {
-      if (res.confirm) {
-        actionClok(id)
-          .then(() => {
-            planList.value[index].Complete = true;
-            uni.showToast({
-              title: "成功",
-              icon: "success",
-              duration: 2000,
-              mask: false,
+  if (!status)
+    uni.showModal({
+      title: "日常打卡",
+      content: "是否进行打卡？",
+      confirmText: "确定",
+      cancelText: "取消",
+      success: (res) => {
+        if (res.confirm) {
+          actionClok(id)
+            .then(() => {
+              planList.value[index].Complete = true;
+              uni.showToast({
+                title: "成功",
+                icon: "success",
+                duration: 2000,
+                mask: false,
+              });
+              setTimeout(() => {
+                uni.$emit("reload", true);
+              }, 2200);
+            })
+            .catch((err) => {
+              uni.showToast({
+                title: "打卡失败",
+                icon: "error",
+                duration: 2000,
+                mask: false,
+              });
+              console.error("打卡失败", err);
             });
-            uni.$emit("refreshAction", true);
-          })
-          .catch((err) => {
-            uni.showToast({
-              title: "打卡失败",
-              icon: "error",
-              duration: 2000,
-              mask: false,
-            });
-            console.error("打卡失败", err);
+        } else {
+          uni.showToast({
+            title: "已取消打卡",
+            icon: "none",
+            duration: 2000,
+            mask: false,
           });
-      } else {
-        uni.showToast({
-          title: "已取消打卡",
-          icon: "none",
-          duration: 2000,
-          mask: false,
-        });
-        planList.value[index].Complete = false;
-        planList.value = [...planList.value];
-      }
-    },
-  });
+          planList.value[index].Complete = false;
+          planList.value = [...planList.value];
+        }
+      },
+    });
+  else if (status)
+    uni.showModal({
+      title: "取消",
+      content: "是否取消打卡？",
+      confirmText: "确定",
+      cancelText: "取消",
+      success: (res) => {
+        if (res.confirm) {
+          actionClok(id)
+            .then(() => {
+              planList.value[index].Complete = true;
+              uni.showToast({
+                title: "成功",
+                icon: "success",
+                duration: 2000,
+                mask: false,
+              });
+              setTimeout(() => {
+                uni.$emit("reload", true);
+              }, 2200);
+            })
+            .catch((err) => {
+              uni.showToast({
+                title: "取消打卡失败",
+                icon: "error",
+                duration: 2000,
+                mask: false,
+              });
+              console.error("打卡失败", err);
+            });
+        } else {
+          uni.showToast({
+            title: "已取消",
+            icon: "none",
+            duration: 2000,
+            mask: false,
+          });
+          planList.value[index].Complete = true;
+          planList.value = [...planList.value];
+        }
+      },
+    });
+};
+
+const handleDelete = async (item: any) => {
+  const data = {
+    id: item.ID,
+  };
+  console.log(data, item, "item");
+
+  const res = await deletePlan(data);
+  if (res.data.code === 200) {
+    emit("del", item);
+    uni.showToast({
+      title: "删除成功",
+      icon: "success",
+    });
+  } else {
+    uni.showToast({
+      title: "删除失败",
+      icon: "error",
+    });
+  }
+  // console.log(item, "item");
 };
 
 watch(

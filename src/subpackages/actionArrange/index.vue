@@ -120,17 +120,9 @@
                 :key="index2"
               >
                 <view
-                  class="felx flex-wrap w-full items-center justify-center content-center px-2 mb-3"
+                  class="flex flex-wrap w-full items-center justify-between content-center px-4 mb-3"
                   style="position: relative"
                 >
-                  <van-checkbox
-                    :value="item2.ifcheck"
-                    @change="
-                      (e: any) => chooseAction(e, item2, mainCur, index1)
-                    "
-                    checked-color="#f60422"
-                    style="position: absolute; right: 1px; top: 1px; z-index: 5"
-                  />
                   <view
                     @click="
                       toggleActive(
@@ -138,13 +130,22 @@
                         actionrouterList[mainCur].children[index1].children
                       )
                     "
-                    class="content pb-1 w-full"
+                    class="content pb-1 flex-1"
                   >
                     <view
-                      class="text-black tracking-wider pr-2 font-bold text-right text-lg opacity-100"
-                      >{{ item2.name }}
+                      class="text-black tracking-wider font-bold text-lg opacity-100"
+                    >
+                      {{ item2.name }}
                     </view>
                   </view>
+                  <van-checkbox
+                    :value="item2.ifcheck"
+                    @change="
+                      (e: any) => chooseAction(e, item2, mainCur, index1)
+                    "
+                    checked-color="#f60422"
+                    class="flex items-center ml-4"
+                  />
                   <transition name="fade">
                     <div
                       v-if="item2.active"
@@ -236,6 +237,19 @@
       >
         <van-icon name="close" size="30px" @click="onCloseopup" />
       </div>
+      <div
+        style="
+          width: 100%;
+          text-align: center;
+          padding: 0 20px;
+          margin-bottom: 15px;
+          font-size: 18px;
+          font-weight: bold;
+          color: #333;
+        "
+      >
+        {{ props.type === "stretch" ? "放松训练" : "力量训练" }}
+      </div>
       <div style="max-height: 460px; margin: 15px auto; overflow-y: auto">
         <div
           class="nodata-card flex flex-col justify-center items-center w-full"
@@ -244,83 +258,39 @@
           <van-empty description="暂未选择动作" />
         </div>
         <div v-for="item in chooseList">
-          <div style="width: 100%; padding: 0 20px">
+          <div style="width: 100%; padding: 0 15px">
             <div
-              v-if="props.type == 'stretch'"
               class="card"
               style="
-                height: 60px;
-                line-height: 60px;
+                min-height: 70px;
                 display: flex;
-                justify-content: space-between;
-                padding: 0 20px;
                 align-items: center;
-                background-color: rgba(255, 255, 255, 0.4);
-                border-bottom: 1px solid gray;
-                border-radius: 5px;
+                justify-content: space-between;
+                background-color: #ffffff;
+                border-radius: 10px;
+                margin-bottom: 12px;
+                padding: 15px 20px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
               "
             >
               <div
                 class="title"
                 style="
-                  max-width: 60%;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
+                  font-size: 16px;
+                  font-weight: 500;
+                  color: #333;
+                  line-height: 1.4;
                 "
               >
                 {{ item.name }}
               </div>
-              <van-stepper
-                :value="item.second"
-                integer
-                min="0"
-                step="1"
-                @change="(e) => changeNum(item, e, 'second')"
-              />秒
-            </div>
-            <div
-              v-if="props.type == 'weight'"
-              class="card"
-              style="
-                height: 50px;
-                line-height: 50px;
-                display: flex;
-                justify-content: space-between;
-                padding: 0 20px;
-                align-items: center;
-                background-color: rgba(255, 255, 255, 0.4);
-                border-bottom: 1px solid gray;
-                border-radius: 5px;
-              "
-            >
-              <div
-                class="title"
-                style="
-                  max-width: 20%;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-              >
-                {{ item.name }}
-              </div>
-              <van-stepper
-                style="max-width: 40%"
-                :value="item.weight"
-                integer
-                min="0"
-                step="1"
-                @change="(e) => changeNum(item, e, 'weight')"
-              />Kg
-              <van-stepper
-                style="max-width: 40%"
-                :value="item.num"
-                integer
-                min="0"
-                step="1"
-                @change="(e) => changeNum(item, e, 'num')"
-              />个
+              <van-icon
+                name="minus"
+                size="20px"
+                color="#ee0a24"
+                @click="removeItem(item)"
+                style="padding: 8px"
+              />
             </div>
           </div>
         </div>
@@ -385,9 +355,9 @@ const toggleActive = (item: any, Array: any) => {
 const subitClass = () => {
   //发布课程
   let temp = chooseList.value;
-  temp = temp.filter(
-    (item: any) => (item.weight != 0 && item.num != 0) || item.second != 0
-  );
+  // temp = temp.filter(
+  //   (item: any) => (item.weight != 0 && item.num != 0) || item.second != 0
+  // );
   if (temp.length == 0) {
     uni.showToast({
       title: "当前没有动作",
@@ -905,6 +875,27 @@ const VerticalMain = (e: any) => {
   // #ifdef MP-ALIPAY
   return false; // 支付宝小程序暂时不支持双向联动
   // #endif
+};
+
+const removeItem = (item) => {
+  const index = chooseList.value.indexOf(item);
+  if (index > -1) {
+    chooseList.value.splice(index, 1);
+
+    // 遍历所有动作，找到对应的动作并更新其选中状态
+    actionrouterList.value.forEach((firstLevel) => {
+      firstLevel.children.forEach((secondLevel) => {
+        if (secondLevel.children) {
+          const targetAction = secondLevel.children.find(
+            (action) => action.id === item.id
+          );
+          if (targetAction) {
+            targetAction.ifcheck = false;
+          }
+        }
+      });
+    });
+  }
 };
 </script>
 

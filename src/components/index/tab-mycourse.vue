@@ -52,9 +52,12 @@
                 white-space: nowrap;
               "
             >
-              私教课程 ({{
-                it.CourseType === "lesson" ? it.LessonCount + "节" : "包月"
-              }})
+              私教课程<text v-if="it.CoachID !== 0">
+                (
+                {{
+                  it.CourseType === "lesson" ? it.LessonCount + "节" : "包月"
+                }})</text
+              >
             </div>
             <div
               style="
@@ -64,9 +67,10 @@
                 margin-left: 10px;
               "
             >
-              教练员: {{ it.CoachName }}
+              教练员: {{ it.CoachID !== 0 ? it.CoachName : "自定义" }}
             </div>
             <div
+              v-if="it.CoachID !== 0"
               style="
                 font-size: 14px;
                 color: #666666;
@@ -90,6 +94,7 @@
           <van-button
             @click="
               tomycourse(
+                it.CoachID,
                 it.ID,
                 it.Percentage,
                 it.Name,
@@ -97,7 +102,8 @@
                 it.CoachName,
                 it.LessonCount,
                 it.EndTime,
-                it.CreatedAt
+                it.CreatedAt,
+                it.UserID
               )
             "
             plain
@@ -152,6 +158,7 @@ const onChange = (event: any) => {
 };
 const router = useRouter();
 const tomycourse = (
+  CoachID: number,
   id: string,
   Percentage: string,
   name: string,
@@ -159,23 +166,38 @@ const tomycourse = (
   CoachName: string,
   LessonCount: string,
   EndTime: string,
-  CreatedAt: string
+  CreatedAt: string,
+  stuId: string
 ) => {
   console.log(id, Percentage, name, desc, LessonCount, EndTime, CreatedAt);
-  useActionsStore().setClassID(id);
-  router.push({
-    name: "mycourse",
-    params: {
-      id,
-      Percentage: Percentage,
-      name: name,
-      desc,
-      CoachName: encodeURIComponent(CoachName),
-      LessonCount: LessonCount,
-      EndTime: EndTime,
-      CreatedAt: CreatedAt,
-    },
-  });
+  if (CoachID === 0) {
+    useActionsStore().setClassID(id);
+    useActionsStore().setClassname(name);
+    useActionsStore().setCoachID(CoachID);
+    router.push({
+      name: "studentDetail",
+      params: {
+        studentId: stuId,
+        courseId: id,
+        CoachPunchInAuth: "true",
+      },
+    });
+  } else {
+    useActionsStore().setClassID(id);
+    router.push({
+      name: "mycourse",
+      params: {
+        id,
+        Percentage: Percentage,
+        name: name,
+        desc,
+        CoachName: encodeURIComponent(CoachName),
+        LessonCount: LessonCount,
+        EndTime: EndTime,
+        CreatedAt: CreatedAt,
+      },
+    });
+  }
 };
 const tocourse = () => {
   props.change();
@@ -200,7 +222,6 @@ const getList = () => {
         }
         list.value[dayjs(item.CreatedAt).format("YYYY-MM")].push(dispose(item));
       });
-      console.log(list.value, "938842387487");
       uni.hideLoading();
     })
     .catch((err) => {

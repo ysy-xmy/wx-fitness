@@ -25,17 +25,17 @@ export const getActionById = (id: string) => {
 
 //为计划添加动作
 export const addActionToGroupAction = (data: any) => {
-  return request.post("/api/course/addAtionGroup", data);
+  return request.post("/api/course/addActionGroup", data);
 };
 
-//给动作组添加动作
-export const addActionToGroup = (data: any) => {
-  return request.post("/api/course/updateAtionGroup", data);
+//给动作组修改动作
+export const updateActionToGroup = (data: any) => {
+  return request.post("/api/course/updateActionGroup", data);
 };
 
 //给动作组删除动作
 export const deleteActionFromGroup = (data: any) => {
-  return request.delete("/api/course/deleteAtionGroup", data);
+  return request.delete("/api/course/deleteActionGroup", data);
 };
 
 //获取日期下的动作
@@ -46,4 +46,9 @@ export const getActionByDate = (data: any) => {
 //获取哪些日期有动作
 export const getActionDate = (data: any) => {
   return request.get("/api/course/getPlanDates", { params: data });
+};
+
+//删除计划
+export const deletePlan = (data: any) => {
+  return request.delete("/api/course/plan/delete?id=" + data.id);
 };

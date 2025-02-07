@@ -8,7 +8,7 @@ export const getCoachcourseinfo = (id: number) => {
 
 //获取所有我的学员
 export const getCoachStudentinfo = () => {
-  return request.get("/api/coach/studentList");
+  return request.get("api/coach/courses");
 };
 
 export const getCourseAndStudentCount = () => {

@@ -41,27 +41,57 @@
       <div class="plan-container" v-if="item.type === 'weight'">
         <div class="top" style="background-color: rgba(59, 213, 221, 1)">
           <div class="title">{{ item.title }}</div>
-          <van-icon
-            name="plus"
-            size="20"
-            color="white"
-            @click="addAction(item)"
-            v-if="roleName === 'coach'"
-          />
+          <div class="top-actions">
+            <van-icon
+              name="edit"
+              size="20"
+              color="white"
+              @click="toggleEditMode(item)"
+              style="margin-right: 10px"
+            />
+            <van-icon
+              name="plus"
+              size="20"
+              color="white"
+              @click="addAction(item)"
+              v-if="roleName === 'coach' || actionsStore.getCoachID === 0"
+            />
+          </div>
         </div>
         <div class="bottom">
           <div class="card" v-for="it in item.planActions" :key="it.ActionName">
-            <div class="content">
-              <div class="name">{{ it.ActionName }}</div>
-              <div class="wei">{{ it.Weight }}Kg</div>
-              <div class="count">{{ it.GroupNum }}次</div>
-            </div>
-            <div
-              class="btn"
-              @click="deleteAction(it)"
-              v-if="roleName === 'coach'"
-            >
-              <van-icon name="minus" size="15" color="white" />
+            <div class="card-content">
+              <div class="content">
+                <div class="name">{{ it.ActionName }}</div>
+                <div class="wei" v-if="!item.isEditing">{{ it.Weight }}Kg</div>
+                <input
+                  v-else
+                  type="number"
+                  v-model="it.Weight"
+                  class="edit-input"
+                  placeholder="重量"
+                />
+                <div class="count" v-if="!item.isEditing">
+                  {{ it.GroupNum }}次
+                </div>
+                <input
+                  v-else
+                  type="number"
+                  v-model="it.GroupNum"
+                  class="edit-input"
+                  placeholder="组数"
+                />
+              </div>
+              <div
+                class="delete-btn"
+                @click="deleteAction(item, it)"
+                v-if="
+                  item.isEditing &&
+                  (roleName === 'coach' || actionsStore.getCoachID === 0)
+                "
+              >
+                <van-icon name="minus" size="15" color="white" />
+              </div>
             </div>
           </div>
         </div>
@@ -69,26 +99,49 @@
       <div class="plan-container" v-if="item.type === 'stretch'">
         <div class="top" style="background-color: rgba(138, 207, 90, 1)">
           <div class="title">{{ item.title }}</div>
-          <van-icon
-            name="plus"
-            size="20"
-            color="white"
-            @click="addAction(item)"
-            v-if="roleName === 'coach'"
-          />
+          <div class="top-actions">
+            <van-icon
+              name="edit"
+              size="20"
+              color="white"
+              @click="toggleEditMode(item)"
+              style="margin-right: 10px"
+            />
+            <van-icon
+              name="plus"
+              size="20"
+              color="white"
+              @click="addAction(item)"
+              v-if="roleName === 'coach' || actionsStore.getCoachID === 0"
+            />
+          </div>
         </div>
         <div class="bottom">
           <div class="card" v-for="it in item.planActions" :key="it.ActionName">
-            <div class="content">
-              <div class="name">{{ it.ActionName }}</div>
-              <div class="count">{{ it.Second }}秒</div>
-            </div>
-            <div
-              class="btn"
-              @click="deleteAction(it)"
-              v-if="roleName === 'coach'"
-            >
-              <van-icon name="minus" size="15" color="white" />
+            <div class="card-content">
+              <div class="content">
+                <div class="name">{{ it.ActionName }}</div>
+                <div class="count" v-if="!item.isEditing">
+                  {{ it.Second }}秒
+                </div>
+                <input
+                  v-else
+                  type="number"
+                  v-model="it.Second"
+                  class="edit-input"
+                  placeholder="秒数"
+                />
+              </div>
+              <div
+                class="delete-btn"
+                @click="deleteAction(item, it)"
+                v-if="
+                  item.isEditing &&
+                  (roleName === 'coach' || actionsStore.getCoachID === 0)
+                "
+              >
+                <van-icon name="minus" size="15" color="white" />
+              </div>
             </div>
           </div>
           <div
@@ -107,7 +160,11 @@
     >
       暂无计划
     </div>
-    <div class="addBtn" @click="toActionArrange" v-if="roleName === 'coach'">
+    <div
+      class="addBtn"
+      @click="toActionArrange"
+      v-if="roleName === 'coach' || actionsStore.getCoachID === 0"
+    >
       <van-icon name="plus" size="20" color="#6495ED" />
     </div>
   </view>
@@ -152,11 +209,11 @@
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, computed, watch } from "vue";
-import { useRouter } from "uni-mini-router";
+import { useRouter, useRoute } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
 import { useAuthStore } from "@/state/modules/auth";
 import {
-  addActionToGroup,
+  updateActionToGroup,
   deleteActionFromGroup,
   getActionByDate,
   getActionDate,
@@ -180,9 +237,11 @@ const currentSelectDay = ref(""); //当前选择的日期
 const planListType = ref<any[]>([]);
 const actionsStore = useActionsStore();
 const addClassName = ref<string>("");
+const planId = ref(Infinity);
 const onChangeAddClassName = (e: any) => {
   addClassName.value = e.detail;
 };
+const route = useRoute();
 onShow(() => {
   getAction(currentSelectDay.value);
 });
@@ -223,17 +282,24 @@ function getDate(date: Date | string, AddDayCount = 0) {
     day: dd.getDay(),
   };
 }
-const deleteAction = (item: any) => {
-  console.log(item, "item");
-  deleteActionFromGroup([item.ID])
+const deleteAction = (item: any, it: any) => {
+  deleteActionFromGroup([it.ID])
     .then((res: any) => {
-      console.log(res, "res");
       if (res.data.code == 200) {
+        // 直接从本地数组中过滤掉被删除的动作
+        const groupIndex = planListType.value.findIndex(
+          (group) => group.title === item.title
+        );
+        if (groupIndex !== -1) {
+          planListType.value[groupIndex].planActions = planListType.value[
+            groupIndex
+          ].planActions.filter((action) => action.ActionName !== it.ActionName);
+        }
+
         uni.showToast({
           title: "删除成功",
           icon: "success",
         });
-        getAction(currentSelectDay.value);
       } else {
         uni.showToast({
           title: "删除失败",
@@ -260,6 +326,7 @@ const changeTime = (dateTime: string) => {
 
 const showDialog = ref<boolean>(false);
 const radioType = ref<string>("");
+
 const chooseType = (type: string) => {
   radioType.value = type;
 };
@@ -354,8 +421,10 @@ const getAction = (data: any) => {
             planActions: it["PlanActions"],
             title: it["ActionGroupTitle"] || `动作${ind + 1}`,
             type: it["ContentType"],
+            isEditing: false,
           });
         });
+        console.log(planListType.value, "planListType");
       } else {
       }
       // planListType.value = res.data.data;
@@ -370,6 +439,9 @@ const getAction = (data: any) => {
 };
 onMounted(() => {
   console.log(actionsStore.getFindActionData, "actionsStore.getFindActionData");
+  if (route.query) {
+    planId.value = route.query.id;
+  }
   nextTick(() => {
     showCalendar.value = true;
     // 获取今天的日期
@@ -377,7 +449,7 @@ onMounted(() => {
     currentSelectDay.value = changeTime(actionsStore.getTime);
     startDate.value = getDate(new Date(), -60).fullDate;
     endDate.value = getDate(new Date(), 30).fullDate;
-    getAction(dayjs(actionsStore.getTime).format("YYYY-MM-DD"));
+    // getAction(dayjs(actionsStore.getTime).format("YYYY-MM-DD"));
     getWhichDate();
     // 初始化打卡数据
     // selected.value = [
@@ -444,9 +516,43 @@ const dragMove = (e: any) => {
   const newHeight = startHeight.value + deltaY;
   wrapperHeight.value = Math.min(Math.max(newHeight, 150), 415);
 };
-
+const saveNewAction = (item: any) => {
+  console.log(item, "item");
+  item.planActions.forEach((it: any) => {
+    it["PlanID"] = Number(planId.value);
+    it.ExerciseActionID = Number(it.ExerciseActionID);
+    it.GroupNum = Number(it.GroupNum);
+    it.ID = Number(it.ID);
+    it.OrderNum = Number(it.OrderNum);
+    it.Second = Number(it.Second);
+    it.TimesNum = Number(it.TimesNum);
+    it.Weight = Number(it.Weight);
+  });
+  updateActionToGroup(item.planActions).then((res: any) => {
+    console.log(res, "res");
+    if (res.data.code === 200) {
+      uni.showToast({
+        title: "保存成功",
+        icon: "success",
+      });
+      item.isEditing = false;
+    } else {
+      uni.showToast({
+        title: "保存失败",
+        icon: "none",
+      });
+    }
+  });
+};
 const dragEnd = () => {
   isDragging.value = false;
+};
+
+const toggleEditMode = (item: any) => {
+  if (item.isEditing) {
+    // 保存所有修改
+    saveNewAction(item);
+  } else item.isEditing = !item.isEditing;
 };
 </script>
 
@@ -511,48 +617,34 @@ const dragEnd = () => {
   }
   .bottom {
     .card {
-      margin: 5px auto;
-      height: 35px;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-left: 20px;
-      padding-right: 10px;
-      padding-bottom: 10px;
-      .content {
-        margin-right: 20px;
-        flex: 1;
-        /* display: flex;
+      min-height: 35px;
+      height: auto;
+      padding: 10px;
+
+      .card-content {
+        display: flex;
         justify-content: space-between;
-        align-items: center; */
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        .name,
-        .wei,
-        .count {
-          font-size: 15px;
-          font-weight: bold;
-          color: rgba(0, 0, 0, 1);
-        }
-        .name {
-          text-align: left;
-        }
-        .wei {
-          text-align: center;
-        }
-        .count {
-          text-align: right;
-        }
+        align-items: center;
+        gap: 10px;
       }
-      .btn {
-        width: 15px;
-        height: 15px;
-        border-radius: 75%;
+
+      .content {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .delete-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
         background: #ffb6c1;
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-shrink: 0;
       }
     }
   }
@@ -560,7 +652,7 @@ const dragEnd = () => {
 .addBtn {
   position: absolute;
   bottom: 50px;
-  right: 20px;
+  left: 20px;
   background-color: white;
   display: flex;
   justify-content: center;
@@ -582,6 +674,26 @@ const dragEnd = () => {
 }
 :deep(.uni-calendar__backtoday) {
   display: none;
+}
+.top-actions {
+  display: flex;
+  align-items: center;
+}
+
+.edit-input {
+  width: 60px;
+  height: 24px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 0 5px;
+  font-size: 14px;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 10px;
+  align-items: center;
 }
 </style>
 <style>

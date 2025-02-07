@@ -2,9 +2,11 @@ import request from "@/utils/request";
 import { useAuthStore } from "@/state/modules/auth";
 import { updateUserInfo } from "./wx_session";
 
-export function loginWithWeChat(callback: (token: string, userInfo: any) => void) {
+export function loginWithWeChat(
+  callback: (token: string, userInfo: any) => void
+) {
   const authStore = useAuthStore();
-
+  console.log("authStore123", authStore);
   uni.login({
     provider: "weixin",
     success: function (event) {
@@ -75,6 +77,8 @@ export function loginWithWeChat(callback: (token: string, userInfo: any) => void
         },
       });
     },
+    fail: function (error) {
+      console.error("微信登录失败：", error);
+    },
   });
 }
-

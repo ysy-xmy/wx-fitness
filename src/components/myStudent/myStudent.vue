@@ -33,26 +33,33 @@
                       <span
                         class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden"
                       >
-                        {{ item.Username }}
+                        {{ item.CoachID !== 0 ? item.Username : "自我训练" }}
                       </span>
                       <text
-                        v-if="item.Sex"
+                        v-if="item.Sex && item.CoachID !== 0"
                         style="font-size: 25px; color: #a54aff"
                         class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"
                       ></text>
 
                       <text
-                        v-else
+                        v-if="item.CoachID !== 0"
                         style="font-size: 25px; color: #16a9fa"
                         class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
                       ></text>
                     </h1>
 
                     <p
+                      v-if="item.CoachID !== 0"
                       class="text-[#6b7280] text-[14px] w-max-[180px] break-all"
                     >
                       {{ item.Name }} {{ handleCourseType(item.CourseType) }}
                       {{ item.LessonCount ? item.LessonCount + "节" : "" }}
+                    </p>
+                    <p
+                      v-else
+                      class="text-[#6b7280] text-[14px] w-max-[180px] break-all"
+                    >
+                      为自己安排训练计划
                     </p>
                   </div>
                 </div>

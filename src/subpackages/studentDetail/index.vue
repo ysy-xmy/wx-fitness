@@ -164,7 +164,12 @@
             <van-empty class="h-28" description="该课程暂无计划" />
           </div>
         </div> -->
-        <PlanCard :isHideHeader="true" :status="1" :actionGroups="showList" />
+        <PlanCard
+          :isHideHeader="true"
+          :status="1"
+          :actionGroups="showList"
+          @del="deletePlan"
+        />
       </van-collapse-item>
     </van-collapse>
 
@@ -312,6 +317,15 @@ const showSelectTime = ref(false);
 const changeTab = (e: any) => {
   console.log(e, "changeTab");
   tabStatus.value = e.detail.name;
+};
+const deletePlan = (item: any) => {
+  console.log(item, "deletePlan");
+  //planList里面三个全部查看，用filter过滤掉
+  Object.keys(plansList.value).forEach((key) => {
+    plansList.value[key] = plansList.value[key].filter(
+      (i: any) => i.ID !== item.ID
+    );
+  });
 };
 const showList = computed(() => {
   return plansList.value[tabStatus.value];
@@ -482,12 +496,14 @@ const changeCheck = (item: any) => {
   uni.showLoading({ title: "打卡中...", mask: true });
   actionClok(item.ID).then((res) => {
     if (res.data.code === 200) {
-      item.Complete = true;
       uni.hideLoading();
       uni.showToast({
         title: "打卡成功",
         icon: "success",
       });
+      setTimeout(() => {
+        initData();
+      }, 2200);
     } else {
       uni.showToast({
         title: "打卡失败",
@@ -545,10 +561,10 @@ const initData = async () => {
       //   ID: item["ID"],
       //   Type: item["Type"].toUpperCase(),
       // });
-      plansList.value[item["Type"].toLowerCase()].push(temp);
+
       if (item["Complete"]) {
         plansList.value["finish"].push(temp);
-      }
+      } else plansList.value[item["Type"].toLowerCase()].push(temp);
     });
     console.log(plansList.value, "plansList");
     uni.hideLoading();
