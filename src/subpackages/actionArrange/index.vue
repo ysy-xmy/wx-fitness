@@ -149,17 +149,20 @@
                   <transition name="fade">
                     <div
                       v-if="item2.active"
-                      class="flex flex-row w-full justify-center flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
-                      @click="toDetail(item2)"
-                    >
-                      <img
-                        class="w-28 h-28 rounded-l-md lg"
-                        :src="getImageUrl(item2.Imgs, 0)"
-                      />
-                      <img
-                        class="w-28 h-28 rounded-r-md lg"
-                        :src="getImageUrl(item2.Imgs, 1)"
-                      />
+                      class="flex flex-row w-full justify-center gap-3 flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
+                      @click="toDetail(item2)">
+                        <div class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
+                          <image
+                            class="w-full h-full"
+                            mode="aspectFill"
+                            :src="getImageUrl(item2.Imgs, 0)" />
+                        </div>
+                        <div class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
+                          <image
+                            class="w-full h-full"
+                            mode="aspectFill"
+                            :src="getImageUrl(item2.Imgs, 1)" />
+                        </div>
                     </div>
                   </transition>
                 </view>
