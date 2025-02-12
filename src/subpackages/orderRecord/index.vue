@@ -33,7 +33,7 @@
               <div class="mt-[21px] ml-[9px]">
                 <img class="w-20 h-20 rounded-xl" :src="item.Img" alt="" />
               </div>
-              <div class="flex flex-col justify-center ml-[16px]">
+              <div class="flex flex-col justify-center ml-[16px] w-[300px]">
                 <div
                   class="w-full text-[16px] font-normal text-[#111827] flex-wrap whitespace-nowrap"
                 >

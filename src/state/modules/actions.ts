@@ -14,6 +14,7 @@ export const useActionsStore = defineStore({
       name: "",
     },
     chooseActionId: -Infinity,
+    remark: "",
   }),
   getters: {
     getFindActionData(): any {
@@ -40,6 +41,9 @@ export const useActionsStore = defineStore({
     getCoachID(): number {
       return this.coachId;
     },
+    getRemark(): string {
+      return this.remark;
+    },
   },
   actions: {
     setClassID(id: string) {
@@ -56,6 +60,9 @@ export const useActionsStore = defineStore({
     },
     setClassname(classname: string) {
       this.classname = classname;
+    },
+    setRemark(remark: string) {
+      this.remark = remark;
     },
     setChooseActions(actions: any) {
       this.chooseActions = actions;

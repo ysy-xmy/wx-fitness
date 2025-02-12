@@ -6,7 +6,7 @@
         v-if="planList.length === 0"
       >
         <van-empty
-          :description="`暂无${type === 'online' ? '线上任务' : '线下计划'}`"
+          :description="`暂无未完成的${type === 'online' ? '线上任务' : '线下计划'}`"
         />
       </div>
       <div v-else>
@@ -33,11 +33,11 @@
                   : plan.PlanTitle
               }}
             </h1>
-            <span class="ml-auto text-sm text-gray-500">{{
+            <!-- <span class="ml-auto text-sm text-gray-500">{{
               props.LessonCount && props.LessonCount !== "null"
                 ? "共" + props.LessonCount + "节"
                 : props.EndTime
-            }}</span>
+            }}</span> -->
           </div>
           <div
             class="card-footer w-full flex justify-between items-center text-sm text-gray-500"
@@ -92,7 +92,9 @@ const props = defineProps({
 });
 
 const initPlanList = (data: actionGroup[]) => {
-  planList.value = data.filter((item) => item.Type === props.type);
+  planList.value = data.filter(
+    (item) => item.Type === props.type && !item.Complete
+  );
 };
 const seePlan = (plan: actionGroup) => {
   console.log(plan, "plan");

@@ -62,7 +62,9 @@
           <div class="card" v-for="it in item.planActions" :key="it.ActionName">
             <div class="card-content">
               <div class="content">
-                <div class="name">{{ it.ActionName }}</div>
+                <div class="name" @click="godetail(it)">
+                  {{ it.ActionName }}
+                </div>
                 <div class="wei" v-if="!item.isEditing">{{ it.Weight }}Kg</div>
                 <input
                   v-else
@@ -120,7 +122,9 @@
           <div class="card" v-for="it in item.planActions" :key="it.ActionName">
             <div class="card-content">
               <div class="content">
-                <div class="name">{{ it.ActionName }}</div>
+                <div class="name" @click="godetail(item)">
+                  {{ it.ActionName }}
+                </div>
                 <div class="count" v-if="!item.isEditing">
                   {{ it.Second }}秒
                 </div>
@@ -257,6 +261,15 @@ const addAction = (item: any) => {
   actionsStore.setChooseActions(temp);
   router.push({
     name: "actionArrange",
+  });
+};
+const godetail = (item: any) => {
+  console.log(item, 123);
+  router.push({
+    name: "actionDetail",
+    params: {
+      itemid: String(item.ExerciseActionID),
+    },
   });
 };
 function getDate(date: Date | string, AddDayCount = 0) {

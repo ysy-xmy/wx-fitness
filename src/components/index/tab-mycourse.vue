@@ -52,12 +52,13 @@
                 white-space: nowrap;
               "
             >
-              私教课程<text v-if="it.CoachID !== 0">
-                (
+              <text v-if="it.CoachID !== 0"
+                >私教课程 (
                 {{
                   it.CourseType === "lesson" ? it.LessonCount + "节" : "包月"
                 }})</text
               >
+              <text v-else>自我训练</text>
             </div>
             <div
               style="
@@ -67,7 +68,8 @@
                 margin-left: 10px;
               "
             >
-              教练员: {{ it.CoachID !== 0 ? it.CoachName : "自定义" }}
+              <text v-if="it.CoachID !== 0"> 教练员: {{ it.CoachName }}</text>
+              <text v-else>为自己安排训练计划</text>
             </div>
             <div
               v-if="it.CoachID !== 0"

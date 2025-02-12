@@ -58,9 +58,12 @@
           alt=""
         />
       </div>
-      <h1 class="my-3 text-2xl text-center font-bold text-white">
+
+      <h1 class="mt-1 text-2xl text-center font-bold text-white">
         {{ stuInfo.Username || "默认用户" }}
       </h1>
+      <h5 class="text-sm text-center text-red" v-if="remark">({{ remark }})</h5>
+
       <span class="text-white font-bold text-sm text-center"
         >{{ stuInfo.Age || "暂未填写" }}岁</span
       >
@@ -329,6 +332,9 @@ const deletePlan = (item: any) => {
 };
 const showList = computed(() => {
   return plansList.value[tabStatus.value];
+});
+const remark = computed(() => {
+  return actionsStore.getRemark;
 });
 const onInput = (e: any) => {
   console.log(e, "onInput");

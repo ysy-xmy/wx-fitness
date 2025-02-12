@@ -9,3 +9,7 @@ export const postPlan = (data: any) => {
 export const getplanlist = (id: number) => {
   return request.get("/api/course/planInfo/" + id);
 };
+
+export const changeCourseMes = (data: any) => {
+  return request.post("/api/course/studentCourse/update", data);
+};
