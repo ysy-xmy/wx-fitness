@@ -179,10 +179,11 @@
       v-if="searchResult.length > 0"
       class="w-screen fixed z-1000 top-10 bg-[#f2f2f2] shadow-sm"
       :index-list="indexList">
-      <!-- 遍历搜索结果 -->
-      <view class="cu-list menu sm-border card-menu">
+      <scroll-view 
+        scroll-y 
+        style="height: calc(100vh - 120px)"
+        class="cu-list menu sm-border card-menu">
         <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa' }">
-          搜索结果
         </van-divider>
         <view
           v-for="(item, index) in searchResult"
@@ -212,7 +213,7 @@
           </view>
           <div style="height: 2px; width: 90%; background-color: #f7f8fc"></div>
         </view>
-      </view>
+      </scroll-view>
     </van-index-bar>
     <van-popup
       custom-style="max-height: 500px;"
@@ -349,8 +350,10 @@ const changeNum = (item: any, e: any) => {
 };
 
 const toggleActive = (item: any, Array: any) => {
-  Array.map((item: any) => {
-    item.active = false;
+  Array.forEach((action: any) => {
+    if (action !== item) {
+      action.active = false;
+    }
   });
   item.active = !item.active;
 };
@@ -594,32 +597,55 @@ const handlelocation = (actionid: number) => {
     actionrouterList.value,
     actionid
   );
-  const fisstindex = findIndexById(actionrouterList.value, firstCategoryId);
+  
+  // 找到一级类目索引
+  const firstIndex = actionrouterList.value.findIndex(item => item.id === firstCategoryId);
+  
+  // 找到二级类目在其父级中的索引
+  const secondIndex = actionrouterList.value[firstIndex].children.findIndex(item => item.id === secondCategoryId);
 
-  const secindex = findIndexById(actionrouterList.value, secondCategoryId);
-  const foundItem = findItemAndChildren(
-    actionrouterList.value,
-    secondCategoryId
-  );
+  if (firstIndex !== -1 && secondIndex !== -1) {
+    tabCur.value = firstIndex;
+    mainCur.value = firstIndex;
+    verticalNavTop.value = (firstIndex - 1) * 50;
+    
+    // 展开对应的二级菜单
+    actionrouterList.value[firstIndex].children.forEach(child => child.active = false);
+    const targetSecondCategory = actionrouterList.value[firstIndex].children[secondIndex];
+    targetSecondCategory.active = true;
+    
+    // 更新二级菜单显示
+    toSecmenu(actionrouterList.value[firstIndex]);
+    
+    // 添加滚动定位
+    nextTick(() => {
+      const selector = `#main-${secondIndex}`;
+      const query = uni.createSelectorQuery().in(this);
+      query.select(selector).boundingClientRect();
+      query.exec((res) => {
+        if (res[0]) {
+          uni.pageScrollTo({
+            scrollTop: res[0].top,
+            duration: 300
+          });
+        }
+      });
+    });
 
-  if (foundItem) {
-    const secondCate = foundItem;
-    tabCur.value = fisstindex;
-    mainCur.value = fisstindex;
-    verticalNavTop.value = (fisstindex - 1) * 50;
-    actionrouterList.value[mainCur.value].children[secindex].active = true;
-    toSecmenu(findItemAndChildren(actionrouterList.value, firstCategoryId));
-
-    // secMenuSelect(secondCate, secindex)
+    // 自动展开目标动作（新增部分）
+    nextTick(() => {
+      const actionIndex = targetSecondCategory.children.findIndex(
+        (action: any) => action.id === actionid
+      );
+      if (actionIndex !== -1) {
+        toggleActive(
+          targetSecondCategory.children[actionIndex],
+          targetSecondCategory.children
+        );
+      }
+    });
   }
 
-  // if (firstCategoryId !== null && secondCategoryId !== null) {
-  //     mainCur.value = firstCategoryId;
-  //     secMenuSelect(secMenu.value[secondCategoryId], secondCategoryId);
-  // } else if (firstCategoryId !== null) {
-  //     mainCur.value = firstCategoryId;
-  //     secMenuSelect(secMenu.value[0], 0);
-  // }
   searchValue.value = "";
   fuzzySearch(actionrouterList.value, searchValue.value);
 };
