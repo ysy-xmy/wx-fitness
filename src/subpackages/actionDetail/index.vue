@@ -13,7 +13,7 @@
                 <div class="intro-content gap-4 w-full flex flex-nowrap mb-10">
                     <div class="intro-text w-1/2">
                         <h2 class="intro-title flex items-center mb-3"><span class="title-bar"></span>{{ actionInfo.Name }}</h2>
-                        <p class="intro-description text-ellipsis">{{ actionInfo.Description }}</p>
+                        <p class="intro-description text-ellipsis" v-html="actionInfo.Description.replace(/\n/g, '<br>')" ></p>
                     </div>
                     <div class="intro-image rounded-md w-1/2">
                         <template v-if="actionInfo.Imgs && actionInfo.Imgs.length > 0">
