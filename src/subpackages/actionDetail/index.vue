@@ -200,7 +200,7 @@ onMounted(() => {
 
 .intro-title {
     font-weight: bold;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .card-title h3 {
