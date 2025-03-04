@@ -9,13 +9,13 @@
       <div class="main">
         <div class="font-bold text-10 mt-2 ml-2">进 行 的 课 程</div>
         <template v-for="(item, index) in list">
-          <div class="bg-white coachlist p-2">
+          <div class="bg-white coachlist p-1">
             <div
               class="lists-item flex flex-nowrap items-start justify-between p-1"
             >
-              <div class="w-14 h-14 mr-2">
+              <div class="w-12 h-12 mr-2">
                 <img
-                  class="w-14 h-14 rounded-full"
+                  class="w-12 h-12 rounded-full"
                   :src="
                     item.Avatar
                       ? item.Avatar
@@ -25,11 +25,11 @@
                 />
               </div>
               <div
-                class="flex-1 flex pl-2 flex-row items-start justify-between"
+                class="flex-1 flex pl-1 w-0 flex-row items-start justify-between"
               >
                 <div class="text-box">
                   <div class="title">
-                    <h1 class="w-full flex text-lg font-bold pt-2">
+                    <h1 class="w-full flex text-lg font-bold pt-2 items-center">
                       <span
                         class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden"
                       >
@@ -37,7 +37,7 @@
                       </span>
                       <span
                         v-if="item.StudentRemark"
-                        class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden text-[#ff6b6b]"
+                        class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden text-[#fd72729d] text-xs"
                         >({{ item.StudentRemark }})</span
                       >
                       <!-- <text
@@ -55,7 +55,7 @@
 
                     <p
                       v-if="item.CoachID !== 0"
-                      class="text-[#6b7280] text-[14px] w-max-[180px] break-all"
+                      class="text-[#6b7280] text-[12px] w-max-[180px] break-all"
                     >
                       {{ item.Name }} {{ handleCourseType(item.CourseType) }}
                       {{ item.LessonCount ? item.LessonCount + "节" : "" }}
@@ -65,7 +65,7 @@
                     </p>
                     <p
                       v-else
-                      class="text-[#6b7280] text-[14px] w-max-[180px] break-all"
+                      class="text-[#6b7280] text-[12px] w-max-[180px] break-all"
                     >
                       为自己安排训练计划
                     </p>
@@ -86,7 +86,7 @@
                       )
                     "
                     color="#5ccee0"
-                    size="small"
+                    size="mini"
                     round
                     type="primary"
                     class="tracking-wide"
@@ -96,7 +96,7 @@
                     v-if="item.CoachID !== 0"
                     @click="showTagDialog(item)"
                     color="#8e44ad"
-                    size="small"
+                    size="mini"
                     round
                     type="primary"
                     class="tracking-wide"
@@ -261,5 +261,11 @@ const todetail = (
 <style scoped>
 .lists-item {
   margin-bottom: 10px;
+}
+
+.text-box {
+  width: 60%;
+  overflow: hidden;
+  flex: 1
 }
 </style>
