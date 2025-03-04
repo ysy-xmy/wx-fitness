@@ -4,7 +4,7 @@
       <div class="w-full h-full bg-black absolute opacity-25"></div>
       <img
         class="w-full h-64"
-        src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
+        src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250304/1741101358012.jpg"
       />
     </div>
     <div class="tabs bg-white pt-4 rounded-t-2xl shadow-white absolute top-60 w-full">
