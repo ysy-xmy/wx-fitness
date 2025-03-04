@@ -54,29 +54,8 @@ onMounted(() => {
 });
 function login() {
   loginWithWeChat((token, userInfo) => {
-    // if (Object.keys(query).length > 0) {
-    //   const params = {
-    //     name: query.name,
-    //     phone: query.phone,
-    //     img: query.img,
-    //     count: query.count,
-    //     price: query.price,
-    //     ifDiy: true,
-    //     id: query.id,
-    //     sex: query.sex,
-    //   };
-
-    //   const queryString = Object.keys(params)
-    //     .map((key) => `${key}=${encodeURIComponent(params[key])}`)
-    //     .join("&");
-
-    //   router.replace({
-    //     path: `/subpackages/coursePurchase/index?${queryString}`,
-    //   });
-    // } else {
-    //   router.replace({ name: "home" });
-    // }
-    router.replace({ name: "home" });
+    // 使用 push 并确保目标页面配置正确
+    router.replaceAll({ name: "home" });
   });
 }
 </script>

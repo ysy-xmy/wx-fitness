@@ -37,11 +37,12 @@
               style="font-size: 25px; color: #16a9fa"
               class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
             ></text>
-            <text
+            
+            <!-- <text
               @click="clearStorage"
               style="font-size: 25px; color: #ffffff"
               class="cuIcon-delete ml-2"
-            ></text>
+            ></text> -->
           </div>
           <p
             class="text-sm z-10 text-white pl-4"
