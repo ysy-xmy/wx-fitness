@@ -80,7 +80,7 @@
                 margin-left: 10px;
               "
             >
-              课程进度: {{ 100 - it.Percentage }}%
+              课程进度: {{ it.Percentage }}%
             </div>
           </div>
           <div

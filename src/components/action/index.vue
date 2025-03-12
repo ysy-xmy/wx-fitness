@@ -9,6 +9,12 @@
           type="text"
           placeholder="搜索二级类目、动作"
           confirm-type="search" />
+        <text 
+          v-if="searchValue"
+          class="cuIcon-close"
+          style="padding: 0 10px;"
+          @tap="clearSearch">
+        </text>
       </view>
     </view>
 
@@ -28,8 +34,7 @@
           line-height: 30px;
           margin-left: 30px;
           margin-left: 30px;
-        "
-      >
+        ">
         正在为{{ props.name }}的课程选课
       </div>
       <view class="cu-item" @click="showPopup = true">
@@ -145,23 +150,30 @@
                       v-if="item2.active"
                       class="flex flex-row w-full justify-center gap-3 flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
                       @click="toDetail(item2)">
-                        <div class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
-                          <image
-                            class="w-full h-full"
-                            mode="aspectFill"
-                            :src="getImageUrl(item2.Imgs, 0)" />
-                        </div>
-                        <div class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
-                          <image
-                            class="w-full h-full"
-                            mode="aspectFill"
-                            :src="getImageUrl(item2.Imgs, 1)" />
-                        </div>
+                      <div
+                        class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
+                        <image
+                          class="w-full h-full"
+                          mode="aspectFill"
+                          :src="getImageUrl(item2.Imgs, 0)" />
+                      </div>
+                      <div
+                        class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
+                        <image
+                          class="w-full h-full"
+                          mode="aspectFill"
+                          :src="getImageUrl(item2.Imgs, 1)" />
+                      </div>
                     </div>
                   </transition>
                 </view>
               </template>
-              <div v-if="actionrouterList[mainCur].children[index1].children.length == 0" class="w-full flex justify-center">
+              <div
+                v-if="
+                  actionrouterList[mainCur].children[index1].children.length ==
+                  0
+                "
+                class="w-full flex justify-center">
                 <text class="text-gray-500">该目录暂无具体动作</text>
               </div>
             </view>
@@ -179,39 +191,68 @@
       v-if="searchResult.length > 0"
       class="w-screen fixed z-1000 top-10 bg-[#f2f2f2] shadow-sm"
       :index-list="indexList">
-      <scroll-view 
-        scroll-y 
-        style="height: calc(100vh - 120px)"
-        class="cu-list menu sm-border card-menu">
-        <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa' }">
-        </van-divider>
+      <scroll-view
+        scroll-y
+        style="height: 90vh"
+        class="cu-list menu sm-border">
         <view
           v-for="(item, index) in searchResult"
           :key="index"
-          class="w-screen flex flex-col items-start content-start">
+          class="mx-4 my-2">
           <view
-            @click="
-              handlelocation(
-                item.children.length > 0 ? item.children[0].id : item.id
-              )
-            "
-            class="border-none padding-tb-sm w-full">
-            <view
-              class="text-black w-full text-center flex-nowrap flex justify-between text-lg font-extrabold">
-              <text class="text-black"> 索引至： {{ item.name }}</text>
-              <text class="cuIcon-right text-lg text-blue mr-10"></text>
+            @click="handlelocation(item.isAction ? item.id : (item.children && item.children.length > 0 ? item.children[0].id : item.id))"
+            :class="{
+              'search-card': true,
+              'first-level': item.isFirstLevel,
+              'second-level': item.isSecondLevel,
+              'action-level': item.isAction
+            }">
+            <!-- 图标区域 -->
+            <view class="card-icon">
+              <text
+                v-if="item.isFirstLevel"
+                class="cuIcon-folder text-2xl">
+              </text>
+              <text
+                v-else-if="item.isSecondLevel"
+                class="cuIcon-file text-2xl">
+              </text>
+              <text
+                v-else
+                class="cuIcon-roundright text-2xl">
+              </text>
             </view>
-            <view
-              v-if="item.children && item.children.length > 0"
-              v-for="(item1, index1) in item.children">
-              <view class="cu-item pl-16">
-                <view class="content">
-                  <view>{{ item1.name }}</view>
-                </view>
+
+            <!-- 内容区域 -->
+            <view class="card-content">
+              <!-- 类型标签 -->
+              <view class="type-tag" :class="{
+                'first-tag': item.isFirstLevel,
+                'second-tag': item.isSecondLevel,
+                'action-tag': item.isAction
+              }">
+                {{ item.isFirstLevel ? '一级目录' : item.isSecondLevel ? '二级目录' : '动作' }}
+              </view>
+
+              <!-- 标题 -->
+              <view class="card-title">
+                {{ item.name }}
+              </view>
+
+              <!-- 路径信息 -->
+              <view v-if="!item.isFirstLevel" class="card-path">
+                <text class="path-icon cuIcon-right"></text>
+                {{ item.isAction 
+                  ? `${item.firstCategory} > ${item.secondCategory}` 
+                  : item.firstCategory }}
               </view>
             </view>
+
+            <!-- 右侧箭头 -->
+            <view class="card-arrow">
+              <text class="cuIcon-right"></text>
+            </view>
           </view>
-          <div style="height: 2px; width: 90%; background-color: #f7f8fc"></div>
         </view>
       </scroll-view>
     </van-index-bar>
@@ -228,8 +269,7 @@
           display: flex;
           justify-content: flex-end;
           padding-right: 10px;
-        "
-      >
+        ">
         <van-icon name="close" size="30px" @click="onCloseopup" />
       </div>
       <div style="max-height: 460px; margin: 15px auto; overflow-y: auto">
@@ -252,8 +292,7 @@
                 background-color: rgba(255, 255, 255, 0.4);
                 border-bottom: 1px solid gray;
                 border-radius: 5px;
-              "
-            >
+              ">
               <div class="title">{{ item.name }}</div>
               <van-stepper
                 :value="item.num"
@@ -597,26 +636,33 @@ const handlelocation = (actionid: number) => {
     actionrouterList.value,
     actionid
   );
-  
+
   // 找到一级类目索引
-  const firstIndex = actionrouterList.value.findIndex(item => item.id === firstCategoryId);
-  
+  const firstIndex = actionrouterList.value.findIndex(
+    (item) => item.id === firstCategoryId
+  );
+
   // 找到二级类目在其父级中的索引
-  const secondIndex = actionrouterList.value[firstIndex].children.findIndex(item => item.id === secondCategoryId);
+  const secondIndex = actionrouterList.value[firstIndex].children.findIndex(
+    (item) => item.id === secondCategoryId
+  );
 
   if (firstIndex !== -1 && secondIndex !== -1) {
     tabCur.value = firstIndex;
     mainCur.value = firstIndex;
     verticalNavTop.value = (firstIndex - 1) * 50;
-    
+
     // 展开对应的二级菜单
-    actionrouterList.value[firstIndex].children.forEach(child => child.active = false);
-    const targetSecondCategory = actionrouterList.value[firstIndex].children[secondIndex];
+    actionrouterList.value[firstIndex].children.forEach(
+      (child) => (child.active = false)
+    );
+    const targetSecondCategory =
+      actionrouterList.value[firstIndex].children[secondIndex];
     targetSecondCategory.active = true;
-    
+
     // 更新二级菜单显示
     toSecmenu(actionrouterList.value[firstIndex]);
-    
+
     // 添加滚动定位
     nextTick(() => {
       const selector = `#main-${secondIndex}`;
@@ -626,7 +672,7 @@ const handlelocation = (actionid: number) => {
         if (res[0]) {
           uni.pageScrollTo({
             scrollTop: res[0].top,
-            duration: 300
+            duration: 300,
           });
         }
       });
@@ -685,30 +731,51 @@ const fuzzySearch = (data: TreeNode[], searchQuery: string): TreeNode[] => {
   }
   const searchResults: TreeNode[] = [];
 
-  const searchNode = (node: TreeNode, isTopLevel: boolean = true) => {
-    // 如果是顶层节点，则跳过搜索
-    if (isTopLevel) {
-      // 但仍需递归搜索子节点
-      if (node.children && node.children.length > 0) {
-        node.children.forEach((child) => searchNode(child, false));
-      }
-    } else {
-      // 确保node.name存在并且是一个字符串
-      if (
-        typeof node.name === "string" &&
-        node.name.toLowerCase().includes(searchQuery.toLowerCase())
-      ) {
-        searchResults.push(node);
-      }
-      // 如果有子节点，递归搜索每个子节点
-      if (node.children && node.children.length > 0) {
-        node.children.forEach((child) => searchNode(child, false));
-      }
+  const searchNode = (node: TreeNode, parentPath: { first?: string, second?: string } = {}) => {
+    // 如果当前节点名称匹配搜索条件
+    if (typeof node.name === "string" && 
+        node.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+      // 添加层级信息到节点
+      const resultNode = { 
+        ...node,
+        firstCategory: parentPath.first || node.name,
+        secondCategory: parentPath.second,
+        isFirstLevel: !parentPath.first,
+        isSecondLevel: !!parentPath.first && !parentPath.second,
+        isAction: !!parentPath.first && !!parentPath.second
+      };
+      searchResults.push(resultNode);
+    }
+
+    // 递归搜索子节点
+    if (node.children && node.children.length > 0) {
+      node.children.forEach((child) => {
+        if (!parentPath.first) {
+          // 当前是一级目录
+          searchNode(child, { first: node.name });
+        } else if (!parentPath.second) {
+          // 当前是二级目录
+          searchNode(child, { first: parentPath.first, second: node.name });
+        } else {
+          // 当前是动作
+          searchNode(child, parentPath);
+        }
+      });
     }
   };
 
   // 对每个顶层节点调用递归搜索函数
   data.forEach((node) => searchNode(node));
+
+  // 分类排序：一级目录 -> 二级目录 -> 动作
+  searchResults.sort((a, b) => {
+    if (a.isFirstLevel && !b.isFirstLevel) return -1;
+    if (!a.isFirstLevel && b.isFirstLevel) return 1;
+    if (a.isSecondLevel && !b.isSecondLevel) return -1;
+    if (!a.isSecondLevel && b.isSecondLevel) return 1;
+    return 0;
+  });
+
   indexList.value = searchResults.map((item) => item.name);
   searchResult.value = searchResults;
   return searchResults;
@@ -741,7 +808,7 @@ onMounted(async () => {
       tabCur.value = 0;
       mainCur.value = 0;
       verticalNavTop.value = 0;
-      
+
       // 获取并设置第一个一级目录的二级目录
       const firstItem = actionrouterList.value[0];
       await getSelection(firstItem);
@@ -771,17 +838,16 @@ const getSelection = async (item: ListItem) => {
 
     const res = await getSecByFirst(firstmenuid);
     if (res.data.data.length > 0) {
-      actionrouterList.value.find(
-        (item) => item.id === firstmenuid
-      )!.children = res.data.data.map((item) => ({
-        id: item.ID,
-        name: item.Name,
-        OrderNum: item.OrderNum,
-        children: [],
-        active: false,
-      }));
+      actionrouterList.value.find((item) => item.id === firstmenuid)!.children =
+        res.data.data.map((item) => ({
+          id: item.ID,
+          name: item.Name,
+          OrderNum: item.OrderNum,
+          children: [],
+          active: false,
+        }));
     }
-    
+
     toSecmenu(item);
     actionrouterList.value = sortByOrderNumDescending(actionrouterList.value);
   } finally {
@@ -849,6 +915,24 @@ const VerticalMain = (e: any) => {
 
 // 动态导入 PlanCard 组件
 const PlanCard = () => import("@/components/plan-card/index.vue");
+
+function findCategoryName(actionId: number): string {
+  for (const firstCategory of actionrouterList.value) {
+    for (const secondCategory of firstCategory.children) {
+      for (const action of secondCategory.children) {
+        if (action.id === actionId) {
+          return secondCategory.name;
+        }
+      }
+    }
+  }
+  return "";
+}
+
+const clearSearch = () => {
+  searchValue.value = '';
+  searchResult.value = [];
+};
 </script>
 
 <style>
@@ -926,5 +1010,195 @@ const PlanCard = () => import("@/components/plan-card/index.vue");
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 1s ease;
+}
+
+.search-result-item {
+  font-size: 20px;
+  margin: 10px 0; /* 减少上下间距 */
+  color: #444;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  background-color: #f9f9f9; /* 统一背景颜色 */
+}
+
+.search-result-item:hover {
+  background-color: #e0e0e0; /* 悬停时背景色 */
+}
+
+.directory-item {
+  background-color: #e3f2fd; /* 更柔和的背景色 */
+  border-left: 4px solid #0288d1; /* 调整边框宽度和颜色 */
+  padding: 12px; /* 减少内边距 */
+  font-size: 20px; /* 调整字体大小 */
+  color: #0288d1;
+  border-radius: 6px;
+  margin-bottom: 8px; /* 减少下间距 */
+  transition: transform 0.3s ease;
+}
+
+.directory-item:hover {
+  transform: scale(1.01); /* 轻微放大 */
+}
+
+.action-item {
+  background-color: #fff8e1; /* 更柔和的背景色 */
+  border-left: 4px solid #f57c00;
+  padding: 12px;
+  font-size: 20px;
+  color: #f57c00;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: transform 0.3s ease;
+}
+
+.action-item:hover {
+  transform: scale(1.01);
+}
+
+.directory-item-first {
+  background-color: #e8f5e9;
+  border-left: 4px solid #2e7d32;
+  padding: 12px;
+  font-size: 20px;
+  color: #2e7d32;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: transform 0.3s ease;
+}
+
+.directory-item-first:hover {
+  transform: scale(1.01);
+}
+
+/* 搜索结果卡片基础样式 */
+.search-card {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.search-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* 不同层级的卡片样式 */
+.first-level {
+  border-left: 6px solid #2196F3;
+}
+
+.second-level {
+  border-left: 6px solid #FF9800;
+}
+
+.action-level {
+  border-left: 6px solid #4CAF50;
+}
+
+/* 图标区域 */
+.card-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  margin-right: 16px;
+}
+
+.first-level .card-icon {
+  color: #2196F3;
+  background: rgba(33, 150, 243, 0.1);
+}
+
+.second-level .card-icon {
+  color: #FF9800;
+  background: rgba(255, 152, 0, 0.1);
+}
+
+.action-level .card-icon {
+  color: #4CAF50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+/* 内容区域 */
+.card-content {
+  flex: 1;
+}
+
+/* 类型标签 */
+.type-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.first-tag {
+  background: rgba(33, 150, 243, 0.1);
+  color: #2196F3;
+}
+
+.second-tag {
+  background: rgba(255, 152, 0, 0.1);
+  color: #FF9800;
+}
+
+.action-tag {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+}
+
+/* 标题 */
+.card-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin: 4px 0;
+}
+
+/* 路径信息 */
+.card-path {
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+.path-icon {
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+/* 右侧箭头 */
+.card-arrow {
+  color: #999;
+  font-size: 20px;
+  margin-left: 12px;
+}
+
+.search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cuIcon-close {
+  color: #999;
+  font-size: 32rpx;
+  padding: 0 20rpx;
+  cursor: pointer;
+}
+
+.cuIcon-close:active {
+  opacity: 0.7;
 }
 </style>
