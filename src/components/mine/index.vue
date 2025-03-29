@@ -37,7 +37,7 @@
               style="font-size: 25px; color: #16a9fa"
               class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
             ></text>
-            
+
             <!-- <text
               @click="clearStorage"
               style="font-size: 25px; color: #ffffff"
@@ -173,6 +173,18 @@
           </view>
         </view>
         <view
+          @click="myMes"
+          class="cu-item my-3 w-11/12 shadow-sm p-3 py-5 rounded-xl arrow"
+        >
+          <view class="content py-3 flex flex-row items-center">
+            <text class="cuIcon-circlefill text-grey"></text>
+            <div class="flex flex-col ml-3">
+              <text class="text-[#042c5c] text-xl font-bold">信息系统</text>
+              <text class="text-gray-500">查看我的信息</text>
+            </div>
+          </view>
+        </view>
+        <view
           v-if="roleName === 'coach'"
           @click="diyTab"
           class="cu-item my-3 w-11/12 shadow-sm p-3 py-5 rounded-xl arrow"
@@ -255,7 +267,9 @@ onMounted(async () => {
 const exitinfo = () => {
   router.push({ name: "info" });
 };
-
+const myMes = () => {
+  router.push({ name: "mes" });
+};
 const orderinfo = () => {
   router.push({ name: "orderRecord" });
 };
@@ -271,10 +285,10 @@ const diyTab = () => {
 const clearStorage = () => {
   uni.clearStorageSync();
   uni.showToast({
-    title: '存储已清除',
-    icon: 'success'
+    title: "存储已清除",
+    icon: "success",
   });
-  router.push({ name: 'login' });
+  router.push({ name: "login" });
 };
 </script>
 

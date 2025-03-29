@@ -40,6 +40,16 @@
           }
         },
         {
+          "path": "mes/index",
+          "name": "mes",
+          "meta": {
+            "islogin": false
+          },
+          "style": {
+            "navigationBarTitleText": "我的信息"
+          }
+        },
+        {
           "path": "course/index",
           "name": "course",
           "meta": {
