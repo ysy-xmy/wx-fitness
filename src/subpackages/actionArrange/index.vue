@@ -10,6 +10,12 @@
           placeholder="搜索二级类目、动作"
           confirm-type="search"
         />
+        <text 
+          v-if="searchValue"
+          class="cuIcon-close"
+          style="padding: 0 10px;"
+          @tap="clearSearch">
+        </text>
       </view>
     </view>
 
@@ -922,6 +928,11 @@ const removeItem = (item) => {
       });
     });
   }
+};
+
+const clearSearch = () => {
+  searchValue.value = '';
+  searchResult.value = [];
 };
 </script>
 

@@ -169,7 +169,10 @@
       @click="toActionArrange"
       v-if="roleName === 'coach' || actionsStore.getCoachID === 0"
     >
-      <van-icon name="plus" size="20" color="#6495ED" />
+      <div class="add-content">
+        <van-icon name="plus" size="24" color="#ffffff" />
+        <span class="add-text">添加计划</span>
+      </div>
     </div>
   </view>
   <van-dialog
@@ -663,17 +666,32 @@ const toggleEditMode = (item: any) => {
   }
 }
 .addBtn {
-  position: absolute;
-  bottom: 50px;
-  left: 20px;
-  background-color: white;
+  margin: 10px auto 60px;
+  width: 95%;
+  background: linear-gradient(135deg, #6495ED, #4169E1);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(100, 149, 237, 0.3);
+  transition: all 0.3s ease;
+}
+
+.addBtn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 5px rgba(100, 149, 237, 0.3);
+}
+
+.add-content {
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 75%;
-  padding: 10px;
-  width: 40px;
-  height: 40px;
+}
+
+.add-text {
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
 }
 :deep(.uni-calendar-item__weeks-box-circle) {
   background-color: #6495ed !important;
