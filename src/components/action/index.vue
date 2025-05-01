@@ -84,8 +84,7 @@
         scroll-y
         scroll-with-animation
         style="background-color: white"
-        :scroll-into-view="'main-' + mainCur"
-        @scroll="VerticalMain">
+        :scroll-into-view="actionScrollIntoView">
         <div v-if="secMenu.length > 0">
           <view
             class="padding-top"
@@ -119,7 +118,8 @@
                 :key="index2">
                 <view
                   class="felx flex-wrap w-full items-center justify-center content-center px-2 mb-3"
-                  style="position: relative">
+                  style="position: relative"
+                  :id="'action-' + item2.id">
                   <van-checkbox
                     v-if="ifChoose"
                     :value="item2.ifcheck"
@@ -372,6 +372,8 @@ const secMenu = ref<ListItem[]>([]);
 const tabCur = ref(0);
 const mainCur = ref(0);
 const verticalNavTop = ref(0);
+
+const actionScrollIntoView = ref("");
 
 type TreeNode = {
   name: string;
@@ -632,7 +634,7 @@ const toDetail = (item: ActionItem) => {
 };
 
 //处理搜索点击事件
-const handlelocation = (actionid: number) => {
+const handlelocation = async (actionid: number) => {
   const { firstCategoryId, secondCategoryId } = findCategoryIds(
     actionrouterList.value,
     actionid
@@ -653,42 +655,54 @@ const handlelocation = (actionid: number) => {
     mainCur.value = firstIndex;
     verticalNavTop.value = (firstIndex - 1) * 50;
 
-    // 展开对应的二级菜单
+    // 先关闭所有二级目录
     actionrouterList.value[firstIndex].children.forEach(
       (child) => (child.active = false)
     );
     const targetSecondCategory =
       actionrouterList.value[firstIndex].children[secondIndex];
-    targetSecondCategory.active = true;
 
-    // 更新二级菜单显示
+    // 检查图片数据是否已加载
+    if (
+      !targetSecondCategory.children.length ||
+      !targetSecondCategory.children[0].Imgs
+    ) {
+      // 如果没有图片数据，先加载
+      await getActionsBySec(String(targetSecondCategory.id)).then((res) => {
+        targetSecondCategory.children = res.data.data.map((item) => {
+          return {
+            id: item.ID,
+            name: item.Name,
+            OrderNum: item.OrderNum,
+            children: [],
+            Imgs: item.Imgs,
+            Videos: item.Videos,
+            Description: item.Description,
+            CreatedAt: item.CreatedAt,
+          };
+        });
+        actionrouterList.value = sortByOrderNumDescending(actionrouterList.value);
+      });
+    }
+
+    // 关键：先更新二级菜单
     toSecmenu(actionrouterList.value[firstIndex]);
 
-    // 添加滚动定位
+    // 必须 nextTick 后再设置 active 和滚动
     nextTick(() => {
-      const selector = `#main-${secondIndex}`;
-      const query = uni.createSelectorQuery().in(this);
-      query.select(selector).boundingClientRect();
-      query.exec((res) => {
-        if (res[0]) {
-          uni.pageScrollTo({
-            scrollTop: res[0].top,
-            duration: 300,
-          });
-        }
-      });
-    });
+      // 展开目标二级目录
+      actionrouterList.value[firstIndex].children[secondIndex].active = true;
 
-    // 自动展开目标动作（新增部分）
-    nextTick(() => {
-      const actionIndex = targetSecondCategory.children.findIndex(
+      // 自动展开目标动作并滚动
+      const actionIndex = actionrouterList.value[firstIndex].children[secondIndex].children.findIndex(
         (action: any) => action.id === actionid
       );
       if (actionIndex !== -1) {
         toggleActive(
-          targetSecondCategory.children[actionIndex],
-          targetSecondCategory.children
+          actionrouterList.value[firstIndex].children[secondIndex].children[actionIndex],
+          actionrouterList.value[firstIndex].children[secondIndex].children
         );
+        actionScrollIntoView.value = "action-" + actionid;
       }
     });
   }
@@ -914,21 +928,6 @@ const VerticalMain = (e: any) => {
   // #endif
 };
 
-// 动态导入 PlanCard 组件
-const PlanCard = () => import("@/components/plan-card/index.vue");
-
-function findCategoryName(actionId: number): string {
-  for (const firstCategory of actionrouterList.value) {
-    for (const secondCategory of firstCategory.children) {
-      for (const action of secondCategory.children) {
-        if (action.id === actionId) {
-          return secondCategory.name;
-        }
-      }
-    }
-  }
-  return "";
-}
 
 const clearSearch = () => {
   searchValue.value = '';
