@@ -1,20 +1,21 @@
 <template>
   <view class="relative flex flex-col h-full">
-    <view class="cu-bar relative search bg-white">
-      <view class="search-form round">
+  
+    <!-- 搜索栏（自定义样式，含取消和清空） -->
+    <view class="cu-bar search z-1001 ">
+      <view class="search-form radius">
         <text class="cuIcon-search"></text>
         <input
           v-model="searchValue"
           :adjust-position="false"
           type="text"
           placeholder="搜索二级类目、动作"
-          confirm-type="search" />
-        <text 
-          v-if="searchValue"
-          class="cuIcon-close"
-          style="padding: 0 10px;"
-          @tap="clearSearch">
-        </text>
+          confirm-type="search"
+        />
+      </view>
+      <view class="action" style="display: flex; align-items: center;">
+        <text           v-if="searchValue"
+        @tap="clearSearch" style="font-size: 16px;">取消</text>
       </view>
     </view>
 
@@ -189,7 +190,7 @@
 
     <van-index-bar
       v-if="searchResult.length > 0"
-      class="w-screen fixed z-1000 top-10 bg-[#f2f2f2] shadow-sm"
+      class="w-screen fixed z-1000 top-12 bg-[#f2f2f2] shadow-sm pb-10"
       :index-list="indexList">
       <scroll-view
         scroll-y
@@ -933,6 +934,7 @@ const clearSearch = () => {
   searchValue.value = '';
   searchResult.value = [];
 };
+
 </script>
 
 <style>

@@ -24,6 +24,7 @@
       </div>
     </div>
     <van-tabbar
+      v-if="tabbarStore.show"
       placeholder
       @change="onChange"
       v-model="usetsto.getcurrentactive"
@@ -123,6 +124,7 @@ import { getUserInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 import { getCoachClass } from "@/api/courses/courses";
 import { useRouter } from "uni-mini-router";
+import { useTabbarStore } from "@/state/tabbar";
 const router = useRouter();
 const usetsto = useAppStore();
 const AuthStore = useAuthStore();
@@ -141,6 +143,7 @@ const stuid = ref(-1);
 const courid = ref(-1);
 const type = ref("");
 const sourName = ref("");
+const tabbarStore = useTabbarStore();
 onMounted(() => {
   if (router.route.value.query.isChoose) {
     ifChoose.value = true;
