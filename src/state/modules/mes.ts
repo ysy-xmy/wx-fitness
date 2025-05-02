@@ -1,3 +1,4 @@
+import { getNotifyList, getWithoutRead } from "@/api/notify";
 import { defineStore } from "pinia";
 
 export const usemesStore = defineStore({
@@ -5,6 +6,7 @@ export const usemesStore = defineStore({
   state: (): any => ({
     hadNew: "", // 是否有新的消息
     list: [], // 消息列表
+    total: 0,
     socket: null, // socket
     createCount: 0, // 创建socket的次数
     status: false, // 是否连接成功
@@ -19,11 +21,45 @@ export const usemesStore = defineStore({
     },
   },
   actions: {
-    sethadNew(state: any) {
+    //只显示未读
+    showUnread() {
+      return new Promise((resolve, reject) => {
+        getWithoutRead().then((res: any) => {
+          if (res.code === 200) {
+            this.setList(res.data.list);
+            this.setTotal(res.data.total);
+            this.resolve(res);
+          } else {
+            reject(false);
+          }
+        });
+      });
+    },
+    //获取消息列表
+    addMesList() {
+      return new Promise((resolve, reject) => {
+        getNotifyList().then((res: any) => {
+          if (res.code === 200) {
+            this.setList(res.data.list);
+            this.setTotal(res.data.total);
+            this.resolve(res);
+          } else {
+            reject(false);
+          }
+        });
+      });
+    },
+    sethadNew(state: boolean) {
       this.hadNew = state;
+    },
+    setTotal(state: number) {
+      this.total = state;
     },
     setList(state: any) {
       this.list.push(state);
+    },
+    setClear() {
+      return;
     },
     changeStatus(id: string) {
       this.list.find((item: any) => item.id === id).status = 1;
@@ -38,7 +74,7 @@ export const usemesStore = defineStore({
         return;
       }
       this.socket = uni.connectSocket({
-        url: "ws://47.115.173.204:8082/api/notifier/conn",
+        url: "ws://47.115.173.204:8081/api/notifier/conn",
         success: () => {
           console.log("Socket连接成功");
         },
