@@ -1,58 +1,73 @@
 <template>
-  <div class="search">
-    <van-search
-      style="width: 100%"
-      v-model="mesState.searchVal"
-      placeholder="请输入关键词"
-      @search="changeMesList"
-      @cancel="clearVal"
-    />
-  </div>
-  <div class="secCheck">
-    <van-checkbox v-model="mesState.checked" @change="changeMesList">
-      仅显示未读
-    </van-checkbox>
-    <div class="allRead" @click="clickAllRead">
-      <van-icon name="success" />
-      一键已读
+  <scroll-view
+    class="bg"
+    ref="mesListRef"
+    @scroll="handleScroll"
+    scroll-y
+    :scroll-top="mesListRefHeight"
+  >
+    <div class="search">
+      <van-search
+        style="width: 100%"
+        v-model="mesState.searchVal"
+        placeholder="请输入关键词"
+        @search="changeMesList"
+        @cancel="clearVal"
+      />
     </div>
-  </div>
-  <div class="right" ref="mesListRef" @scroll="handleScroll">
-    <van-collapse :value="mesState.activeKey" accordion @change="showDetail">
-      <div
-        class="card"
-        v-for="(item, index) in mesStore.mesList"
-        :key="item.id"
-      >
-        <van-collapse-item :name="item.id" class="collapse-item">
-          <view slot="title">
-            <view class="dot" v-if="!item.readed"></view>
-            {{ item.title }}</view
-          >
-          <div class="detailContent" v-html="item.content"></div>
-        </van-collapse-item>
+    <div class="secCheck">
+      <van-checkbox v-model="mesState.checked" @change="changeMesList">
+        仅显示未读
+      </van-checkbox>
+      <div class="allRead" @click="clickAllRead">
+        <van-icon name="success" />
+        一键已读
       </div>
-      <div
-        class="bottom_text"
-        v-if="mesStore.mesList.length >= mesStore.total - 1"
-      >
-        已经到底了
-      </div>
-      <div
-        class="bottom_text"
-        v-else-if="mesStore.length < mesStore.total - 1 && mesState.loading"
-      >
-        <van-loading />
-        <div>加载中...</div>
-      </div>
-    </van-collapse>
-    <div v-if="mesStore.mesList.length === 0" class="emptystatus">
-      <div class="emptyText">暂无信息</div>
     </div>
-  </div>
+    <div class="right" ref="mesListRef">
+      <van-collapse
+        :value="mesState.activeKey"
+        accordion
+        @change="showDetail"
+        v-if="mesStore.mesList.length > 0"
+      >
+        <div
+          class="card"
+          v-for="(item, index) in mesStore.mesList"
+          :key="item.ID"
+        >
+          <van-collapse-item :name="item.id" class="collapse-item">
+            <view slot="title">
+              <view class="dot" v-if="!item.Status"></view>
+              {{ item.Title }}</view
+            >
+            <div class="detailContent" v-html="item.Content"></div>
+          </van-collapse-item>
+        </div>
+        <div
+          class="bottom_text"
+          v-if="mesStore.mesList.length >= mesStore.total - 1"
+        >
+          已经到底了
+        </div>
+        <div
+          class="bottom_text"
+          v-else-if="
+            mesStore.mesList.length < mesStore.total - 1 && mesState.loading
+          "
+        >
+          <van-loading />
+          <div>加载中...</div>
+        </div>
+      </van-collapse>
+      <div v-if="mesStore.mesList.length === 0" class="emptystatus">
+        <div class="emptyText">暂无信息</div>
+      </div>
+    </div>
+  </scroll-view>
 </template>
 <script setup lang="ts">
-import { getNotifyList, readNotify } from "@/api/notify/index";
+import { readNotify } from "@/api/notify/index";
 // import router from "@/router";
 // import {
 //   QuestionCircleOutlined,
@@ -105,7 +120,7 @@ const clearVal = () => {
   changeMesList();
 };
 const clickAllRead = async () => {
-  if (mesStore.hadNew == 0)
+  if (mesStore.hadNew === 0)
     uni.showToast({
       title: "没有新消息",
       icon: "none",
@@ -130,46 +145,19 @@ const clickAllRead = async () => {
 const showDetail = (e: any) => {
   if (!e) return; // 如果没有选中项，直接返回
   console.log(e.detail);
+  console.log(mesStore.mesList);
   mesState.activeKey = e.detail;
   nextTick(() => {
-    let temp: HTMLElement | null = null;
-    const index = mesList.value.findIndex((item) => item.id === e);
+    const index = e.detail;
     // notifyStore.sethadNew(false);
-    temp = refList.value[index];
-
+    console.log(typeof index, 123);
     if (typeof index !== "number") return;
-    if (!temp) return;
-    console.log(index, temp, 123);
-    const { width, height } = temp.getBoundingClientRect();
-    let lastHeight = height;
-    const getHeight = () => {
-      const { height: heightNew } = (
-        temp as HTMLElement
-      ).getBoundingClientRect();
-      if (heightNew !== lastHeight || heightNew === height) {
-        console.log("heightNew", heightNew);
-        lastHeight = heightNew;
-        requestAnimationFrame(getHeight);
-      } else {
-        const topHeight = (temp as HTMLElement).offsetTop; //子元素相对于父元素的高度
-        if (heightNew >= mesListRefHeight.value) {
-          (mesListRef.value as HTMLElement).scrollTo({
-            top: topHeight, //滚动到的位置
-            behavior: "smooth",
-          });
-        } else {
-          (mesListRef.value as HTMLElement).scrollTo({
-            top: topHeight - (mesListRefHeight.value - heightNew) / 2, //滚动到的位置
-            behavior: "smooth",
-          });
-        }
-      }
-    };
-    if (!mesList.value[index].readed)
-      readNotify(mesList.value[index].id).then((res) => {
-        if (res.code == 20000) {
-          console.log(mesList.value[index]);
-          mesList.value[index].readed = true;
+
+    if (!mesStore.mesList[index].Status)
+      readNotify(mesStore.mesList[index].ID).then((res) => {
+        if (res.code == 200) {
+          console.log(mesStore.mesList[index]);
+          mesStore.mesList[index].Status = true;
           mesStore.sethadNew(false);
         }
       });
@@ -186,14 +174,12 @@ const showDetail = (e: any) => {
     //     });
     //   }
     // });
-    getHeight();
   });
 };
 const changeMesList = async () => {
   mesState.activeKey = [];
   mesState.page_size = 10;
   mesState.page_index = 1;
-  mesList.value = [];
   refList.value = [];
   let data = {
     userId: useAuthStore().user.id,
@@ -206,9 +192,6 @@ const mesListRef = ref<HTMLElement | null>(null);
 const refList = ref<HTMLElement[]>([]);
 const customStyle =
   "background:rgba(46, 49, 51, 0.30);border-radius: 4px;margin-bottom: 10px;border: 0;overflow: hidden;";
-const setMesRef = (el: HTMLElement, index: number) => {
-  refList.value[index] = el;
-};
 const detailContent = ref("");
 const mesList = ref<any>([
   {
@@ -251,30 +234,54 @@ const getMesList = (data) => {
     .then(() => {
       mesState.loading = false;
     })
-    .catch(() => {
+    .catch((e) => {
+      console.log(e);
       uni.showToast({
         title: "获取消息失败",
         icon: "error",
       });
     });
 };
-const handleScroll = (e: Event) => {
-  let el = e.target as HTMLElement;
-  //判断是否到达div容器底部
-  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 20) {
-    if (mesList.value.length >= mesState.total) return;
-    mesState.loading = false;
-    mesState.page_index++;
-    let data = {
-      userId: useAuthStore().user.id,
-      page: mesState.page_index,
-      size: mesState.page_size,
-    };
-    getMesList(data);
-  }
+const handleScroll = (e: any) => {
+  const { scrollTop, scrollHeight } = e.detail;
+
+  // 获取 scroll-view 可视区域高度
+  uni
+    .createSelectorQuery()
+    .select(".bg") // 确保 scroll-view 使用了 class="bg"
+    .boundingClientRect((rect: any) => {
+      if (!rect) return;
+      const clientHeight = rect.height;
+
+      // 判断是否触底
+      if (scrollTop + clientHeight >= scrollHeight - 20) {
+        // 防止重复触发
+        if (mesState.loading) return;
+
+        // 判断是否还有更多数据
+        if (mesStore.mesList.length >= mesStore.total) return;
+
+        mesState.loading = true; // 标记加载中
+        mesState.page_index++;
+
+        const data = {
+          userId: useAuthStore().user.id,
+          page: mesState.page_index,
+          size: mesState.page_size,
+        };
+
+        getMesList(data).finally(() => {
+          mesState.loading = false; // 请求结束后恢复
+        });
+      }
+    })
+    .exec();
 };
 </script>
 <style scoped lang="scss">
+.bg {
+  height: 100vh;
+}
 .card {
   margin-top: 10px;
   background: white;
@@ -456,9 +463,7 @@ const handleScroll = (e: Event) => {
   }
 }
 .right {
-  overflow-y: auto;
   width: 100%;
-  height: 102%;
   text-align: center;
   // background-color: rgba(0, 0, 0, 1);
   padding: 25px 24px;
@@ -536,7 +541,7 @@ const handleScroll = (e: Event) => {
       PingFang SC;
     font-weight: 500;
     font-size: 14px;
-    color: rgba(255, 255, 255, 1);
+    color: black;
     line-height: 20px;
     font-style: normal;
   }

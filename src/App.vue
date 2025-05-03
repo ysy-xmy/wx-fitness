@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
-import { getUserInfo, refreshToken } from "@/api/user";
+import { refreshToken } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 import { usemesStore } from "@/state/modules/mes";
 const authStore = useAuthStore();
-const mesStore = usemesStore();
+
 onLaunch(() => {
   if (uni.getStorageSync("token")) {
     refreshToken().then((res) => {
@@ -16,21 +16,23 @@ onLaunch(() => {
         return;
       } else if (!res.data.data.Remove && !res.data.data.Refresh) {
         //如果没有Remove而且Refresh为true,啥都不做
-        mesStore.createSocket();
+
         return;
       } else {
         //刷新token
         let token = res.data.data.Token;
         authStore.setToken(token);
         uni.setStorageSync("token", token);
-        mesStore.createSocket();
+
         return;
       }
     });
   }
 });
 onShow(() => {});
-onHide(() => {});
+onHide(() => {
+  usemesStore().closeSocket();
+});
 </script>
 <style>
 @import url("./style/index.css");
