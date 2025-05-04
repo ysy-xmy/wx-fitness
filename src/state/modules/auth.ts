@@ -6,6 +6,7 @@
  * @Description:有关权限的pinia
  */
 import { defineStore } from "pinia";
+import { usemesStore } from "./mes";
 
 interface AuthState {
   token?: string;
@@ -61,6 +62,7 @@ export const useAuthStore = defineStore({
     },
     setUser(user: object) {
       this.user = user;
+      if (user) usemesStore().createSocket();
     },
     clearToken() {
       this.token = ""; // 清空 token 设置为空字符串

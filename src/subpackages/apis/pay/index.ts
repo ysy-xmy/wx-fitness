@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 export const buyCourse = (data: any) => {
-  return request.post("/api/pay/bugCourse", data);
+  return request.post("/api/pay/buyCourse", data);
 };
 //获取支付签名
 export const getPaySignature = (data: any) => {
