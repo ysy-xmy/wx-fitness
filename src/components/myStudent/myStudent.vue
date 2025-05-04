@@ -1,120 +1,104 @@
 <template>
-  <scrollFrom
-    :fun="getCoachStudentinfo"
-    :dispose="dispose"
-    ref="scorllFormRef"
-    :datasources="list"
-  >
-    <template #card>
-      <div class="main">
-        <div class="font-bold text-10 mt-2 ml-2">进 行 的 课 程</div>
-        <template v-for="(item, index) in list">
-          <div class="bg-white coachlist p-1">
+  <div class="h-full flex flex-col overflow-y-auto pb-5">
+    <template v-if="list.length > 0">
+      <template v-for="(item, index) in list" :key="item.ID">
+        <div class="bg-white coachlist p-1">
+          <div
+            class="lists-item flex flex-nowrap items-start justify-between p-1">
+            <div class="w-12 h-12 mr-2">
+              <img
+                class="w-12 h-12 rounded-full"
+                :src="
+                  item.Avatar
+                    ? item.Avatar
+                    : 'https://img.yzcdn.cn/vant/user-inactive.png'
+                "
+                alt="" />
+            </div>
             <div
-              class="lists-item flex flex-nowrap items-start justify-between p-1"
-            >
-              <div class="w-12 h-12 mr-2">
-                <img
-                  class="w-12 h-12 rounded-full"
-                  :src="
-                    item.Avatar
-                      ? item.Avatar
-                      : 'https://img.yzcdn.cn/vant/user-inactive.png'
-                  "
-                  alt=""
-                />
-              </div>
-              <div
-                class="flex-1 flex pl-1 w-0 flex-row items-start justify-between"
-              >
-                <div class="text-box">
-                  <div class="title">
-                    <h1 class="w-full flex text-lg font-bold pt-2 items-center">
-                      <span
-                        class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden"
-                      >
-                        {{ item.CoachID !== 0 ? item.Username : "自我训练" }}
-                      </span>
-                      <span
-                        v-if="item.StudentRemark"
-                        class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden text-[#fd72729d] text-xs"
-                        >({{ item.StudentRemark }})</span
-                      >
-                      <!-- <text
-                        v-if="item.Sex && item.CoachID !== 0"
-                        style="font-size: 25px; color: #a54aff"
-                        class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"
-                      ></text>
+              class="flex-1 flex pl-1 w-0 flex-row items-start justify-between">
+              <div class="text-box">
+                <div class="title">
+                  <h1 class="w-full flex text-lg font-bold pt-2 items-center">
+                    <span
+                      class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden">
+                      {{ item.CoachID !== 0 ? item.Username : "自我训练" }}
+                    </span>
+                    <span
+                      v-if="item.StudentRemark"
+                      class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden text-[#fd72729d] text-xs"
+                      >({{ item.StudentRemark }})</span
+                    >
+                    <!-- <text
+                      v-if="item.Sex && item.CoachID !== 0"
+                      style="font-size: 25px; color: #a54aff"
+                      class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"
+                    ></text>
 
-                      <text
-                        v-if="item.CoachID !== 0"
-                        style="font-size: 25px; color: #16a9fa"
-                        class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
-                      ></text> -->
-                    </h1>
-
-                    <p
+                    <text
                       v-if="item.CoachID !== 0"
-                      class="text-[#6b7280] text-[12px] w-max-[180px] break-all"
-                    >
-                      {{ item.Name }} {{ handleCourseType(item.CourseType) }}
-                      {{ item.LessonCount ? item.LessonCount + "节" : "" }}
-                      <span v-if="item.remark" class="text-[#ff6b6b]"
-                        >({{ item.remark }})</span
-                      >
-                    </p>
-                    <p
-                      v-else
-                      class="text-[#6b7280] text-[12px] w-max-[180px] break-all"
-                    >
-                      为自己安排训练计划
-                    </p>
-                  </div>
-                </div>
+                      style="font-size: 25px; color: #16a9fa"
+                      class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
+                    ></text> -->
+                  </h1>
 
-                <div
-                  class="btn h-full mt-[17px] flex flex-row items-center gap-2"
-                >
-                  <van-button
-                    @click="
-                      todetail(
-                        item.UserID,
-                        item.ID,
-                        item.CoachPunchInAuth,
-                        item.Name,
-                        item.StudentRemark
-                      )
-                    "
-                    color="#5ccee0"
-                    size="mini"
-                    round
-                    type="primary"
-                    class="tracking-wide"
-                    ><span>查看</span></van-button
-                  >
-                  <van-button
+                  <p
                     v-if="item.CoachID !== 0"
-                    @click="showTagDialog(item)"
-                    color="#8e44ad"
-                    size="mini"
-                    round
-                    type="primary"
-                    class="tracking-wide"
-                    ><span>备注</span></van-button
-                  >
+                    class="text-[#6b7280] text-[12px] w-max-[180px] break-all">
+                    {{ item.Name }} {{ handleCourseType(item.CourseType) }}
+                    {{ item.LessonCount ? item.LessonCount + "节" : "" }}
+                    <span v-if="item.remark" class="text-[#ff6b6b]"
+                      >({{ item.remark }})</span
+                    >
+                  </p>
+                  <p
+                    v-else
+                    class="text-[#6b7280] text-[12px] w-max-[180px] break-all">
+                    为自己安排训练计划
+                  </p>
                 </div>
+              </div>
+
+              <div
+                class="btn h-full mt-[17px] flex flex-row items-center gap-2">
+                <van-button
+                  @click="
+                    todetail(
+                      item.UserID,
+                      item.ID,
+                      item.CoachPunchInAuth,
+                      item.Name,
+                      item.StudentRemark
+                    )
+                  "
+                  color="#5ccee0"
+                  size="mini"
+                  round
+                  type="primary"
+                  class="tracking-wide"
+                  ><span>查看</span></van-button
+                >
+                <van-button
+                  v-if="item.CoachID !== 0"
+                  @click="showTagDialog(item)"
+                  color="#8e44ad"
+                  size="mini"
+                  round
+                  type="primary"
+                  class="tracking-wide"
+                  ><span>备注</span></van-button
+                >
               </div>
             </div>
           </div>
-        </template>
-      </div>
+        </div>
+      </template>
     </template>
-    <template #empty>
+    <template v-else>
       <div class="nodata-card flex flex-col justify-center items-center w-full">
         <van-empty description="暂无学员" />
       </div>
     </template>
-  </scrollFrom>
   <!-- 添加备注弹窗 -->
   <van-dialog
     use-slot
@@ -127,26 +111,22 @@
         addTagVal = '';
         showDialogAddTags = false;
       }
-    "
-  >
+    ">
     <van-field
       :value="addTagVal"
       placeholder="输入备注"
       maxlength="10"
-      @change="(e) => (addTagVal = e.detail)"
-    />
+      @change="(e) => (addTagVal = e.detail)" />
   </van-dialog>
+</div>
 </template>
 <script lang="ts" setup>
 import { useRouter } from "uni-mini-router";
-import scrollFrom from "@/components/scrollForm/index.vue";
 import { ref, onMounted } from "vue";
 import { getCoachStudentinfo } from "@/api/coach";
 import { useActionsStore } from "@/state/modules/actions";
 import { changeCourseMes } from "@/api/course";
 const router = useRouter();
-const scorllFormRef = ref<any>(null);
-const totalData = ref([]);
 let list = ref<any[]>([]);
 const showDialogAddTags = ref(false);
 const currentRemark = ref("");
@@ -154,19 +134,20 @@ const currentIndex = ref(-1);
 const addTagVal = ref("");
 onMounted(() => {
   uni.showLoading({ title: "数据加载中" });
-  uni.$on("nextData", (val) => {
-    if (val == "buy") {
-      uni.showLoading();
-      scorllFormRef.value.getData();
-      getListData();
-    }
-  });
-  uni.$on("searchDate", (val) => {});
   getListData();
   setTimeout(() => {
     uni.hideLoading();
   }, 3000);
 });
+const getListData = async () => {
+  const res = await getCoachStudentinfo();
+  if (res && res.data && res.data.data) {
+    list.value = res.data.data;
+  } else {
+    list.value = [];
+  }
+  uni.hideLoading();
+};
 const addTags = async () => {
   const current = addTagVal.value;
   const res = await changeCourseMes({
@@ -221,22 +202,6 @@ const showTagDialog = (item: any) => {
   tempval.value = item;
   showDialogAddTags.value = true;
 };
-const getListData = () => {
-  list.value = scorllFormRef.value?.state.list;
-  totalData.value = scorllFormRef.value?.state.totalData;
-  if (scorllFormRef.value?.ifChange()) {
-    uni.hideLoading();
-    return;
-  } else {
-    setTimeout(() => {
-      getListData();
-    }, 500);
-  }
-};
-
-const dispose = (item: any) => {
-  return item;
-};
 const todetail = (
   stuid: any,
   courseId: any,
@@ -266,6 +231,6 @@ const todetail = (
 .text-box {
   width: 60%;
   overflow: hidden;
-  flex: 1
+  flex: 1;
 }
 </style>

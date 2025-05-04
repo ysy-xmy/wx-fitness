@@ -3,8 +3,7 @@
     <div style="flex: 1 !important; height: 0" class="viewcontent flex-1">
       <div
         v-show="usetsto.active === 'index'"
-        class="index-page"
-        style="height: 90vh; overflow: hidden"
+        class="index-page h-full"
       >
         <CoachHome v-if="permission == 'coach'" />
         <Index v-else />

@@ -66,15 +66,15 @@
         :scroll-top="verticalNavTop"
         style="height: calc(100vh - 375upx)">
         <view
-          class="cu-item truncate"
+          v-for="(item, index) in actionrouterList"
+          :key="item.id"
           :style="{
             backgroundColor: index == tabCur ? '#5adade' : '#f7f8fc',
             color: index == tabCur ? '#ffffff' : '',
             fontWeight: index == tabCur ? 'bold' : '',
             borderRadius: index == tabCur ? '5px' : '',
           }"
-          v-for="(item, index) in actionrouterList"
-          :key="index"
+          class="cu-item truncate"
           @tap="TabSelect"
           :data-id="index">
           {{ item.name }}
@@ -87,10 +87,10 @@
         :scroll-into-view="actionScrollIntoView">
         <div v-if="secMenu.length > 0">
           <view
-            class="padding-top"
             v-for="(item1, index1) in secMenu"
-            :key="index1"
-            :id="'main-' + index1">
+            :key="item1.id"
+            :id="'main-' + index1"
+            class="padding-top">
             <view
               @click="secMenuSelect(item1, index1)"
               class="cu-bar text-black font-extrabold solid-bottom bg-white">
@@ -115,7 +115,7 @@
                 v-for="(item2, index2) in actionrouterList[mainCur].children[
                   index1
                 ].children"
-                :key="index2">
+                :key="item2.id">
                 <view
                   class="felx flex-wrap w-full items-center justify-center content-center px-2 mb-3"
                   style="position: relative"
@@ -148,7 +148,7 @@
                   </view>
                   <transition name="fade">
                     <div
-                      v-if="item2.active"
+                      v-if="item2.active && item2.Imgs"
                       class="flex flex-row w-full justify-center gap-3 flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
                       @click="toDetail(item2)">
                       <div
@@ -198,7 +198,7 @@
         class="cu-list menu sm-border">
         <view
           v-for="(item, index) in searchResult"
-          :key="index"
+          :key="item.id"
           class="mx-4 my-2">
           <view
             @click="handlelocation(item.isAction ? item.id : (item.children && item.children.length > 0 ? item.children[0].id : item.id))"
@@ -279,7 +279,7 @@
           v-if="chooseList.length == 0">
           <van-empty description="暂未选择动作" />
         </div>
-        <div v-for="item in chooseList">
+        <div v-for="item in chooseList" :key="item">
           <div style="width: 100vw; padding: 0 20px">
             <div
               class="card"

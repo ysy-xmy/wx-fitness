@@ -1,6 +1,6 @@
 <template>
   <div class="tab-mycourse w-full pb-28 flex flex-wrap justify-center">
-    <div v-if="Object.keys(list).length > 0" style="width: 100vw">
+    <div v-if="Object.keys(list).length > 0" style="width: 100vw; height: calc(100vh - 200px); overflow-y: auto;">
       <div v-for="(item, index) in Object.keys(list)" :key="index">
         <div
           v-for="it in list[item]"
