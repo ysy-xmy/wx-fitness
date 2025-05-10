@@ -175,7 +175,7 @@
                   0
                 "
                 class="w-full flex justify-center">
-                <text class="text-gray-500">该目录暂无具体动作</text>
+                <van-empty description="该目录暂无具体动作" image="search" />
               </div>
             </view>
           </view>
