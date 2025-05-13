@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/state/modules/auth";
 import request from "@/utils/request";
 export const getNotifyList = (data, url) => {
   return request.get(url, { params: data });
@@ -10,9 +11,10 @@ export const readNotify = (data: any) => {
       range: "all",
     };
   } else {
-    t = data;
+    t = { id: data };
   }
-  return request.post("/api/notifier/status", t);
+  t.userId = useAuthStore().user.id;
+  return request.put("/api/notifier/status", t);
 };
 
 //获取未读通知数量

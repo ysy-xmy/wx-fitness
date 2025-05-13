@@ -6,7 +6,7 @@
     scroll-y
     :scroll-top="mesListRefHeight"
   >
-    <div class="search">
+    <!-- <div class="search">
       <van-search
         style="width: 100%"
         v-model="mesState.searchVal"
@@ -23,7 +23,7 @@
         <van-icon name="success" />
         一键已读
       </div>
-    </div>
+    </div> -->
     <div class="right" ref="mesListRef">
       <van-collapse
         :value="mesState.activeKey"

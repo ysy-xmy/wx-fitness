@@ -26,15 +26,17 @@ export const usemesStore = defineStore({
     //只显示未读
     showUnread() {
       return new Promise((resolve, reject) => {
-        getWithoutRead({ userId: (useAuthStore().user as any).id }).then((res: any) => {
-          if (res.code === 200) {
-            this.setList(res.data.Notifications || []);
-            this.setTotal(res.data.Total || 0);
-            resolve(res);
-          } else {
-            reject(false);
+        getWithoutRead({ userId: (useAuthStore().user as any).id }).then(
+          (res: any) => {
+            if (res.code === 200) {
+              this.setList(res.data.Notifications || []);
+              this.setTotal(res.data.Total || 0);
+              resolve(res);
+            } else {
+              reject(false);
+            }
           }
-        });
+        );
       });
     },
     //获取消息列表
@@ -78,6 +80,7 @@ export const usemesStore = defineStore({
       this.list.find((item: any) => item.id === id).status = 1;
     },
     createSocket() {
+      if (!uni.getStorageSync("token")) return;
       console.log("创建socket");
       if (
         this.status ||
@@ -87,8 +90,10 @@ export const usemesStore = defineStore({
         return;
       }
 
-      const wsUrl = "ws://47.115.173.204:8082/api/notifier/conn?userId=" + (useAuthStore().user as any).id;
-      const token = uni.getStorageSync("token") || '';
+      const wsUrl =
+        "ws://47.115.173.204:8081/api/notifier/conn?userId=" +
+        (useAuthStore().user as any).id;
+      const token = uni.getStorageSync("token") || "";
 
       try {
         // 关闭可能存在的旧连接
@@ -96,15 +101,15 @@ export const usemesStore = defineStore({
           try {
             uni.closeSocket();
           } catch (e) {
-            console.log('关闭旧连接失败', e);
+            console.log("关闭旧连接失败", e);
           }
           this.socket = null;
         }
-        
+
         uni.connectSocket({
           url: wsUrl,
           header: {
-            'Authorization': token
+            Authorization: token,
           },
           success: () => {
             console.log("Socket连接请求已发送");
@@ -112,14 +117,14 @@ export const usemesStore = defineStore({
           fail: (error) => {
             console.error("Socket连接请求失败", error);
             this.createCount++;
-            
+
             if (this.createCount < this.maxCreateCount) {
               setTimeout(() => {
                 console.log(`尝试第${this.createCount}次重连...`);
                 this.createSocket();
               }, 2000);
             }
-          }
+          },
         });
 
         // 监听连接打开事件
@@ -128,7 +133,7 @@ export const usemesStore = defineStore({
           this.status = true;
           this.socket = true;
           this.createCount = 0;
-          
+
           // 设置心跳机制，每10秒发送一次ping
           const heartbeatInterval = setInterval(() => {
             if (this.socket && this.status) {
@@ -140,7 +145,7 @@ export const usemesStore = defineStore({
                 fail: (error) => {
                   console.error("心跳消息发送失败", error);
                   clearInterval(heartbeatInterval);
-                }
+                },
               });
             } else {
               clearInterval(heartbeatInterval);
@@ -165,7 +170,7 @@ export const usemesStore = defineStore({
           this.status = false;
           this.socket = null;
           this.createCount++;
-          
+
           // 尝试重连
           if (this.createCount < this.maxCreateCount) {
             setTimeout(() => {
@@ -182,13 +187,13 @@ export const usemesStore = defineStore({
             title: "连接错误",
             icon: "error",
           });
-          
+
           this.status = false;
         });
       } catch (error) {
         console.error("创建WebSocket实例失败:", error);
         this.createCount++;
-        
+
         // 尝试重连
         if (this.createCount < this.maxCreateCount) {
           setTimeout(() => {
@@ -203,7 +208,7 @@ export const usemesStore = defineStore({
           uni.closeSocket({
             success: () => {
               console.log("WebSocket已手动关闭");
-            }
+            },
           });
         } catch (error) {
           console.error("关闭WebSocket时出错:", error);

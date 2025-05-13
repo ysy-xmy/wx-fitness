@@ -59,10 +59,11 @@ export const useAuthStore = defineStore({
     },
     setToken(token: string) {
       this.token = token;
+      if (token) usemesStore().createSocket();
     },
     setUser(user: object) {
       this.user = user;
-      if (user) usemesStore().createSocket();
+      usemesStore().createSocket();
     },
     clearToken() {
       this.token = ""; // 清空 token 设置为空字符串

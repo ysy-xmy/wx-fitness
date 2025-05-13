@@ -15,15 +15,12 @@ onLaunch(() => {
         authStore.clearStore();
         return;
       } else if (!res.data.data.Remove && !res.data.data.Refresh) {
-        //如果没有Remove而且Refresh为true,啥都不做
-
         return;
       } else {
         //刷新token
         let token = res.data.data.Token;
         authStore.setToken(token);
         uni.setStorageSync("token", token);
-
         return;
       }
     });
