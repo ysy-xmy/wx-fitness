@@ -10,11 +10,12 @@
           placeholder="搜索二级类目、动作"
           confirm-type="search"
         />
-        <text 
+        <text
           v-if="searchValue"
           class="cuIcon-close"
-          style="padding: 0 10px;"
-          @tap="clearSearch">
+          style="padding: 0 10px"
+          @tap="clearSearch"
+        >
         </text>
       </view>
     </view>
@@ -39,14 +40,18 @@
       >
         正在为动作组 "{{ props.name || "" }}" 选课
       </div>
-      <view class="cu-item" @click="showPopup = true">
-        <div
-          class="cuIcon-apps"
-          style="position: relative; width: 30px; font-size: 30px; height: 30px"
-        >
-          <view class="cu-tag badge">{{ chooseList.length }}</view>
+      <div
+        class="cu-item"
+        @click="showPopup = true"
+        style="width: 80px; text-align: center; background: #9e9e9e36"
+      >
+        <div style="position: relative; height: 30px; line-height: 30px">
+          已选动作
+          <view class="cu-tag badge" style="right: -10px">{{
+            chooseList.length
+          }}</view>
         </div>
-      </view>
+      </div>
     </view>
 
     <view class="fixed">
@@ -156,19 +161,26 @@
                     <div
                       v-if="item2.active"
                       class="flex flex-row w-full justify-center gap-3 flex-nowrap items-center bg-[#f4f5f5] rounded-xl p-2 shadow-lg"
-                      @click="toDetail(item2)">
-                        <div class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
-                          <image
-                            class="w-full h-full"
-                            mode="aspectFill"
-                            :src="getImageUrl(item2.Imgs, 0)" />
-                        </div>
-                        <div class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
-                          <image
-                            class="w-full h-full"
-                            mode="aspectFill"
-                            :src="getImageUrl(item2.Imgs, 1)" />
-                        </div>
+                      @click="toDetail(item2)"
+                    >
+                      <div
+                        class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0"
+                      >
+                        <image
+                          class="w-full h-full"
+                          mode="aspectFill"
+                          :src="getImageUrl(item2.Imgs, 0)"
+                        />
+                      </div>
+                      <div
+                        class="w-24 h-24 overflow-hidden rounded-md flex-shrink-0"
+                      >
+                        <image
+                          class="w-full h-full"
+                          mode="aspectFill"
+                          :src="getImageUrl(item2.Imgs, 1)"
+                        />
+                      </div>
                     </div>
                   </transition>
                 </view>
@@ -646,26 +658,33 @@ const handlelocation = (actionid: number) => {
     actionrouterList.value,
     actionid
   );
-  
+
   // 找到一级类目索引
-  const firstIndex = actionrouterList.value.findIndex(item => item.id === firstCategoryId);
-  
+  const firstIndex = actionrouterList.value.findIndex(
+    (item) => item.id === firstCategoryId
+  );
+
   // 找到二级类目在其父级中的索引
-  const secondIndex = actionrouterList.value[firstIndex].children.findIndex(item => item.id === secondCategoryId);
+  const secondIndex = actionrouterList.value[firstIndex].children.findIndex(
+    (item) => item.id === secondCategoryId
+  );
 
   if (firstIndex !== -1 && secondIndex !== -1) {
     tabCur.value = firstIndex;
     mainCur.value = firstIndex;
     verticalNavTop.value = (firstIndex - 1) * 50;
-    
+
     // 展开对应的二级菜单
-    actionrouterList.value[firstIndex].children.forEach(child => child.active = false);
-    const targetSecondCategory = actionrouterList.value[firstIndex].children[secondIndex];
+    actionrouterList.value[firstIndex].children.forEach(
+      (child) => (child.active = false)
+    );
+    const targetSecondCategory =
+      actionrouterList.value[firstIndex].children[secondIndex];
     targetSecondCategory.active = true;
-    
+
     // 更新二级菜单显示
     toSecmenu(actionrouterList.value[firstIndex]);
-    
+
     // 添加滚动定位
     nextTick(() => {
       const selector = `#main-${secondIndex}`;
@@ -675,7 +694,7 @@ const handlelocation = (actionid: number) => {
         if (res[0]) {
           uni.pageScrollTo({
             scrollTop: res[0].top,
-            duration: 300
+            duration: 300,
           });
         }
       });
@@ -931,7 +950,7 @@ const removeItem = (item) => {
 };
 
 const clearSearch = () => {
-  searchValue.value = '';
+  searchValue.value = "";
   searchResult.value = [];
 };
 </script>

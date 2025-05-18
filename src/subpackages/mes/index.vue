@@ -14,16 +14,16 @@
         @search="changeMesList"
         @cancel="clearVal"
       />
-    </div>
+    </div> -->
     <div class="secCheck">
-      <van-checkbox v-model="mesState.checked" @change="changeMesList">
+      <!-- <van-checkbox v-model="mesState.checked" @change="changeMesList">
         仅显示未读
-      </van-checkbox>
+      </van-checkbox> -->
       <div class="allRead" @click="clickAllRead">
         <van-icon name="success" />
         一键已读
       </div>
-    </div> -->
+    </div>
     <div class="right" ref="mesListRef">
       <van-collapse
         :value="mesState.activeKey"

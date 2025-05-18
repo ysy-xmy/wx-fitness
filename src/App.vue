@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
+import { onLaunch, onShow, onHide, onUnload } from "@dcloudio/uni-app";
 import { refreshToken } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
 import { usemesStore } from "@/state/modules/mes";
@@ -29,6 +29,13 @@ onLaunch(() => {
 onShow(() => {});
 onHide(() => {
   usemesStore().closeSocket();
+});
+//关闭之前
+onUnload(() => {
+  const mesStore = usemesStore();
+  if (mesStore && mesStore.socket) {
+    mesStore.closeSocket();
+  }
 });
 </script>
 <style>

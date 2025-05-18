@@ -1,4 +1,4 @@
-import { getNotifyList, getWithoutRead } from "@/api/notify";
+import { getNotifyList, getWithoutRead, CloseSocket } from "@/api/notify";
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
 
@@ -23,14 +23,23 @@ export const usemesStore = defineStore({
     mesList: (state) => state.list || [],
   },
   actions: {
-    //只显示未读
-    showUnread() {
+    //查看未读数量
+    showUnread(type: "num" | "list") {
       return new Promise((resolve, reject) => {
         getWithoutRead({ userId: (useAuthStore().user as any).id }).then(
           (res: any) => {
-            if (res.code === 200) {
-              this.setList(res.data.Notifications || []);
-              this.setTotal(res.data.Total || 0);
+            console.log(res, "res");
+            if (res.data.code === 200) {
+              if (type === "num") {
+                console.log(res.data, "res.data");
+                // this.setList(res.data.Notifications || []);
+                // this.setTotal(res.data.Total || 0);
+                //设置还有多少未读
+                this.sethadNew(res.data.data || 0);
+              } else {
+                this.setList(res.data.data.Notifications || []);
+                this.setTotal(res.data.data.Total || 0);
+              }
               resolve(res);
             } else {
               reject(false);
@@ -133,7 +142,7 @@ export const usemesStore = defineStore({
           this.status = true;
           this.socket = true;
           this.createCount = 0;
-
+          this.showUnread("num");
           // 设置心跳机制，每10秒发送一次ping
           const heartbeatInterval = setInterval(() => {
             if (this.socket && this.status) {
@@ -158,7 +167,16 @@ export const usemesStore = defineStore({
           console.log(res.data, "收到消息");
           try {
             const data = JSON.parse(res.data);
-            // 可以添加对不同类型消息的处理逻辑
+            if (data.ID) {
+              // 可以添加对不同类型消息的处理逻辑
+              console.log(data, "data");
+              //total++
+              this.setTotal(this.total + 1);
+              //未读++
+              this.sethadNew(this.hadNew + 1);
+              //列表push
+              this.list.unshift(data);
+            }
           } catch (e) {
             console.error("解析消息失败:", e);
           }
@@ -177,16 +195,17 @@ export const usemesStore = defineStore({
               console.log(`尝试第${this.createCount}次重连...`);
               this.createSocket();
             }, 2000);
+          } else {
+            uni.showToast({
+              title: "连接错误",
+              icon: "error",
+            });
           }
         });
 
         // 监听连接错误事件
         uni.onSocketError((error) => {
           console.error("WebSocket连接错误:", error);
-          uni.showToast({
-            title: "连接错误",
-            icon: "error",
-          });
 
           this.status = false;
         });
@@ -205,6 +224,7 @@ export const usemesStore = defineStore({
     closeSocket() {
       if (this.socket) {
         try {
+          CloseSocket();
           uni.closeSocket({
             success: () => {
               console.log("WebSocket已手动关闭");
