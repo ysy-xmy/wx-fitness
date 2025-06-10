@@ -88,7 +88,7 @@ export const usemesStore = defineStore({
     changeStatus(id: string) {
       this.list.find((item: any) => item.id === id).status = 1;
     },
-    createSocket() {
+    async createSocket() {
       if (!uni.getStorageSync("token")) return;
       console.log("创建socket");
       if (
@@ -98,9 +98,9 @@ export const usemesStore = defineStore({
       ) {
         return;
       }
-
+      await CloseSocket();
       const wsUrl =
-        "ws://47.115.173.204:8081/api/notifier/conn?userId=" +
+        "ws://sit.2018ctjs.cn/api/notifier/conn?userId=" +
         (useAuthStore().user as any).id;
       const token = uni.getStorageSync("token") || "";
 
@@ -167,7 +167,8 @@ export const usemesStore = defineStore({
           console.log(res.data, "收到消息");
           try {
             const data = JSON.parse(res.data);
-            if (data.ID) {
+            console.log(data, "data");
+            if (typeof data.ID === "number") {
               // 可以添加对不同类型消息的处理逻辑
               console.log(data, "data");
               //total++
@@ -176,6 +177,7 @@ export const usemesStore = defineStore({
               this.sethadNew(this.hadNew + 1);
               //列表push
               this.list.unshift(data);
+              console.log(this.list, "unshift");
             }
           } catch (e) {
             console.error("解析消息失败:", e);

@@ -537,6 +537,7 @@ const initData = async () => {
     stuInfo.value = res.data.data;
     //获取课程内容
     const response = await getplanlist(query.value.courseId);
+    console.log(response, "response获取课程成功");
     if (response.data.data === null || !response.data.data)
       return uni.hideLoading();
     response.data.data.forEach((item: any) => {
@@ -546,7 +547,7 @@ const initData = async () => {
         Complete: item["Complete"] ? 1 : 0,
         ID: item["ID"],
         Type: item["Type"],
-        actionGroups: item["ActionGroups"].map((it: any, ind: number) => {
+        actionGroups: item["ActionGroups"]?.map((it: any, ind: number) => {
           return {
             title: it["ActionGroupTitle"] || `动作${ind + 1}`,
             date: "",

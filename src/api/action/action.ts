@@ -52,3 +52,19 @@ export const getActionDate = (data: any) => {
 export const deletePlan = (data: any) => {
   return request.delete("/api/course/plan/delete?id=" + data.id);
 };
+
+//为动作组添加详情
+
+export const addDetailToGroup = (data: any) => {
+  return request.post("/api/course/plan/addActionDetail", data);
+};
+
+//删除动作组详情
+export const deleteDetailFromGroup = (id: string) => {
+  return request.delete("/api/course/plan/deleteActionDetail/" + id);
+};
+
+//修改动作组详情
+export const updateDetailFromGroup = (data: any) => {
+  return request.put("/api/course/plan/updateActionDetail", data);
+};

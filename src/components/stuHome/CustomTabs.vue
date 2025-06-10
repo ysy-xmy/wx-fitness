@@ -7,8 +7,20 @@
         :class="['tab-header', { active: tab.name === activeTab }]"
         @click="selectTab(tab.name)"
       >
-        <van-icon class="tab-icon" size="35" v-if="tab.name === 'buy'" name="cart-o" color="#6eaaac" />
-        <van-icon class="tab-icon" size="35" v-if="tab.name === 'my'"  name="records-o" color="#6eaaac" />
+        <van-icon
+          class="tab-icon"
+          size="35"
+          v-if="tab.name === 'buy'"
+          name="cart-o"
+          color="#6eaaac"
+        />
+        <van-icon
+          class="tab-icon"
+          size="35"
+          v-if="tab.name === 'my'"
+          name="records-o"
+          color="#6eaaac"
+        />
         <text class="tab-title">{{ tab.title }}</text>
       </div>
     </div>
@@ -19,19 +31,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from 'vue';
+import { ref, defineProps } from "vue";
 
 const props = defineProps({
   initialActive: {
     type: String,
-    default: ''
-  }
+    default: "",
+  },
 });
 
 const activeTab = ref(props.initialActive);
 const tabs = ref([
-  { title: '购买\nBUY', name: 'buy' },
-  { title: '课程\nPLAN', name: 'my' }
+  { title: "购买\nBUY", name: "buy" },
+  { title: "课程\nPLAN", name: "my" },
 ]);
 
 function selectTab(name: string) {
@@ -62,10 +74,9 @@ function selectTab(name: string) {
   flex-direction: row;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
-
 }
 
-.tab-icon{
+.tab-icon {
   margin-right: 10px;
 }
 
@@ -85,5 +96,6 @@ function selectTab(name: string) {
 .tab-content {
   background-color: #fff;
   overflow-y: auto;
+  height: 40vh;
 }
 </style>

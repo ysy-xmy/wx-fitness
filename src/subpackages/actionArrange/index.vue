@@ -395,13 +395,15 @@ const subitClass = () => {
         ActionName: item.name,
       };
       if (props.value.type == "stretch") {
-        temp["Second"] = item.second;
+        // temp["Second"] = item.second;
         temp["ContentType"] = "stretch";
       } else {
-        temp["Weight"] = item.weight;
-        temp["GroupNum"] = item.num;
+        // temp["Weight"] = item.weight;
+        // temp["GroupNum"] = item.num;
         temp["ContentType"] = "weight";
       }
+      temp["OrderNum"] = 0;
+      temp["PlanActionDetail"] = [];
       classes.push(temp);
     });
     console.log(classes, "classes");

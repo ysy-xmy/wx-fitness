@@ -65,24 +65,36 @@
                 <div class="name" @click="godetail(it)">
                   {{ it.ActionName }}
                 </div>
-                <div class="wei" v-if="!item.isEditing">{{ it.Weight }}Kg</div>
-                <input
+                <div class="wei">{{ getMinWeght(it.PlanActionDetail) }}Kg</div>
+                <!-- <input
                   v-else
                   type="number"
                   v-model="it.Weight"
                   class="edit-input"
                   placeholder="重量"
-                />
-                <div class="count" v-if="!item.isEditing">
-                  {{ it.GroupNum }}次
+                /> -->
+                <div class="count">
+                  {{ it.PlanActionDetail.length }}组
+                  <van-icon
+                    :name="nowShow.includes(it.ID) ? 'arrow-up' : 'arrow-down'"
+                    @click="
+                      nowShow.includes(it.ID)
+                        ? nowShow.splice(nowShow.indexOf(it.ID), 1)
+                        : nowShow.push(it.ID)
+                    "
+                    size="20"
+                    color="black"
+                    style="margin-left: 5px"
+                  />
                 </div>
-                <input
+
+                <!-- <input
                   v-else
                   type="number"
                   v-model="it.GroupNum"
                   class="edit-input"
                   placeholder="组数"
-                />
+                /> -->
               </div>
               <div
                 class="delete-btn"
@@ -93,6 +105,68 @@
                 "
               >
                 <van-icon name="minus" size="15" color="white" />
+              </div>
+              <div
+                class="add-btn"
+                @click="addActionGroup(item, it)"
+                v-if="
+                  item.isEditing &&
+                  (roleName === 'coach' || actionsStore.getCoachID === 0)
+                "
+              >
+                <van-icon name="plus" size="15" color="white" />
+              </div>
+            </div>
+            <div class="group-info" v-if="nowShow.includes(it.ID)">
+              <div
+                v-for="(group, index) in it.PlanActionDetail"
+                :key="index"
+                class="group-item"
+              >
+                <div
+                  v-if="!item.isEditing"
+                  style="text-align: right; width: 100%; padding-right: 30px"
+                >
+                  <span style="margin-right: 30px">第{{ index + 1 }}组</span>
+                  <span style="margin-right: 30px">{{ group.Weight }}Kg</span>
+                  <span>{{ group.GroupNum }}次</span>
+                </div>
+                <div v-else class="edit-group">
+                  <div style="display: flex">
+                    <span>第{{ index + 1 }}组</span>
+                  </div>
+                  <div style="display: flex">
+                    <input
+                      type="number"
+                      v-model="group.Weight"
+                      class="edit-input"
+                      placeholder="Kg"
+                    />
+                    <span>Kg</span>
+                  </div>
+                  <div style="display: flex">
+                    <input
+                      type="number"
+                      v-model="group.GroupNum"
+                      class="edit-input"
+                      placeholder="次"
+                    />
+                    <span>次</span>
+                  </div>
+                  <van-icon
+                    name="minus"
+                    @click="removeGroup(item, it, index)"
+                    size="15"
+                    color="red"
+                  />
+                  <!-- 一个打勾 -->
+                  <van-icon
+                    name="success"
+                    @click="changeDetail(item, it, index)"
+                    size="15"
+                    color="green"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -122,19 +196,33 @@
           <div class="card" v-for="it in item.planActions" :key="it.ActionName">
             <div class="card-content">
               <div class="content">
-                <div class="name" @click="godetail(item)">
+                <div class="name" @click="godetail(it)">
                   {{ it.ActionName }}
                 </div>
-                <div class="count" v-if="!item.isEditing">
-                  {{ it.Second }}秒
+                <div class="count">
+                  {{ getTotalSec(it.PlanActionDetail) }}秒
                 </div>
-                <input
+                <!-- <input
                   v-else
                   type="number"
                   v-model="it.Second"
                   class="edit-input"
                   placeholder="秒数"
-                />
+                /> -->
+                <div class="count">
+                  {{ it.PlanActionDetail.length }}组
+                  <van-icon
+                    :name="nowShow.includes(it.ID) ? 'arrow-up' : 'arrow-down'"
+                    @click="
+                      nowShow.includes(it.ID)
+                        ? nowShow.splice(nowShow.indexOf(it.ID), 1)
+                        : nowShow.push(it.ID)
+                    "
+                    size="20"
+                    color="black"
+                    style="margin-left: 5px"
+                  />
+                </div>
               </div>
               <div
                 class="delete-btn"
@@ -145,6 +233,57 @@
                 "
               >
                 <van-icon name="minus" size="15" color="white" />
+              </div>
+              <div
+                class="add-btn"
+                @click="addActionGroup(item, it)"
+                v-if="
+                  item.isEditing &&
+                  (roleName === 'coach' || actionsStore.getCoachID === 0)
+                "
+              >
+                <van-icon name="plus" size="15" color="white" />
+              </div>
+            </div>
+            <div class="group-info" v-if="nowShow.includes(it.ID)">
+              <div
+                v-for="(group, index) in it.PlanActionDetail"
+                :key="index"
+                class="group-item"
+              >
+                <div
+                  v-if="!item.isEditing"
+                  style="text-align: right; width: 100%; padding-right: 30px"
+                >
+                  <span style="margin-right: 30px">第{{ index + 1 }}组</span>
+                  <span style="margin-right: 30px">{{ group.Second }}秒</span>
+                </div>
+                <div v-else class="edit-group">
+                  <div style="display: flex">
+                    <span>第{{ index + 1 }}组</span>
+                  </div>
+                  <div style="display: flex">
+                    <input
+                      type="number"
+                      v-model="group.Second"
+                      class="edit-input"
+                      placeholder="秒数"
+                    />
+                    <span>秒</span>
+                  </div>
+                  <van-icon
+                    name="minus"
+                    @click="removeGroup(item, it, index)"
+                    size="15"
+                    color="red"
+                  />
+                  <van-icon
+                    name="success"
+                    @click="changeDetail(item, it, index)"
+                    size="15"
+                    color="green"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -215,7 +354,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, computed, watch } from "vue";
+import { ref, nextTick, onMounted, computed, watch, reactive } from "vue";
 import { useRouter, useRoute } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
 import { useAuthStore } from "@/state/modules/auth";
@@ -224,6 +363,9 @@ import {
   deleteActionFromGroup,
   getActionByDate,
   getActionDate,
+  addDetailToGroup,
+  deleteDetailFromGroup,
+  updateDetailFromGroup,
 } from "@/api/action/action";
 import dayjs from "dayjs";
 import { onShow } from "@dcloudio/uni-app";
@@ -245,6 +387,21 @@ const planListType = ref<any[]>([]);
 const actionsStore = useActionsStore();
 const addClassName = ref<string>("");
 const planId = ref(Infinity);
+const nowShow = ref([]);
+const planActionsss = ref<any[]>([
+  {
+    weight: 20,
+    time: 20,
+  },
+  {
+    weight: 20,
+    time: 20,
+  },
+  {
+    weight: 20,
+    time: 20,
+  },
+]);
 const onChangeAddClassName = (e: any) => {
   addClassName.value = e.detail;
 };
@@ -306,6 +463,7 @@ const deleteAction = (item: any, it: any) => {
         const groupIndex = planListType.value.findIndex(
           (group) => group.title === item.title
         );
+        console.log(groupIndex, "groupIndex");
         if (groupIndex !== -1) {
           planListType.value[groupIndex].planActions = planListType.value[
             groupIndex
@@ -404,7 +562,37 @@ const goChooseAction = () => {
 //     ? planListType.value
 //     : [];
 // });
-
+const addActionGroup = (item: any, it: any) => {
+  console.log(
+    planListType.value
+      .find(
+        (i) =>
+          i.title === item.title ||
+          i.title === item.ActionName ||
+          i.ActionName === item.title
+      )
+      ?.planActions.find((i) => i.ID === it.ID),
+    "1233"
+  );
+  planListType.value
+    .find(
+      (i) =>
+        i.title === item.title ||
+        i.title === item.ActionName ||
+        i.ActionName === item.title
+    )
+    ?.planActions.find((i) => i.ID === it.ID)
+    ?.PlanActionDetail.push(
+      item.type == "weight"
+        ? {
+            Weight: 0,
+            GroupNum: 0,
+          }
+        : {
+            Second: 0,
+          }
+    );
+};
 const toActionArrange = () => {
   showDialog.value = true;
 };
@@ -438,6 +626,7 @@ const getAction = (data: any) => {
             title: it["ActionGroupTitle"] || `动作${ind + 1}`,
             type: it["ContentType"],
             isEditing: false,
+            showGroup: false,
           });
         });
         console.log(planListType.value, "planListType");
@@ -533,32 +722,9 @@ const dragMove = (e: any) => {
   wrapperHeight.value = Math.min(Math.max(newHeight, 150), 415);
 };
 const saveNewAction = (item: any) => {
-  console.log(item, "item");
-  item.planActions.forEach((it: any) => {
-    it["PlanID"] = Number(planId.value);
-    it.ExerciseActionID = Number(it.ExerciseActionID);
-    it.GroupNum = Number(it.GroupNum);
-    it.ID = Number(it.ID);
-    it.OrderNum = Number(it.OrderNum);
-    it.Second = Number(it.Second);
-    it.TimesNum = Number(it.TimesNum);
-    it.Weight = Number(it.Weight);
-  });
-  updateActionToGroup(item.planActions).then((res: any) => {
-    console.log(res, "res");
-    if (res.data.code === 200) {
-      uni.showToast({
-        title: "保存成功",
-        icon: "success",
-      });
-      item.isEditing = false;
-    } else {
-      uni.showToast({
-        title: "保存失败",
-        icon: "none",
-      });
-    }
-  });
+  //todo
+  getAction(currentSelectDay.value);
+  item.isEditing = false;
 };
 const dragEnd = () => {
   isDragging.value = false;
@@ -569,6 +735,95 @@ const toggleEditMode = (item: any) => {
     // 保存所有修改
     saveNewAction(item);
   } else item.isEditing = !item.isEditing;
+};
+
+const removeGroup = (item: any, it: any, index: number) => {
+  // item.planActions.splice(index, 1); // 从当前组中删除指定的组
+  console.log(it, "it");
+  deleteDetailFromGroup(it["PlanActionDetail"][index].ID).then((res: any) => {
+    console.log(res, "res");
+    if (res.data.code === 200) {
+      uni.showToast({
+        title: "删除成功",
+        icon: "success",
+      });
+      planListType.value
+        .find(
+          (i) =>
+            i.title === item.title ||
+            i.ActionName === item.title ||
+            i.title === item.ActionName
+        )
+        ?.planActions.find((i) => i.ID === it.ID)
+        ?.PlanActionDetail.splice(index, 1);
+    } else {
+      uni.showToast({
+        title: res.data.msg,
+        icon: "error",
+      });
+    }
+  });
+};
+
+const getMinWeght = (list) => {
+  let minWeight = list[0] ? list[0].Weight : 0;
+
+  list.forEach((it: any) => {
+    if (Number(it.Weight) < minWeight) {
+      minWeight = Number(it.Weight);
+    }
+  });
+  console.log(list, "list", minWeight);
+  return minWeight;
+};
+const getTotalSec = (list: any) => {
+  return list.reduce((acc: number, it: any) => {
+    return acc + Number(it.Second);
+  }, 0);
+};
+const changeDetail = (item: any, it: any, index: number) => {
+  console.log(item, it, index, "item, it, index");
+  let data = {};
+  data.Weight = Number(it.PlanActionDetail[index].Weight || 0);
+  data.TimesNum = Number(it.PlanActionDetail[index].GroupNum || 0);
+  data.Second = Number(it.PlanActionDetail[index].Second || 0);
+  data.GroupNum = Number(it.PlanActionDetail[index].GroupNum || 0);
+  if (it.PlanActionDetail[index].ID) {
+    data.ID = it.PlanActionDetail[index].ID;
+    updateDetailFromGroup(data).then((res: any) => {
+      console.log(res, "res");
+      if (res.data.code === 200) {
+        uni.showToast({
+          title: "保存成功",
+          icon: "success",
+        });
+      } else {
+        uni.showToast({
+          title: res.data.msg,
+          icon: "error",
+        });
+      }
+    });
+  } else {
+    data.PlanActionId = it.ID;
+    addDetailToGroup(data).then((res: any) => {
+      console.log(res, "res");
+
+      if (res.data.code === 200) {
+        it.PlanActionDetail[index].ID = res.data.data.ID;
+        uni.showToast({
+          title: "保存成功",
+          icon: "success",
+        });
+        console.log(planListType.value, "planListType.value");
+      } else {
+        uni.showToast({
+          title: res.data.msg,
+          icon: "error",
+        });
+      }
+    });
+  }
 };
 </script>
 
@@ -651,7 +906,7 @@ const toggleEditMode = (item: any) => {
         gap: 10px;
         align-items: center;
       }
-
+      .add-btn,
       .delete-btn {
         width: 24px;
         height: 24px;
@@ -668,7 +923,7 @@ const toggleEditMode = (item: any) => {
 .addBtn {
   margin: 10px auto 60px;
   width: 95%;
-  background: linear-gradient(135deg, #6495ED, #4169E1);
+  background: linear-gradient(135deg, #6495ed, #4169e1);
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(100, 149, 237, 0.3);
@@ -725,6 +980,30 @@ const toggleEditMode = (item: any) => {
   grid-template-columns: 2fr 1fr 1fr;
   gap: 10px;
   align-items: center;
+}
+
+.group-info {
+  margin-top: 10px;
+}
+
+.group-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.edit-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.edit-input {
+  width: 50px;
+  margin-right: 5px;
 }
 </style>
 <style>

@@ -127,12 +127,16 @@ const clickAllRead = async () => {
     });
   else {
     const res = await readNotify(-1);
-    if (res.code == 20000) {
+    if (res.data.code == 200) {
       mesStore.setClear(true);
       mesStore.sethadNew(0);
 
       mesList.value.forEach((item) => {
-        item.readed = true;
+        item.Status = true;
+      });
+      uni.showToast({
+        title: "全部已读成功",
+        icon: "success",
       });
     } else {
       uni.showToast({
@@ -150,12 +154,13 @@ const showDetail = (e: any) => {
   nextTick(() => {
     const index = e.detail;
     // notifyStore.sethadNew(false);
-    console.log(typeof index, 123);
+    console.log(typeof index, 1234565);
     if (typeof index !== "number") return;
 
     if (!mesStore.mesList[index].Status)
       readNotify(mesStore.mesList[index].ID).then((res) => {
-        if (res.code == 200) {
+        console.log(res);
+        if (res.data.code == 200) {
           console.log(mesStore.mesList[index]);
           mesStore.mesList[index].Status = true;
           mesStore.sethadNew(false);
@@ -193,40 +198,7 @@ const refList = ref<HTMLElement[]>([]);
 const customStyle =
   "background:rgba(46, 49, 51, 0.30);border-radius: 4px;margin-bottom: 10px;border: 0;overflow: hidden;";
 const detailContent = ref("");
-const mesList = ref<any>([
-  {
-    id: "1",
-    title: "系统通知：平台更新公告",
-    content:
-      "<p>尊敬的用户，我们的平台将于本周六进行系统升级，届时服务将暂停2小时。</p>",
-    readed: true,
-  },
-  {
-    id: "2",
-    title: "账户安全提醒",
-    content: "<p>您的账户近期有异常登录，请及时修改密码并开启双重验证。</p>",
-    readed: false,
-  },
-  {
-    id: "3",
-    title: "新功能上线通知",
-    content:
-      "<p>我们新增了数据分析功能，现在您可以查看更详细的统计报表。</p><ul><li>数据可视化</li><li>自定义报表</li><li>导出功能</li></ul>",
-    readed: false,
-  },
-  {
-    id: "4",
-    title: "活动邀请：技术分享会",
-    content: "<p>诚邀您参加下周三的技术分享会，主题为'前端框架发展趋势'。</p>",
-    readed: true,
-  },
-  {
-    id: "5",
-    title: "账单提醒",
-    content: "<p>您本月的服务费用已生成，请在本月25日前完成支付。</p>",
-    readed: false,
-  },
-]);
+const mesList = ref<any>([]);
 const getMesList = (data) => {
   mesState.loading = true;
   mesStore
