@@ -5,14 +5,12 @@
       height: 100%;
       min-height: 100vh;
       background-color: rgba(0, 0, 0, 0.1);
-    "
-  >
+    ">
     <view class="calendar-container">
       <view
         class="calendar-wrapper"
         :style="{ height: wrapperHeight + 'px' }"
-        ref="calendarRef"
-      >
+        ref="calendarRef">
         <uni-calendar
           class="uni-calendar--hook"
           :selected="selected"
@@ -24,16 +22,14 @@
           @change="change"
           @monthSwitch="monthSwitch"
           :date="currentDate"
-          :weeksCount="showCalendar ? 6 : 1"
-        />
+          :weeksCount="showCalendar ? 6 : 1" />
       </view>
       <view
         class="drag-bar"
         @touchstart="dragStart"
         @touchmove="dragMove"
         @touchend="dragEnd"
-        @click="toggleHeight"
-      >
+        @click="toggleHeight">
         <view class="drag-line"></view>
       </view>
     </view>
@@ -47,20 +43,27 @@
               size="20"
               color="white"
               @click="toggleEditMode(item)"
-              style="margin-right: 10px"
-            />
+              style="margin-right: 10px" />
             <van-icon
               name="plus"
               size="20"
               color="white"
               @click="addAction(item)"
-              v-if="roleName === 'coach' || actionsStore.getCoachID === 0"
-            />
+              v-if="roleName === 'coach' || actionsStore.getCoachID === 0" />
           </div>
         </div>
         <div class="bottom">
           <div class="card" v-for="it in item.planActions" :key="it.ActionName">
             <div class="card-content">
+              <div
+                class="delete-btn"
+                @click="deleteAction(item, it)"
+                v-if="
+                  item.isEditing &&
+                  (roleName === 'coach' || actionsStore.getCoachID === 0)
+                ">
+                <van-icon name="minus" size="15" color="white" />
+              </div>
               <div class="content">
                 <div class="name" @click="godetail(it)">
                   {{ it.ActionName }}
@@ -84,8 +87,7 @@
                     "
                     size="20"
                     color="black"
-                    style="margin-left: 5px"
-                  />
+                    style="margin-left: 5px" />
                 </div>
 
                 <!-- <input
@@ -96,24 +98,14 @@
                   placeholder="组数"
                 /> -->
               </div>
-              <div
-                class="delete-btn"
-                @click="deleteAction(item, it)"
-                v-if="
-                  item.isEditing &&
-                  (roleName === 'coach' || actionsStore.getCoachID === 0)
-                "
-              >
-                <van-icon name="minus" size="15" color="white" />
-              </div>
+
               <div
                 class="add-btn"
                 @click="addActionGroup(item, it)"
                 v-if="
                   item.isEditing &&
                   (roleName === 'coach' || actionsStore.getCoachID === 0)
-                "
-              >
+                ">
                 <van-icon name="plus" size="15" color="white" />
               </div>
             </div>
@@ -121,18 +113,16 @@
               <div
                 v-for="(group, index) in it.PlanActionDetail"
                 :key="index"
-                class="group-item"
-              >
+                class="group-item">
                 <div
                   v-if="!item.isEditing"
-                  style="text-align: right; width: 100%; padding-right: 30px"
-                >
+                  style="text-align: right; width: 100%; padding-right: 30px">
                   <span style="margin-right: 30px">第{{ index + 1 }}组</span>
                   <span style="margin-right: 30px">{{ group.Weight }}Kg</span>
                   <span>{{ group.GroupNum }}次</span>
                 </div>
                 <div v-else class="edit-group">
-                  <div style="display: flex">
+                  <div style="display: flex; margin-left: 20px">
                     <span>第{{ index + 1 }}组</span>
                   </div>
                   <div style="display: flex">
@@ -140,8 +130,7 @@
                       type="number"
                       v-model="group.Weight"
                       class="edit-input"
-                      placeholder="Kg"
-                    />
+                      placeholder="Kg" />
                     <span>Kg</span>
                   </div>
                   <div style="display: flex">
@@ -149,23 +138,20 @@
                       type="number"
                       v-model="group.GroupNum"
                       class="edit-input"
-                      placeholder="次"
-                    />
+                      placeholder="次" />
                     <span>次</span>
                   </div>
                   <van-icon
                     name="minus"
                     @click="removeGroup(item, it, index)"
                     size="15"
-                    color="red"
-                  />
+                    color="red" />
                   <!-- 一个打勾 -->
                   <van-icon
                     name="success"
                     @click="changeDetail(item, it, index)"
                     size="15"
-                    color="green"
-                  />
+                    color="green" />
                 </div>
               </div>
             </div>
@@ -181,20 +167,27 @@
               size="20"
               color="white"
               @click="toggleEditMode(item)"
-              style="margin-right: 10px"
-            />
+              style="margin-right: 10px" />
             <van-icon
               name="plus"
               size="20"
               color="white"
               @click="addAction(item)"
-              v-if="roleName === 'coach' || actionsStore.getCoachID === 0"
-            />
+              v-if="roleName === 'coach' || actionsStore.getCoachID === 0" />
           </div>
         </div>
         <div class="bottom">
           <div class="card" v-for="it in item.planActions" :key="it.ActionName">
             <div class="card-content">
+              <div
+                class="delete-btn"
+                @click="deleteAction(item, it)"
+                v-if="
+                  item.isEditing &&
+                  (roleName === 'coach' || actionsStore.getCoachID === 0)
+                ">
+                <van-icon name="minus" size="15" color="white" />
+              </div>
               <div class="content">
                 <div class="name" @click="godetail(it)">
                   {{ it.ActionName }}
@@ -220,19 +213,8 @@
                     "
                     size="20"
                     color="black"
-                    style="margin-left: 5px"
-                  />
+                    style="margin-left: 5px" />
                 </div>
-              </div>
-              <div
-                class="delete-btn"
-                @click="deleteAction(item, it)"
-                v-if="
-                  item.isEditing &&
-                  (roleName === 'coach' || actionsStore.getCoachID === 0)
-                "
-              >
-                <van-icon name="minus" size="15" color="white" />
               </div>
               <div
                 class="add-btn"
@@ -240,8 +222,7 @@
                 v-if="
                   item.isEditing &&
                   (roleName === 'coach' || actionsStore.getCoachID === 0)
-                "
-              >
+                ">
                 <van-icon name="plus" size="15" color="white" />
               </div>
             </div>
@@ -249,17 +230,15 @@
               <div
                 v-for="(group, index) in it.PlanActionDetail"
                 :key="index"
-                class="group-item"
-              >
+                class="group-item">
                 <div
                   v-if="!item.isEditing"
-                  style="text-align: right; width: 100%; padding-right: 30px"
-                >
+                  style="text-align: right; width: 100%; padding-right: 30px">
                   <span style="margin-right: 30px">第{{ index + 1 }}组</span>
                   <span style="margin-right: 30px">{{ group.Second }}秒</span>
                 </div>
                 <div v-else class="edit-group">
-                  <div style="display: flex">
+                  <div style="display: flex; margin-left: 20px">
                     <span>第{{ index + 1 }}组</span>
                   </div>
                   <div style="display: flex">
@@ -267,22 +246,19 @@
                       type="number"
                       v-model="group.Second"
                       class="edit-input"
-                      placeholder="秒数"
-                    />
+                      placeholder="秒数" />
                     <span>秒</span>
                   </div>
                   <van-icon
                     name="minus"
                     @click="removeGroup(item, it, index)"
                     size="15"
-                    color="red"
-                  />
+                    color="red" />
                   <van-icon
                     name="success"
                     @click="changeDetail(item, it, index)"
                     size="15"
-                    color="green"
-                  />
+                    color="green" />
                 </div>
               </div>
             </div>
@@ -290,8 +266,7 @@
           <div
             class="card"
             style="text-align: center"
-            v-if="item.planActions.length === 0"
-          >
+            v-if="item.planActions.length === 0">
             暂无计划
           </div>
         </div>
@@ -299,15 +274,13 @@
     </div>
     <div
       style="text-align: center; margin-top: 20px; width: 100%"
-      v-if="planListType.length === 0"
-    >
+      v-if="planListType.length === 0">
       暂无计划
     </div>
     <div
       class="addBtn"
       @click="toActionArrange"
-      v-if="roleName === 'coach' || actionsStore.getCoachID === 0"
-    >
+      v-if="roleName === 'coach' || actionsStore.getCoachID === 0">
       <div class="add-content">
         <van-icon name="plus" size="24" color="#ffffff" />
         <span class="add-text">添加计划</span>
@@ -320,8 +293,7 @@
     :show="showDialog"
     show-cancel-button
     @confirm="goChooseAction"
-    @close="onCloseDialog"
-  >
+    @close="onCloseDialog">
     <van-radio-group :value="radioType">
       <van-cell-group>
         <van-cell
@@ -329,8 +301,7 @@
           value-class="value-class"
           clickable
           data-name="stretch"
-          @click="() => chooseType('stretch')"
-        >
+          @click="() => chooseType('stretch')">
           <van-radio name="stretch" />
         </van-cell>
         <van-cell
@@ -338,8 +309,7 @@
           value-class="value-class"
           clickable
           data-name="weight"
-          @click="() => chooseType('weight')"
-        >
+          @click="() => chooseType('weight')">
           <van-radio name="weight" />
         </van-cell>
       </van-cell-group>
@@ -348,9 +318,65 @@
       :value="addClassName"
       placeholder="请输入动作组名称"
       border="true"
-      @change="onChangeAddClassName"
-    />
+      @change="onChangeAddClassName" />
   </van-dialog>
+  <div class="custom-dialog">
+    <van-dialog
+      use-slot
+      title="提示"
+      :show="showDeleteConfirmDialog"
+      :show-cancel-button="false"
+      :show-confirm-button="false">
+      <div class="delete-dialog-content">
+        <p style="font-size: 16px; margin-bottom: 20px">
+          <strong>是否确认删除该训练动作？</strong>
+        </p>
+        <div style="display: flex; justify-content: space-between; width: 100%">
+          <button
+            style="background-color: #3bd5dd; color: #ffffff; padding: 0 80rpx"
+            class="cu-btn lg"
+            @click="confirmDelete"
+            >
+            是
+          </button>
+          <button
+            style="background-color: #ffffff; color: #9d9d9d; padding: 0 80rpx"
+            class="cu-btn lg"
+            @click="showDeleteConfirmDialog = false">
+            否
+          </button>
+        </div>
+      </div>
+    </van-dialog>
+  </div>
+  <div class="custom-dialog">
+    <van-dialog
+      use-slot
+      title="提示"
+      :show="showRemoveGroupDialog"
+      :show-cancel-button="false"
+      :show-confirm-button="false">
+      <div class="delete-dialog-content">
+        <p style="font-size: 16px; margin-bottom: 20px">
+          <strong>是否确认删除 第{{ currentRemoveGroupInfo? currentRemoveGroupInfo.index + 1 : '' }}组 训练</strong>
+        </p>
+        <div style="display: flex; justify-content: space-between; width: 100%">
+          <button
+            style="background-color: #3bd5dd; color: #ffffff; padding: 0 80rpx"
+            class="cu-btn lg"
+            @click="confirmRemoveGroup">
+            是
+          </button>
+          <button
+            style="background-color: #ffffff; color: #9d9d9d; padding: 0 80rpx"
+            class="cu-btn lg"
+            @click="showRemoveGroupDialog = false">
+            否
+          </button>
+        </div>
+      </div>
+    </van-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -387,7 +413,7 @@ const planListType = ref<any[]>([]);
 const actionsStore = useActionsStore();
 const addClassName = ref<string>("");
 const planId = ref(Infinity);
-const nowShow = ref([]);
+const nowShow = ref<number[]>([]);
 const planActionsss = ref<any[]>([
   {
     weight: 20,
@@ -409,8 +435,14 @@ const route = useRoute();
 onShow(() => {
   getAction(currentSelectDay.value);
 });
+interface UserInfo {
+  RoleName?: string;
+  // 其他可能的用户信息字段
+}
+
 const roleName = computed(() => {
-  return authStore.user.RoleName;
+  const user = authStore.user as UserInfo;
+  return user.RoleName || "";
 });
 const addAction = (item: any) => {
   console.log(item, "item");
@@ -455,48 +487,6 @@ function getDate(date: Date | string, AddDayCount = 0) {
     day: dd.getDay(),
   };
 }
-const deleteAction = (item: any, it: any) => {
-  deleteActionFromGroup([it.ID])
-    .then((res: any) => {
-      if (res.data.code == 200) {
-        // 直接从本地数组中过滤掉被删除的动作
-        const groupIndex = planListType.value.findIndex(
-          (group) => group.title === item.title
-        );
-        console.log(groupIndex, "groupIndex");
-        if (groupIndex !== -1) {
-          planListType.value[groupIndex].planActions = planListType.value[
-            groupIndex
-          ].planActions.filter((action) => action.ActionName !== it.ActionName);
-        }
-
-        uni.showToast({
-          title: "删除成功",
-          icon: "success",
-        });
-      } else {
-        uni.showToast({
-          title: "删除失败",
-          icon: "none",
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err, "err");
-      uni.showToast({
-        title: "删除失败",
-        icon: "none",
-      });
-    });
-};
-const changeTime = (dateTime: string) => {
-  // 将字符串转化为 Date 对象
-  const date = new Date(dateTime.replace(" ", "T"));
-
-  // 转化为 ISO 格式并提取日期部分
-  const isoDate = date.toISOString().split("T")[0];
-  return isoDate;
-};
 
 const showDialog = ref<boolean>(false);
 const radioType = ref<string>("");
@@ -562,27 +552,17 @@ const goChooseAction = () => {
 //     ? planListType.value
 //     : [];
 // });
-const addActionGroup = (item: any, it: any) => {
-  console.log(
-    planListType.value
-      .find(
-        (i) =>
-          i.title === item.title ||
-          i.title === item.ActionName ||
-          i.ActionName === item.title
-      )
-      ?.planActions.find((i) => i.ID === it.ID),
-    "1233"
+const addActionGroup = (item: PlanListItem, it: PlanAction) => {
+  const targetGroup = planListType.value.find(
+    (i: PlanListItem) => i.title === item.title || i.title === item.type
   );
-  planListType.value
-    .find(
-      (i) =>
-        i.title === item.title ||
-        i.title === item.ActionName ||
-        i.ActionName === item.title
-    )
-    ?.planActions.find((i) => i.ID === it.ID)
-    ?.PlanActionDetail.push(
+
+  const targetAction = targetGroup?.planActions.find(
+    (i: PlanAction) => i.ID === it.ID
+  );
+
+  if (targetAction) {
+    targetAction.PlanActionDetail.push(
       item.type == "weight"
         ? {
             Weight: 0,
@@ -592,6 +572,7 @@ const addActionGroup = (item: any, it: any) => {
             Second: 0,
           }
     );
+  }
 };
 const toActionArrange = () => {
   showDialog.value = true;
@@ -737,43 +718,85 @@ const toggleEditMode = (item: any) => {
   } else item.isEditing = !item.isEditing;
 };
 
-const removeGroup = (item: any, it: any, index: number) => {
-  // item.planActions.splice(index, 1); // 从当前组中删除指定的组
-  console.log(it, "it");
-  deleteDetailFromGroup(it["PlanActionDetail"][index].ID).then((res: any) => {
-    console.log(res, "res");
-    if (res.data.code === 200) {
-      uni.showToast({
-        title: "删除成功",
-        icon: "success",
-      });
-      planListType.value
-        .find(
-          (i) =>
-            i.title === item.title ||
-            i.ActionName === item.title ||
-            i.title === item.ActionName
-        )
-        ?.planActions.find((i) => i.ID === it.ID)
-        ?.PlanActionDetail.splice(index, 1);
-    } else {
-      uni.showToast({
-        title: res.data.msg,
-        icon: "error",
-      });
-    }
-  });
+const showRemoveGroupDialog = ref(false);
+const currentRemoveGroupInfo = ref<{
+  item: PlanListItem, 
+  it: PlanAction, 
+  index: number
+} | null>(null);
+
+const removeGroup = (item: PlanListItem, it: PlanAction, index: number) => {
+  currentRemoveGroupInfo.value = { item, it, index };
+  console.log(currentRemoveGroupInfo.value, "currentRemoveGroupInfo");
+  showRemoveGroupDialog.value = true;
 };
 
-const getMinWeght = (list) => {
-  let minWeight = list[0] ? list[0].Weight : 0;
+const confirmRemoveGroup = () => {
+  if (!currentRemoveGroupInfo.value) return;
 
-  list.forEach((it: any) => {
+  const { item, it, index } = currentRemoveGroupInfo.value;
+  const targetGroup = planListType.value.find(
+    (i: PlanListItem) => i.title === item.title || i.title === item.type
+  );
+
+  const targetAction = targetGroup?.planActions.find((i: PlanAction) => i.ID === it.ID);
+
+  if (targetAction && targetAction.PlanActionDetail[index].ID) {
+    deleteDetailFromGroup(targetAction.PlanActionDetail[index].ID).then((res: any) => {
+      console.log(res, "res");
+      if (res.data.code === 200) {
+        uni.showToast({
+          title: "删除成功",
+          icon: "success",
+        });
+        targetAction.PlanActionDetail.splice(index, 1);
+      } else {
+        uni.showToast({
+          title: res.data.msg,
+          icon: "error",
+        });
+      }
+      showRemoveGroupDialog.value = false;
+    });
+  } else {
+    // 如果是新添加的组且没有ID，直接删除
+    if (targetAction) {
+      targetAction.PlanActionDetail.splice(index, 1);
+      showRemoveGroupDialog.value = false;
+    }
+  }
+};
+
+interface PlanActionDetail {
+  ID?: number;
+  Weight?: number;
+  GroupNum?: number;
+  Second?: number;
+}
+
+interface PlanAction {
+  ID: number;
+  ActionName: string;
+  PlanActionDetail: PlanActionDetail[];
+  ExerciseActionID: number;
+}
+
+interface PlanListItem {
+  planActions: PlanAction[];
+  title: string;
+  type: string;
+  isEditing: boolean;
+  showGroup: boolean;
+}
+
+const getMinWeght = (list: PlanActionDetail[]) => {
+  let minWeight = list[0] ? list[0].Weight || 0 : 0;
+
+  list.forEach((it) => {
     if (Number(it.Weight) < minWeight) {
       minWeight = Number(it.Weight);
     }
   });
-  console.log(list, "list", minWeight);
   return minWeight;
 };
 const getTotalSec = (list: any) => {
@@ -781,13 +804,14 @@ const getTotalSec = (list: any) => {
     return acc + Number(it.Second);
   }, 0);
 };
-const changeDetail = (item: any, it: any, index: number) => {
+const changeDetail = (item: PlanListItem, it: PlanAction, index: number) => {
   console.log(item, it, index, "item, it, index");
-  let data = {};
-  data.Weight = Number(it.PlanActionDetail[index].Weight || 0);
-  data.TimesNum = Number(it.PlanActionDetail[index].GroupNum || 0);
-  data.Second = Number(it.PlanActionDetail[index].Second || 0);
-  data.GroupNum = Number(it.PlanActionDetail[index].GroupNum || 0);
+  const data: PlanActionDetail = {
+    Weight: Number(it.PlanActionDetail[index].Weight || 0),
+    GroupNum: Number(it.PlanActionDetail[index].GroupNum || 0),
+    Second: Number(it.PlanActionDetail[index].Second || 0),
+  };
+
   if (it.PlanActionDetail[index].ID) {
     data.ID = it.PlanActionDetail[index].ID;
     updateDetailFromGroup(data).then((res: any) => {
@@ -805,8 +829,11 @@ const changeDetail = (item: any, it: any, index: number) => {
       }
     });
   } else {
-    data.PlanActionId = it.ID;
-    addDetailToGroup(data).then((res: any) => {
+    const newData = {
+      ...data,
+      PlanActionId: it.ID,
+    };
+    addDetailToGroup(newData).then((res: any) => {
       console.log(res, "res");
 
       if (res.data.code === 200) {
@@ -824,6 +851,66 @@ const changeDetail = (item: any, it: any, index: number) => {
       }
     });
   }
+};
+
+const changeTime = (dateTime: string) => {
+  // 将字符串转化为 Date 对象
+  const date = new Date(dateTime.replace(" ", "T"));
+
+  // 转化为 ISO 格式并提取日期部分
+  const isoDate = date.toISOString().split("T")[0];
+  return isoDate;
+};
+
+const currentDeleteItem = ref<{ item: PlanListItem; it: PlanAction } | null>(
+  null
+);
+const showDeleteConfirmDialog = ref(false);
+
+const deleteAction = (item: PlanListItem, it: PlanAction) => {
+  currentDeleteItem.value = { item, it };
+  showDeleteConfirmDialog.value = true;
+};
+
+const confirmDelete = () => {
+  if (!currentDeleteItem.value) return;
+
+  const { item, it } = currentDeleteItem.value;
+  deleteActionFromGroup([it.ID])
+    .then((res: any) => {
+      if (res.data.code == 200) {
+        // 直接从本地数组中过滤掉被删除的动作
+        const groupIndex = planListType.value.findIndex(
+          (group) => group.title === item.title
+        );
+        if (groupIndex !== -1) {
+          planListType.value[groupIndex].planActions = planListType.value[
+            groupIndex
+          ].planActions.filter(
+            (action: PlanAction) => action.ActionName !== it.ActionName
+          );
+        }
+
+        uni.showToast({
+          title: "删除成功",
+          icon: "success",
+        });
+      } else {
+        uni.showToast({
+          title: "删除失败",
+          icon: "none",
+        });
+      }
+      showDeleteConfirmDialog.value = false;
+    })
+    .catch((err) => {
+      console.log(err, "err");
+      uni.showToast({
+        title: "删除失败",
+        icon: "none",
+      });
+      showDeleteConfirmDialog.value = false;
+    });
 };
 </script>
 
@@ -923,7 +1010,7 @@ const changeDetail = (item: any, it: any, index: number) => {
 .addBtn {
   margin: 10px auto 60px;
   width: 95%;
-  background: linear-gradient(135deg, #6495ed, #4169e1);
+  background: #358062;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(100, 149, 237, 0.3);
@@ -1006,9 +1093,28 @@ const changeDetail = (item: any, it: any, index: number) => {
   margin-right: 5px;
 }
 </style>
-<style>
+<style lang="scss">
 .uni-calendar-item--checked {
   background-color: #3bd5dd !important;
   border-radius: 50% !important;
+}
+.custom-dialog {
+  .van-dialog__header {
+    background-color: #3bd5dd !important;
+    color: white !important;
+    text-align: left !important;
+    display: flex !important;
+    justify-content: start !important;
+    align-items: center !important;
+    padding-top: 0 !important;
+    padding: 10px !important;
+  }
+  .delete-dialog-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+  }
 }
 </style>
