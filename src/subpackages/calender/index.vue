@@ -147,11 +147,11 @@
                     size="15"
                     color="red" />
                   <!-- 一个打勾 -->
-                  <van-icon
+                  <!-- <van-icon
                     name="success"
                     @click="changeDetail(item, it, index)"
                     size="15"
-                    color="green" />
+                    color="green" /> -->
                 </div>
               </div>
             </div>
@@ -254,11 +254,11 @@
                     @click="removeGroup(item, it, index)"
                     size="15"
                     color="red" />
-                  <van-icon
+                  <!-- <van-icon
                     name="success"
                     @click="changeDetail(item, it, index)"
                     size="15"
-                    color="green" />
+                    color="green" /> -->
                 </div>
               </div>
             </div>
