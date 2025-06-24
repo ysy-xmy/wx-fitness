@@ -341,6 +341,7 @@ import {
   getActionAll,
   getActionsBySec,
   addActionToGroupAction,
+  addGroupAction,
 } from "@/api/action/action";
 import { useAuthStore } from "@/state/modules/auth";
 import { useRouter } from "uni-mini-router";
@@ -408,6 +409,7 @@ const subitClass = () => {
     });
     console.log(classes, "classes");
     addActionToGroupAction(classes)
+      // addGroupAction(classes)
       .then((res) => {
         if (res.data.code == 200) {
           uni.showToast({

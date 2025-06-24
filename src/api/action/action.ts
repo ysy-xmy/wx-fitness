@@ -68,3 +68,8 @@ export const deleteDetailFromGroup = (id: string) => {
 export const updateDetailFromGroup = (data: any) => {
   return request.put("/api/course/plan/updateActionDetail", data);
 };
+
+//为动作组添加动作
+export const addGroupAction = (data: any) => {
+  return request.post("/api/course/plan/addAction", data);
+};
