@@ -547,15 +547,17 @@ const initData = async () => {
         Complete: item["Complete"] ? 1 : 0,
         ID: item["ID"],
         Type: item["Type"],
-        actionGroups: item["ActionGroups"]?.map((it: any, ind: number) => {
-          return {
-            title: it["ActionGroupTitle"] || `动作${ind + 1}`,
-            date: "",
-            status: it["Complete"],
-            List: it["PlanActions"],
-            type: it["ContentType"],
-          };
-        }),
+        actionGroups: (item["ActionGroups"] || []).map(
+          (it: any, ind: number) => {
+            return {
+              title: it["ActionGroupTitle"] || `动作${ind + 1}`,
+              date: "",
+              status: it["Complete"],
+              List: it["PlanActions"],
+              type: it["ContentType"],
+            };
+          }
+        ),
       };
       if (
         actionsStore.getChooseActionId != -Infinity &&

@@ -40,7 +40,7 @@
     <div v-for="(item, index) in planListType" :key="index">
       <div
         class="plan-container"
-        v-if="item.type === 'weight'"
+        v-if="item.type === 'weight' && item.planActions.length > 0"
         @dragstart="onDragStart(index)"
         @dragover.prevent="onDragOver(index)"
       >
@@ -183,7 +183,7 @@
       </div>
       <div
         class="plan-container"
-        v-if="item.type === 'stretch'"
+        v-if="item.type === 'stretch' && item.planActions.length > 0"
         @dragstart="onDragStart(index)"
         @dragover.prevent="onDragOver(index)"
       >
