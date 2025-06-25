@@ -198,10 +198,10 @@ export const usemesStore = defineStore({
               this.createSocket();
             }, 2000);
           } else {
-            uni.showToast({
-              title: "连接错误",
-              icon: "error",
-            });
+            // uni.showToast({
+            //   title: "连接错误",
+            //   icon: "error",
+            // });
           }
         });
 
