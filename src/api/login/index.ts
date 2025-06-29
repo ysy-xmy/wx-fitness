@@ -6,7 +6,6 @@ export function loginWithWeChat(
   callback: (token: string, userInfo: any) => void
 ) {
   const authStore = useAuthStore();
-  console.log("authStore123", authStore);
   uni.login({
     provider: "weixin",
     success: function (event) {

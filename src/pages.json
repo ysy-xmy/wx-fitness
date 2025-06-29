@@ -24,6 +24,7 @@
         "navigationBarTitleText": "登录"
       }
     }
+
   ],
   "subPackages": [
     {
@@ -192,6 +193,16 @@
           "name": "actionArrange",
           "style": {
             "navigationBarTitleText": "动作库"
+          }
+        },
+        {
+          "path": "serviceTerms/index",
+          "name": "serviceTerms",
+          "meta": {
+            "islogin": false
+          },
+          "style": {
+            "navigationBarTitleText": ""
           }
         }
       ]
