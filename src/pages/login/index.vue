@@ -30,9 +30,9 @@
             </view>
             <text class="agreement-text">
               我已阅读并同意
-              <text class="text-teal-500 underline" >服务条款</text>
+              <text class="text-teal-500 underline" @click.stop="goServiceTerms('terms')">服务条款</text>
               和
-              <text class="text-teal-500 underline">隐私政策</text>
+              <text class="text-teal-500 underline" @click.stop="goServiceTerms('privacy')">隐私政策</text>
             </text>
           </view>
         </view>
@@ -66,6 +66,13 @@ onMounted(() => {
   }
 });
 
+function goServiceTerms(type: 'terms' | 'privacy') {
+  router.push({
+    name: 'serviceTerms',
+    params: { type }
+  });
+}
+
 function toggleAgreement() {
   isAgreed.value = !isAgreed.value
 }
@@ -73,7 +80,7 @@ function toggleAgreement() {
 function login() {
   if (!isAgreed.value) {
     uni.showToast({
-      title: '请先勾选同意服务条款和隐私政策',
+      title: '请先阅读并同意服务条款和隐私政策',
       icon: 'none',
       duration: 2000
     })
