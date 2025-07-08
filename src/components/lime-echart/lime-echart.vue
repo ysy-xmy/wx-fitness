@@ -98,7 +98,7 @@
 
 <script setup>
 import { reactive, ref, onMounted, defineProps } from "vue";
-import  {echarts} from "./echarts.esm.js";
+import { echarts } from "fitness-echarts/dist/echarts.esm";
 import { getBodydata } from "@/api/body";
 import dayjs from "dayjs";
 const props = defineProps({
