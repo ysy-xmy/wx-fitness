@@ -74,7 +74,7 @@
               <text class="cuIcon-close"></text>
             </view>
           </view>
-          <view class="solids" @tap="handleUploadWXimg" v-if="wximg.length < 1">
+          <view class="solids" @tap="addWeiXinImg" v-if="wximg.length < 1">
             <text class="cuIcon-cameraadd"></text>
           </view>
         </view>
@@ -319,8 +319,7 @@ const chooseAvatar = (e: any) => {
     };
   });
 };
-//这里废弃了，用自带的就行
-const onChooseAvatar = async (e: any) => {
+const addWeiXinImg = async (e: any) => {
   uni.chooseImage({
     count: 1, //默认9
     sizeType: ["original", "compressed"], //可以指定是原图还是压缩图，默认二者都有
@@ -330,13 +329,7 @@ const onChooseAvatar = async (e: any) => {
       res.tempFilePaths.forEach((item) => {
         console.log(item);
         uploadimg(item).then((res) => {
-          userInfo.value = {
-            ID: user.value.ID,
-            Avatar: res,
-            Username: user.value.name,
-            Sex: user.value.Sex,
-            Age: user.value.Age,
-          };
+          wximg.value.push(res);
         });
       });
     },

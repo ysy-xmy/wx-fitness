@@ -412,7 +412,12 @@ const pay = async () => {
     return;
   }
   console.log("身份验证");
-  if (!AuthStore.user || Object.keys(AuthStore.user).length === 0) {
+  if (
+    !AuthStore.user ||
+    Object.keys(AuthStore.user).length === 0 ||
+    !AuthStore.user.id ||
+    !AuthStore.user.OpenID
+  ) {
     uni.showLoading("正在获取用户信息...");
 
     getUserInfo()
