@@ -799,41 +799,32 @@ const state = reactive({
   type: "",
 });
 
-onMounted(() => {
-  console.log(props.value, "props");
-  uni.$on("beginAddClass", (val) => {
-    state.stuId = val.stuID;
-    state.courseId = val.courID;
-    state.type = val.type;
-  });
-  uni.showLoading({ title: "加载中...", mask: true });
-  const newList: ListItem[] = [];
-  //先获取一级目录
-  getFirstmenulist().then((res) => {
-    //遍历存到总数组中
-    for (let item of res.data.data) {
-      let data: ListItem = {
-        name: item.Name,
-        id: item.ID,
-        OrderNum: item.OrderNum,
-        children: [],
-      };
-      actionrouterList.value.push(data);
-    }
-    //排序
-    const sortedItems = sortByOrderNumDescending(actionrouterList.value);
-    actionrouterList.value = sortedItems;
-    //获取二级目录信息，传入一个一级目录的
-    getSelection(actionrouterList.value[0]);
-  });
-  //另一个进程获取全部完整的信息
-  getActionAll().then((res) => {
-    const transformedData = transformCategories(res.data.data);
+onMounted(async () => {
+  try {
+    uni.showLoading({ title: "加载中...", mask: true });
+
+    // 获取全部完整的信息
+    const actionAllResponse = await getActionAll();
+    const transformedData = transformCategories(actionAllResponse.data.data);
     actionrouterList.value = sortByOrderNumDescending(transformedData);
-  });
-  nextTick(() => {
+
+    // 自动选择第一个一级目录
+    if (actionrouterList.value.length > 0) {
+      tabCur.value = 0;
+      mainCur.value = 0;
+      verticalNavTop.value = 0;
+
+      // 获取并设置第一个一级目录的二级目录
+      const firstItem = actionrouterList.value[0];
+      await getSelection(firstItem);
+    }
+
     uni.hideLoading();
-  });
+  } catch (error) {
+    uni.hideLoading();
+    uni.showToast({ title: "加载失败", icon: "error" });
+    console.error("初始化数据失败:", error);
+  }
 });
 
 const chooseList = ref([]); //被选中课程的列表
@@ -859,40 +850,36 @@ const chooseAction = (
   }
 };
 
-const getSelection = (item: ListItem) => {
-  var firstmenuid = item.id;
+// 修改 getSelection 函数，返回 Promise
+const getSelection = async (item: ListItem) => {
+  const firstmenuid = item.id;
   if (item.children.length > 0) {
     toSecmenu(item);
-  } else {
+    return;
+  }
+
+  try {
     uni.showLoading({
       title: "加载中...",
       mask: true,
     });
-    getSecByFirst(firstmenuid)
-      .then((res) => {
-        if (res.data.data.length > 0) {
-          actionrouterList.value.find(
-            (item) => item.id === firstmenuid
-          )!.children = res.data.data.map((item) => {
-            return {
-              id: item.ID,
-              name: item.Name,
-              OrderNum: item.OrderNum,
-              children: [],
-              active: false,
-              // hadactive: true
-            };
-          });
-        }
-        toSecmenu(item);
-        actionrouterList.value = sortByOrderNumDescending(
-          actionrouterList.value
-        );
-        uni.hideLoading();
-      })
-      .finally(() => {
-        uni.hideLoading();
-      });
+
+    const res = await getSecByFirst(firstmenuid);
+    if (res.data.data.length > 0) {
+      actionrouterList.value.find((item) => item.id === firstmenuid)!.children =
+        res.data.data.map((item) => ({
+          id: item.ID,
+          name: item.Name,
+          OrderNum: item.OrderNum,
+          children: [],
+          active: false,
+        }));
+    }
+
+    toSecmenu(item);
+    actionrouterList.value = sortByOrderNumDescending(actionrouterList.value);
+  } finally {
+    uni.hideLoading();
   }
 };
 
