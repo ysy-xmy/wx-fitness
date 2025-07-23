@@ -58,6 +58,7 @@ export const usemesStore = defineStore({
           url = `/api/notifier/list`;
         }
         getNotifyList(data, url).then((res: any) => {
+          if (data.page_index === 1) this.setClear();
           console.log(res, "res");
           if (res.data.code === 200 && res.data.data) {
             console.log(res.data.data, "res.data");
@@ -83,7 +84,7 @@ export const usemesStore = defineStore({
       console.log(this.list, "this.list");
     },
     setClear() {
-      return;
+      this.list = [];
     },
     changeStatus(id: string) {
       this.list.find((item: any) => item.id === id).status = 1;

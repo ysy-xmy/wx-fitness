@@ -1,10 +1,7 @@
 <template>
   <div style="height: 100vh; display: flex; flex-direction: column">
     <div style="flex: 1 !important; height: 0" class="viewcontent flex-1">
-      <div
-        v-show="usetsto.active === 'index'"
-        class="index-page h-full"
-      >
+      <div v-show="usetsto.active === 'index'" class="index-page h-full">
         <CoachHome v-if="permission == 'coach'" />
         <Index v-else />
       </div>
@@ -92,6 +89,12 @@
           tabbardata[2].title
         }}</span>
         <template #icon>
+          <view
+            v-if="usemesStore().hadNew > 0"
+            class="cu-tag round bg-red sm"
+            style="left: -12px; top: -7px; position: absolute"
+            >{{ usemesStore().hadNew }}</view
+          >
           <img class="w-7 h-7" :src="tabbardata[2].activeicon" />
         </template>
       </van-tabbar-item>
@@ -105,6 +108,12 @@
           tabbardata[2].title
         }}</span>
         <template #icon>
+          <view
+            v-if="usemesStore().hadNew > 0"
+            class="cu-tag round bg-red sm"
+            style="left: -12px; top: -7px; position: absolute"
+            >{{ usemesStore().hadNew }}</view
+          >
           <img class="w-7 h-7" :src="tabbardata[2].inactiveicon" />
         </template>
       </van-tabbar-item>
@@ -112,6 +121,7 @@
   </div>
 </template>
 <script setup lang="ts" name="home">
+import { usemesStore } from "@/state/modules/mes";
 import { useAppStore } from "@/state/app";
 import Index from "@/components/stuHome/index.vue";
 import { tabbardata } from "@/tabbar";

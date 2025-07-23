@@ -183,6 +183,11 @@
               <text class="text-gray-500">查看我的信息</text>
             </div>
           </view>
+          <view class="action" v-if="usemesStore().hadNew > 0">
+            <view class="cu-tag round bg-red sm">{{
+              usemesStore().hadNew
+            }}</view>
+          </view>
         </view>
         <view
           v-if="roleName === 'coach'"
@@ -219,6 +224,7 @@ import { computed, onMounted, ref } from "vue";
 import { getCourseAndStudentCount } from "@/api/coach";
 import { getHWInfo, getUserInfo } from "@/api/user";
 import { useAuthStore } from "@/state/modules/auth";
+import { usemesStore } from "@/state/modules/mes";
 import { useRouter } from "uni-mini-router";
 const router = useRouter();
 const authStore = useAuthStore();
