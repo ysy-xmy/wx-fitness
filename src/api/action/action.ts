@@ -73,3 +73,8 @@ export const updateDetailFromGroup = (data: any) => {
 export const addGroupAction = (data: any) => {
   return request.post("/api/course/plan/addAction", data);
 };
+
+//修改动作组内容
+export const changeActionGroupDetail = (data: any) => {
+  return request.put("/api/course/plan/updateActionGroup", data);
+};

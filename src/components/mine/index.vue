@@ -247,8 +247,10 @@ onMounted(async () => {
   uni.$on("changeBody", (val) => {
     console.log("变");
     getHWInfo().then((res) => {
-      showTab1.value = res.data.data.Height.toString();
-      showTab2.value = res.data.data.Weight.toString();
+      if (roleName === "student") {
+        showTab1.value = res.data.data.Height.toString();
+        showTab2.value = res.data.data.Weight.toString();
+      }
     });
   });
   const ress = await (await getUserInfo()).data.data;

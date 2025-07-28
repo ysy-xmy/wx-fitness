@@ -44,8 +44,19 @@
         @dragstart="onDragStart(index)"
         @dragover.prevent="onDragOver(index)"
       >
-        <div class="top" style="background-color: rgba(59, 213, 221, 1)">
-          <div class="title">{{ item.title }}</div>
+        <div
+          class="top"
+          style="background-color: rgba(59, 213, 221, 1); height: 40px"
+        >
+          <div class="title" v-if="!item.isEditing">{{ item.title }}</div>
+          <input
+            type="text"
+            v-model="item.title"
+            class="edit-input"
+            style="width: auto"
+            v-else
+            @change="(e) => changeTitle(e, item)"
+          />
           <div class="top-actions">
             <van-icon
               name="edit"
@@ -80,10 +91,10 @@
                 <div class="name" @click="godetail(it)">
                   {{ it.ActionName }}
                 </div>
+
                 <div class="wei">{{ getMaxWeight(it.PlanActionDetail) }}Kg</div>
                 <!-- <input
-                  v-else
-                  type="number"
+                  v-el
                   v-model="it.Weight"
                   class="edit-input"
                   placeholder="重量"
@@ -104,8 +115,7 @@
                 </div>
 
                 <!-- <input
-                  v-else
-                  type="number"
+                  v-el
                   v-model="it.GroupNum"
                   class="edit-input"
                   placeholder="组数"
@@ -145,7 +155,6 @@
                   </div>
                   <div style="display: flex">
                     <input
-                      type="number"
                       v-model="group.Weight"
                       @change="(e) => changeDetail(item, it, index, e)"
                       class="edit-input"
@@ -155,7 +164,6 @@
                   </div>
                   <div style="display: flex">
                     <input
-                      type="number"
                       @change="(e) => changeDetail(item, it, index, e)"
                       v-model="group.GroupNum"
                       class="edit-input"
@@ -188,7 +196,15 @@
         @dragover.prevent="onDragOver(index)"
       >
         <div class="top" style="background-color: rgba(138, 207, 90, 1)">
-          <div class="title">{{ item.title }}</div>
+          <div class="title" v-if="!item.isEditing">{{ item.title }}</div>
+          <input
+            type="text"
+            v-model="item.title"
+            class="edit-input"
+            style="width: auto"
+            v-else
+            @change="(e) => changeTitle(e, item)"
+          />
           <div class="top-actions">
             <van-icon
               name="edit"
@@ -227,8 +243,7 @@
                   {{ getTotalSec(it.PlanActionDetail) }}秒
                 </div>
                 <!-- <input
-                  v-else
-                  type="number"
+                  v-el
                   v-model="it.Second"
                   class="edit-input"
                   placeholder="秒数"
@@ -280,7 +295,6 @@
                   </div>
                   <div style="display: flex">
                     <input
-                      type="number"
                       v-model="group.Second"
                       class="edit-input"
                       @change="(e) => changeDetail(item, it, index, e)"
@@ -451,6 +465,7 @@ import {
   addDetailToGroup,
   deleteDetailFromGroup,
   updateDetailFromGroup,
+  changeActionGroupDetail,
 } from "@/api/action/action";
 import dayjs from "dayjs";
 import { onShow } from "@dcloudio/uni-app";
@@ -489,6 +504,24 @@ const planActionsss = ref<any[]>([
 ]);
 const onChangeAddClassName = (e: any) => {
   addClassName.value = e.detail;
+};
+const changeTitle = (e, item) => {
+  console.log(item);
+  let data = {
+    ID: item.ID,
+    ActionGroupTitle: item.title,
+    ContentType: item.type,
+    OrderNum: 0,
+  };
+  changeActionGroupDetail(data).then((res: any) => {
+    if (res.data.code === 200) {
+    } else {
+      uni.showToast({
+        title: "保存失败",
+        icon: "error",
+      });
+    }
+  });
 };
 const route = useRoute();
 onShow(() => {
@@ -668,6 +701,7 @@ const getAction = (data: any) => {
       if (res.data.code === 200 && res.data.data) {
         res.data.data.forEach((it: any, ind: number) => {
           planListType.value.push({
+            ID: it["ID"],
             planActions: it["PlanActions"],
             title: it["ActionGroupTitle"] || `动作${ind + 1}`,
             type: it["ContentType"],

@@ -5,7 +5,7 @@
     scroll-y="true"
   >
     <scrollFrom
-      :fun="getOrderlist"
+      :fun="fun"
       :dispose="dispose"
       ref="scorllFormRef"
       :datasources="list"
@@ -83,13 +83,14 @@
 
 <script setup lang="ts">
 import scrollFrom from "@/components/scrollForm/index.vue";
-import { ref, onMounted } from "vue";
-import { getOrderlist } from "@/subpackages/apis/order";
+import { ref, onMounted, computed } from "vue";
+import { getOrderlist, getCoachOrderlist } from "@/subpackages/apis/order";
 import { useRouter } from "uni-mini-router";
+import { useAuthStore } from "@/state/modules/auth";
 import dayjs from "dayjs";
 const router = useRouter();
 const scorllFormRef = ref<any>(null);
-
+const AuthStore = useAuthStore();
 const dispose = (item: any) => {
   // 返回一个新的对象，将 PaymentTime 格式化
   return {
@@ -97,7 +98,9 @@ const dispose = (item: any) => {
     PaymentTime: dayjs(item.PaymentTime).format("YYYY-MM-DD"), // 格式化时间
   };
 };
-
+const fun = computed(() => {
+  return AuthStore.user.RoleName == "coach" ? getCoachOrderlist : getOrderlist;
+});
 let list = ref<any[]>([]);
 onMounted(() => {
   uni.showLoading({ title: "数据加载中" });

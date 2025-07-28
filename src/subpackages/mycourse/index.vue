@@ -9,7 +9,9 @@
         />
       </div>
     </div>
-    <div class="info-card rounded-t-xl bg-white absolute top-40 w-full flex flex-col justify-center p-4">
+    <div
+      class="info-card rounded-t-xl bg-white absolute top-40 w-full flex flex-col justify-center p-4"
+    >
       <div class="card w-full bg-[#f7f9fb] p-3">
         <div class="card-top">
           <div class="title w-full flex justify-between items-center px-1">
@@ -19,21 +21,23 @@
               size="60"
               layer-color="#ebedf0"
               :color="gradientColor"
-              :value="100-Number(state.Percentage)"
-              :text="(100-Number(state.Percentage)) + '%'"
-              style="font-size: 13px!important"
+              :value="100 - Number(state.Percentage)"
+              :text="100 - Number(state.Percentage) + '%'"
+              style="font-size: 13px !important"
             />
           </div>
         </div>
         <div class="card-body mt-2 flex w-full justify-between flex-nowrap">
-          <div class="body-content w-2/3 text-[#666] text-ellipsis h-20 overflow-y-auto text-lg flex items-center">
+          <div
+            class="body-content w-2/3 text-[#666] text-ellipsis h-20 overflow-y-auto text-lg flex items-center"
+          >
             <h1>{{ state.desc ? state.desc : "暂无描述" }}</h1>
           </div>
           <div
             class="body-btn w-1/3 flex-1 flex flex-col items-center justify-end"
           >
-            <span class="text-[#359be5]  text-xs w-full text-center pb-2">
-                授权教练打卡
+            <span class="text-[#359be5] text-xs w-full text-center pb-2">
+              授权教练打卡
             </span>
             <div class="btn">
               <van-switch :checked="checked" @change="handleswitch" />
@@ -44,38 +48,37 @@
       <!-- <Finishtabs/> -->
 
       <div class="mycourse-tabs">
-      <van-tabs swipeable animated color="#46c5e5">
-        <van-tab title="已完成">
-          <PlanCard 
-            title="私教课"
-            :startDate="state.CreatedAt"
-            :endDate="state.EndTime"
-            :status="someStatus"
-            :actionGroups="list.filter(item => item.Complete)"
-          />
-        </van-tab>
-        <van-tab title="线下计划">
-          <PlanList 
-            type="outline"
-            :list="list" 
-            :LessonCount="state.LessonCount" 
-            :EndTime="state.EndTime" 
-            :CoachName="state.CoachName"
-          />
-        </van-tab>
-        <van-tab title="线上任务">
-          <PlanList 
-            type="online"
-            :list="list" 
-            :LessonCount="state.LessonCount" 
-            :EndTime="state.EndTime" 
-            :CoachName="state.CoachName"
-          />
-        </van-tab>
-      </van-tabs>
+        <van-tabs swipeable animated color="#46c5e5">
+          <van-tab title="线下计划">
+            <PlanList
+              type="outline"
+              :list="list"
+              :LessonCount="state.LessonCount"
+              :EndTime="state.EndTime"
+              :CoachName="state.CoachName"
+            />
+          </van-tab>
+          <van-tab title="线上任务">
+            <PlanList
+              type="online"
+              :list="list"
+              :LessonCount="state.LessonCount"
+              :EndTime="state.EndTime"
+              :CoachName="state.CoachName"
+            />
+          </van-tab>
+          <van-tab title="已完成">
+            <PlanCard
+              title="私教课"
+              :startDate="state.CreatedAt"
+              :endDate="state.EndTime"
+              :status="someStatus"
+              :actionGroups="list.filter((item) => item.Complete)"
+            />
+          </van-tab>
+        </van-tabs>
+      </div>
     </div>
-    </div>
-
   </div>
 </template>
 <script lang="ts" setup name="mycourse">
@@ -86,7 +89,7 @@ import {
   allowCoachClock,
   selectCoachClok,
 } from "@/api/courses/courses";
-import { getplanlist } from "@/api/course";
+import { getplanlist as PlanListGet } from "@/api/course";
 import type { actionGroup } from "@/components/mycourse/course";
 import PlanList from "@/components/mycourse/PlanList.vue";
 import PlanCard from "@/components/plan-card/index.vue";
@@ -103,27 +106,29 @@ const state = ref({
   Percentage: "",
   CoachName: "",
   LessonCount: "",
-  EndTime: '',
-  CreatedAt: ''
+  EndTime: "",
+  CreatedAt: "",
 });
 const gradientColor = {
-  '0%': '#3ed2de',
-  '100%': '#5aa6f4',
+  "0%": "#3ed2de",
+  "100%": "#5aa6f4",
 };
 const someStatus = ref(0);
 
 const getPlanlist = () => {
   uni.showLoading({
     title: "加载中",
-    mask: false
+    mask: false,
   });
-  getplanlist(iddd.value).then((res) => {
-    let temp = res.data.data || [];
-    uni.hideLoading();
-    list.value = temp
-  }).finally(() => {
-    uni.hideLoading();
-  });
+  PlanListGet(iddd.value)
+    .then((res) => {
+      let temp = res.data.data || [];
+      uni.hideLoading();
+      list.value = temp;
+    })
+    .finally(() => {
+      uni.hideLoading();
+    });
 };
 const handleswitch = () => {
   uni.showModal({
@@ -160,8 +165,8 @@ const handleswitch = () => {
   });
 };
 const initList = () => {
-  list.value = []
-}
+  list.value = [];
+};
 
 onMounted(() => {
   // 获取路由参数
@@ -170,7 +175,9 @@ onMounted(() => {
   courseId.value = router.route.value.params?.id;
   const name = router.route.value.params?.name;
   const desc = router.route.value.params?.desc;
-  const CoachName = decodeURIComponent(router.route.value.params?.CoachName || "");
+  const CoachName = decodeURIComponent(
+    router.route.value.params?.CoachName || ""
+  );
   const LessonCount = router.route.value.params?.LessonCount;
   const EndTime = router.route.value.params?.EndTime;
   const Percentage = router.route.value.params?.Percentage;
@@ -183,15 +190,14 @@ onMounted(() => {
     Percentage,
     LessonCount,
     EndTime: decodeURIComponent(EndTime || ""),
-    CreatedAt: decodeURIComponent(CreatedAt || "")
+    CreatedAt: decodeURIComponent(CreatedAt || ""),
   };
   getPlanlist();
 });
 
 defineExpose({
   initList,
-  getPlanlist
-})
+  getPlanlist,
+});
 </script>
 <style scoped></style>
-

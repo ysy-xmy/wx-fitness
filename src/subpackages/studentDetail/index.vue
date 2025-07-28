@@ -90,9 +90,9 @@
 
     <div class="tab-title mt-2 bg-[#f8fafc] w-full">
       <van-tabs :active="tabStatus" @change="changeTab">
-        <van-tab title="已完成" name="finish"></van-tab>
         <van-tab title="线下计划" name="outline"></van-tab>
         <van-tab title="线上任务" name="online"></van-tab>
+        <van-tab title="已完成" name="finish"></van-tab>
       </van-tabs>
     </div>
     <van-collapse :value="activeName" @change="onChange" class="w-full">
@@ -283,7 +283,7 @@
 <script setup lang="ts">
 import PlanCard from "@/components/plan-card/index.vue";
 import { computed, reactive, ref, watch } from "vue";
-import { getplanlist, postPlan } from "@/api/course/index";
+import { getCoursePlan, getplanlist, postPlan } from "@/api/course/index";
 import { getstudentInfobyId } from "@/api/coach/index";
 import { useRouter } from "uni-mini-router";
 import { onMounted } from "vue";
@@ -493,7 +493,7 @@ const changeCheck = (item: any) => {
   //判断是否已经授权，如果没有授权，提示
   if (!CoachPunchInAuth.value) {
     uni.showToast({
-      title: "请先授权",
+      title: "请先获取授权",
       icon: "none",
     });
     return;
@@ -535,8 +535,10 @@ const initData = async () => {
     //获取个人信息
     const res = await getstudentInfobyId(query.value.studentId);
     stuInfo.value = res.data.data;
+    // const r = await getCoursePlan(query.value.courseId);
+    // console.log(r, "r");
     //获取课程内容
-    const response = await getplanlist(query.value.courseId);
+    const response = await getCoursePlan(query.value.courseId);
     console.log(response, "response获取课程成功");
     if (response.data.data === null || !response.data.data)
       return uni.hideLoading();

@@ -1,6 +1,9 @@
 <template>
   <div class="tab-mycourse w-full flex flex-wrap justify-center">
-    <div v-if="Object.keys(list).length > 0" style="width: 100vw;overflow-y: auto;">
+    <div
+      v-if="Object.keys(list).length > 0"
+      style="width: 100vw; overflow-y: auto"
+    >
       <div v-for="(item, index) in Object.keys(list)" :key="index">
         <div
           v-for="it in list[item]"
@@ -136,7 +139,7 @@ import { useRouter } from "uni-mini-router";
 import { getMycourese } from "@/api/courses/courses";
 import { onMounted, reactive, ref } from "vue";
 import { useAuthStore } from "@/state/modules/auth";
-import { getOrderlist } from "@/subpackages/apis/order";
+import { getOrderlist, getOrderDetail } from "@/subpackages/apis/order";
 import dayjs from "dayjs";
 import { useActionsStore } from "@/state/modules/actions";
 const props = defineProps<{
