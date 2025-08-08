@@ -186,7 +186,16 @@ const handlePunchIn = (id: any, status: boolean, index: number) => {
       success: (res) => {
         if (res.confirm) {
           actionClok(id)
-            .then(() => {
+            .then((r) => {
+              console.log(r, "res");
+              if (r.data.code !== 200) {
+                uni.showToast({
+                  title: r.data.msg,
+                  icon: "error",
+                  duration: 2000,
+                });
+                return;
+              }
               planList.value[index].Complete = true;
               uni.showToast({
                 title: "成功",
@@ -200,7 +209,7 @@ const handlePunchIn = (id: any, status: boolean, index: number) => {
             })
             .catch((err) => {
               uni.showToast({
-                title: "打卡失败",
+                title: r.data.msg,
                 icon: "error",
                 duration: 2000,
                 mask: false,
@@ -228,8 +237,16 @@ const handlePunchIn = (id: any, status: boolean, index: number) => {
       success: (res) => {
         if (res.confirm) {
           actionClok(id)
-            .then(() => {
-              planList.value[index].Complete = true;
+            .then((r) => {
+              if (r.data.code !== 200) {
+                uni.showToast({
+                  title: r.data.msg,
+                  icon: "error",
+                  duration: 2000,
+                });
+                return;
+              }
+              planList.value[index].Complete = false;
               uni.showToast({
                 title: "成功",
                 icon: "success",
@@ -237,12 +254,13 @@ const handlePunchIn = (id: any, status: boolean, index: number) => {
                 mask: false,
               });
               setTimeout(() => {
+                console.log("取消打卡成功");
                 uni.$emit("reload", true);
               }, 2200);
             })
             .catch((err) => {
               uni.showToast({
-                title: "取消打卡失败",
+                title: r.data.msg,
                 icon: "error",
                 duration: 2000,
                 mask: false,

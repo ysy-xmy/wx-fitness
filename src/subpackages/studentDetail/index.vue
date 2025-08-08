@@ -314,7 +314,7 @@ const minDate = dayjs().format("YYYY-MM-DD");
 const maxDate = dayjs().add(1, "year").format("YYYY-MM-DD");
 const tagsList = ref<{ content: string; color: string }[]>([]);
 const tagsColor = ["rgb(144,199,97)", "rgb(226,198,29)", "rgb(217,9,84)"];
-const tabStatus = ref("finish");
+const tabStatus = ref("outline");
 const columns = ref(["私教课"]);
 const showSelectTime = ref(false);
 const changeTab = (e: any) => {

@@ -145,9 +145,9 @@
                 >
                   <span style="margin-right: 30px">第{{ index + 1 }}组</span>
                   <span style="margin-right: 30px"
-                    >{{ group.Weight | 0 }}Kg</span
+                    >{{ group.Weight || 0 }}Kg</span
                   >
-                  <span>{{ group.GroupNum | 0 }}次</span>
+                  <span>{{ group.GroupNum || 0 }}次</span>
                 </div>
                 <div v-else class="edit-group">
                   <div style="display: flex; margin-left: 20px">
@@ -286,7 +286,7 @@
                 >
                   <span style="margin-right: 30px">第{{ index + 1 }}组</span>
                   <span style="margin-right: 30px"
-                    >{{ group.Second | 0 }}秒</span
+                    >{{ group.Second || 0 }}秒</span
                   >
                 </div>
                 <div v-else class="edit-group">
@@ -930,10 +930,10 @@ const changeDetail = (
           icon: "success",
         });
       } else {
-        // uni.showToast({
-        //   title: res.data.msg,
-        //   icon: "error",
-        // });
+        uni.showToast({
+          title: res.data.msg,
+          icon: "error",
+        });
       }
     });
   } else {

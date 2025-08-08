@@ -88,12 +88,12 @@ import {
   cancelCoachClok,
   allowCoachClock,
   selectCoachClok,
+  getMycourese,
 } from "@/api/courses/courses";
-import { getplanlist as PlanListGet } from "@/api/course";
+import { getCoursePlan, getCoursePlan as PlanListGet } from "@/api/course";
 import type { actionGroup } from "@/components/mycourse/course";
 import PlanList from "@/components/mycourse/PlanList.vue";
 import PlanCard from "@/components/plan-card/index.vue";
-import dayjs from "dayjs";
 const checked = ref(false);
 let list = ref<actionGroup[]>([]); // 确保 list 被初始化为一个空数组
 const iddd = ref();
@@ -140,12 +140,20 @@ const handleswitch = () => {
       if (res.confirm) {
         if (!checked.value) {
           allowCoachClock(courseId.value).then((res) => {
-            uni.showToast({
-              title: "授权成功",
-              icon: "success", //如果要纯文本，不要icon，将值设为'none'
-              duration: 2000, //持续时间为 2秒
-            });
-            checked.value = !checked.value;
+            if (res.data.code == 200) {
+              uni.showToast({
+                title: "授权成功",
+                icon: "success", //如果要纯文本，不要icon，将值设为'none'
+                duration: 2000, //持续时间为 2秒
+              });
+              checked.value = !checked.value;
+            } else {
+              uni.showToast({
+                title: res.data.msg,
+                icon: "error", //如果要纯文本，不要icon，将值设为'none'
+                duration: 2000, //持续时间为 2秒
+              });
+            }
           });
         } else {
           cancelCoachClok(courseId.value).then((res) => {
@@ -182,6 +190,7 @@ onMounted(() => {
   const EndTime = router.route.value.params?.EndTime;
   const Percentage = router.route.value.params?.Percentage;
   const CreatedAt = router.route.value.params?.CreatedAt;
+
   state.value = {
     id,
     name: decodeURIComponent(name || ""),
@@ -193,8 +202,18 @@ onMounted(() => {
     CreatedAt: decodeURIComponent(CreatedAt || ""),
   };
   getPlanlist();
+  getIfTruth();
 });
-
+const getIfTruth = () => {
+  getMycourese().then((res) => {
+    res.data.data.forEach((item) => {
+      if (item.ID == courseId.value) {
+        checked.value = item.CoachPunchInAuth;
+        return;
+      }
+    });
+  });
+};
 defineExpose({
   initList,
   getPlanlist,
