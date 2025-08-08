@@ -3,31 +3,22 @@
     <div class="course-img w-full">
       <img
         class="w-screen h-60"
-        src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
+        src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250729/1753798686313.jpg"
         alt=""
       />
     </div>
-    <div class="p-5 course-info">
-      <div class="tip text-[#6b7280]">
-        <van-icon name="star" color="#ffdf6e" size="20" />
-        （最近有<span class="text-red-500">100人</span>报名）
-      </div>
-      <div class="course-title tracking-wide py-3 text-2xl font-bold">
+    <div class="p-5 course-info pb-1 items-center">
+      <span class="course-title tracking-wide py-3 text-2xl font-bold">
         私教课
+      </span>
+      <span class="tip text-[#6b7280]">
+        （<span class="text-red-500">火热</span>报名中）
+      </span>
+      <div class="course-tip text-[#545d6a] mt-2">
+        <p>购课后请与教练协调上课时间，<span class="font-bold">主动告知既往病史以及身体不适</span>，并在教练协助下进行锻炼。</p>
       </div>
-      <div class="course-tip text-[#545d6a]">
-        <p>由李教练进行授课，授课时间购课后与教练沟通</p>
-      </div>
-      <van-divider style="height: 3px" class="" />
+      <van-divider style="height: 1px" class="p-0 m-0" />
 
-      <div class="course-desc tracking-wider font-semibold">
-        <p style="line-height: 27px">
-          私教课是指由教练带领的专业私人教练课程，适合于那些需要有针对性的训练，如减脂、塑形、瘦身、塑胶训练、健美、减肥等。
-        </p>
-        <p style="line-height: 27px">
-          私教课的特点是由专业的私人教练带领，教练会根据客户的个人情况，制定针对性的训练计划，并提供专业的指导，帮助客户达到目标。
-        </p>
-      </div>
     </div>
     <div class="pl-5 font-extrabold tracking-widest text-lg feature-text">
       课程特色
@@ -37,26 +28,38 @@
         <div class="feature-icon">
           <van-icon name="medal" color="#ffdf6e" size="24" />
         </div>
-        <div class="feature-title">专业教练</div>
+        <div class="feature-title">减脂塑形</div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">
           <van-icon name="medal" color="#ffdf6e" size="24" />
         </div>
-        <div class="feature-title">场地免费wifi</div>
+        <div class="feature-title">增肌强化</div>
       </div>
 
       <div class="feature-item">
         <div class="feature-icon">
           <van-icon name="medal" color="#ffdf6e" size="24" />
         </div>
-        <div class="feature-title">无时间限制</div>
+        <div class="feature-title">提升心肺功能</div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">
           <van-icon name="medal" color="#ffdf6e" size="24" />
         </div>
-        <div class="feature-title">空调</div>
+        <div class="feature-title">专项运动表现</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <van-icon name="medal" color="#ffdf6e" size="24" />
+        </div>
+        <div class="feature-title">健康与功能改善</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <van-icon name="medal" color="#ffdf6e" size="24" />
+        </div>
+        <div class="feature-title">特殊需求与康复</div>
       </div>
     </div>
 
@@ -65,32 +68,35 @@
     >
       课程主要内容
     </div>
-    <div class="p-5 course-content">
+    <div class="p-5 pt-2 course-content">
       <div class="content-item">
-        杠铃卧推：平板、上斜、下斜杠铃卧推动作图解教程
+        实体私教课简介：
+        <br />
+        由专业教练提供一对一指导，量身定制专属运动计划。课程采用线下实体授课形式，教练全程陪伴指导，确保动作标准与训练安全高效。
       </div>
       <div class="content-item">
-        杠铃卧推能增加胸大肌厚度。平板、上斜、下斜三种形式的杠铃卧推，分别重点锻炼胸大肌不同部位，其他还涉及肱三头肌、三角肌。
-      </div>
-      <div class="content-item">
-        杠铃卧推（barbell
-        press）是锻炼胸肌的经典动作，属于自由重量卧推，比固定器械的效果更好，因此胸大肌和上臂力量达到一定水平后最好用杠铃或哑铃进行卧推，这样才能得到完美的胸肌。
+        &nbsp;
+        <br />
+
+        适合人群：
+        <br />
+        ● 希望获得个性化训练的人群
+        <br />
+        ● 运动新手或经验不足者，需要专业指导
+        <br />
+        ● 追求快速、安全、显著健身效果者
+        <br /> 
+        ● 需要持续动力与监督以保持训练积极性等
       </div>
 
       <div class="content-item flex justify-center">
         <img
-          class="w-2/3 h-40"
-          src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
+          class="w-5/6 h-44"
+          src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250729/1753798666231.png"
           alt=""
         />
       </div>
-      <div class="content-item flex justify-center">
-        <img
-          class="w-2/3 h-40"
-          src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
-          alt=""
-        />
-      </div>
+    
     </div>
     <div class="p-5 course-warning">
       <div class="warning-title font-extrabold tracking-widest text-lg">
