@@ -3,7 +3,7 @@ name: Publish fitness-echarts to npm
 on:
   push:
     branches:
-      - monoreportTest
+      - monorepoTest
     paths:
       - "packages/fitness-echarts/**" # 只有 fitness-echarts 目录变动才触发
 
