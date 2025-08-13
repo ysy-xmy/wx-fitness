@@ -45,6 +45,6 @@ jobs:
         run: pnpm --filter fitness-echarts run build
 
       - name: Publish to npm
-        run: pnpm --filter fitness-echarts publish --access public
+        run: npm --filter fitness-echarts publish --access public
         env:
           NODE_AUTH_TOKEN: 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
