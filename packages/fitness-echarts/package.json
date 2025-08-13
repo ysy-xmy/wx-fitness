@@ -1,6 +1,6 @@
 {
   "name": "fitness-echarts",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "fitness微信小程序 ECharts 按需引入 ESM 包",
   "main": "dist/echarts.esm.js",
   "files": [
