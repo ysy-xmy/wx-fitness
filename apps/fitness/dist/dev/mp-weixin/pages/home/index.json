@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "轻律健身",
+  "usingComponents": {
+    "index": "../../components/stuHome/index",
+    "action": "../../components/action/index",
+    "mine": "../../components/mine/index",
+    "coach-home": "../../components/coachHome/index"
+  }
+}

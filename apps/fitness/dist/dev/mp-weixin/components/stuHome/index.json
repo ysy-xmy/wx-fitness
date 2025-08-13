@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "custom-tabs": "./CustomTabs",
+    "tab-buycourse": "../index/tab-buycourse",
+    "tab-mycourse": "../index/tab-mycourse"
+  }
+}

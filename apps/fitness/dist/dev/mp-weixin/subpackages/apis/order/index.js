@@ -1,0 +1,1 @@
+"use strict";const a=require("../../../utils/request.js"),d=(r,t)=>{let e={Size:r,Page:t};return a.http.get("/api/order/owner-orders",{params:e})},s=(r,t)=>{let e={Size:r,Page:t};return a.http.get("/api/order/coach-orders",{params:e})},i=r=>a.http.get("/api/order/order-detail/",{params:{OrderID:"14"}});exports.getCoachOrderlist=s;exports.getOrderDetail=i;exports.getOrderlist=d;

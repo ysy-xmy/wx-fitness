@@ -1,0 +1,70 @@
+<template>
+  <div class="w-screen h-screen card-wrap" style="background-image: url('https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250224/1740412443021.png');background-position: center;background-size: cover;">
+    <div class="card" style="background-color: #fff">
+      <div
+        class="w-full exhibition-box relative flex justify-centers rounded-t-[20px] overflow-hidden">
+        <img
+          class="w-full h-50"
+          src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250305/1741105971033.png" />
+      </div>
+      <view class="cu-form-group margin-top" style="width: 100%; background: 0">
+        <view class="label-title">课程数</view>
+        <input placeholder="请输入课程数" name="input" v-model="form.num" />
+      </view>
+      <view class="cu-form-group margin-top" style="width: 100%; background: 0">
+        <view class="label-title">价&nbsp;格</view>
+        <input placeholder="请输入价格" name="input" v-model="form.money" />
+      </view>
+      <button
+        class="cu-btn round large margin-top mb-5"
+        open-type="share"
+        style="background-color:#94d0f2 ;color: #fff;"
+        :disabled="form.money == '' || form.num == ''">
+        点击分享
+      </button>
+    </div>
+  </div>
+</template>
+<script setup lang="ts">
+import { onMounted, reactive } from "vue";
+import { onShareAppMessage } from "@dcloudio/uni-app";
+import { useAuthStore } from "@/state/modules/auth";
+const AuthStore = useAuthStore();
+const user = AuthStore.getUser;
+console.log(user, "user");
+onShareAppMessage((res) => {
+  console.log(res, user, form.num, form.money, "res");
+  return {
+    title: `${user.name}分享的课程`,
+    path: `/subpackages/coursePurchase/index?name=${user.name}&&phone=${user.phone ? user.phone : "暂无联系方式"}&&img=${user.img}&&count=${form.num}&&price=${form.money}&&ifDiy=true&&id=${user.id}&&sex=${user.sex}`,
+  };
+});
+
+type form = {
+  num: string;
+  money: string;
+};
+const form = reactive<form>({
+  num: "",
+  money: "",
+});
+</script>
+<style scoped>
+.card-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.card {
+  width: 80vw;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.label-title {
+  width: 60px;
+}
+</style>

@@ -1,0 +1,1 @@
+<view style="width:100vw;padding:20px 10px"><block wx:if="{{a}}"><view wx:for="{{b}}" wx:for-item="item" class="card" style="width:100%;display:flex;justify-content:center"><image style="margin-bottom:10px" src="{{item.a}}" mode="widthFix" bindtap="{{item.b}}"></image></view></block><van-empty wx:else u-t="m" u-i="318deec0-0" bind:__l="__l" u-p="{{c||''}}"/></view>

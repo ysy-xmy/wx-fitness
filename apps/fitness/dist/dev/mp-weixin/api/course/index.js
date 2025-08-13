@@ -1,0 +1,1 @@
+"use strict";const e=require("../../utils/request.js"),s=t=>e.http.post("/api/course/postPlan",t),o=t=>e.http.post("/api/course/studentCourse/update",t),r=t=>e.http.get("/api/course/planInfo/"+t);exports.changeCourseMes=o;exports.getCoursePlan=r;exports.postPlan=s;

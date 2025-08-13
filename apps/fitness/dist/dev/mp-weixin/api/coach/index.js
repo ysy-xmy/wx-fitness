@@ -1,0 +1,1 @@
+"use strict";const t=require("../../utils/request.js"),n=()=>t.http.get("/api/coach/list"),o=()=>t.http.get("api/coach/courses"),u=()=>t.http.get("/api/coach/courseAndStudentCount"),c=e=>t.http.get("/api/coach/student/info/"+e);exports.getCoachList=n;exports.getCoachStudentinfo=o;exports.getCourseAndStudentCount=u;exports.getstudentInfobyId=c;

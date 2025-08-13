@@ -1,0 +1,1 @@
+<slot wx:if="{{a}}" name="empty"></slot><slot wx:else name="card"></slot>

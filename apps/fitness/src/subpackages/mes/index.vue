@@ -1,0 +1,527 @@
+<template>
+  <scroll-view
+    class="bg"
+    ref="mesListRef"
+    @scroll="handleScroll"
+    scroll-y
+    :scroll-top="mesListRefHeight"
+  >
+    <!-- <div class="search">
+      <van-search
+        style="width: 100%"
+        v-model="mesState.searchVal"
+        placeholder="请输入关键词"
+        @search="changeMesList"
+        @cancel="clearVal"
+      />
+    </div> -->
+    <div class="secCheck">
+      <!-- <van-checkbox v-model="mesState.checked" @change="changeMesList">
+        仅显示未读
+      </van-checkbox> -->
+      <div class="allRead" @click="clickAllRead">
+        <van-icon name="success" />
+        一键已读
+      </div>
+    </div>
+    <div class="right" ref="mesListRef">
+      <van-collapse
+        :value="mesState.activeKey"
+        accordion
+        @change="showDetail"
+        v-if="mesStore.mesList.length > 0"
+      >
+        <div
+          class="card"
+          v-for="(item, index) in mesStore.mesList"
+          :key="item.ID"
+        >
+          <van-collapse-item :name="item.id" class="collapse-item">
+            <view slot="title">
+              <view class="dot" v-if="!item.Status"></view>
+              {{ item.Title }}</view
+            >
+            <div class="detailContent" v-html="item.Content"></div>
+          </van-collapse-item>
+        </div>
+        <div
+          class="bottom_text"
+          v-if="mesStore.mesList.length >= mesStore.total - 1"
+        >
+          已经到底了
+        </div>
+        <div
+          class="bottom_text"
+          v-else-if="
+            mesStore.mesList.length < mesStore.total - 1 && mesState.loading
+          "
+        >
+          <van-loading />
+          <div>加载中...</div>
+        </div>
+      </van-collapse>
+      <div v-if="mesStore.mesList.length === 0" class="emptystatus">
+        <div class="emptyText">暂无信息</div>
+      </div>
+    </div>
+  </scroll-view>
+</template>
+<script setup lang="ts">
+import { readNotify } from "@/api/notify/index";
+// import router from "@/router";
+// import {
+//   QuestionCircleOutlined,
+//   ExclamationCircleFilled,
+//   SettingOutlined,
+//   DownOutlined,
+//   UpOutlined,
+//   LoadingOutlined,
+//   CheckOutlined,
+// } from "@ant-design/icons-vue";
+
+// <van-icon name="arrow-down" />
+import {
+  nextTick,
+  onMounted,
+  reactive,
+  ref,
+  type ComponentPublicInstance,
+} from "vue";
+// import { useNotifyStore } from "@/stores/notifyMes";
+import { usemesStore } from "@/state/modules/mes";
+import { useAuthStore } from "@/state/modules/auth";
+const mesStore = usemesStore();
+const mesState = reactive<{
+  mesType: "official" | "persional" | "total";
+  checked: boolean;
+  searchVal: string;
+  activeKey: string[];
+  page_size: number;
+  page_index: number;
+  loading: boolean;
+}>({
+  mesType: "total",
+  checked: false,
+  searchVal: "",
+  activeKey: [] as string[],
+  page_size: 10,
+  page_index: 1,
+  loading: true,
+});
+onMounted(() => {
+  changeMesList();
+  mesListRefHeight.value = mesListRef.value?.offsetHeight
+    ? mesListRef.value?.offsetHeight
+    : 0;
+});
+const mesListRefHeight = ref(0);
+const clearVal = () => {
+  mesState.searchVal = "";
+  changeMesList();
+};
+const clickAllRead = async () => {
+  if (mesStore.hadNew === 0)
+    uni.showToast({
+      title: "没有新消息",
+      icon: "none",
+    });
+  else {
+    const res = await readNotify(-1);
+    if (res.data.code == 200) {
+      mesStore.setClear(true);
+      mesStore.sethadNew(0);
+
+      mesList.value.forEach((item) => {
+        item.Status = true;
+      });
+      uni.showToast({
+        title: "全部已读成功",
+        icon: "success",
+      });
+    } else {
+      uni.showToast({
+        title: "全部已读失败",
+        icon: "error",
+      });
+    }
+  }
+};
+const showDetail = (e: any) => {
+  if (!e) return; // 如果没有选中项，直接返回
+  console.log(e.detail);
+  console.log(mesStore.mesList);
+  mesState.activeKey = e.detail;
+  nextTick(() => {
+    const index = e.detail;
+    // notifyStore.sethadNew(false);
+    console.log(typeof index, 1234565);
+    if (typeof index !== "number") return;
+
+    if (!mesStore.mesList[index].Status)
+      readNotify(mesStore.mesList[index].ID).then((res) => {
+        console.log(res);
+        if (res.data.code == 200) {
+          console.log(mesStore.mesList[index]);
+          mesStore.mesList[index].Status = true;
+          mesStore.sethadNew(false);
+        }
+      });
+    // 不再需要单独获取详情，直接使用item.content
+    // getNotifyDeatil(mesList.value[index].id).then((res) => {
+    //   if (res.code == 20000) {
+    //     detailContent.value = res.data.content
+    //       ? res.data.content
+    //       : res.data.title;
+    //   } else {
+    //     uni.showToast({
+    //       title: "获取详情失败",
+    //       icon: "error",
+    //     });
+    //   }
+    // });
+  });
+};
+const changeMesList = async () => {
+  mesState.activeKey = [];
+  mesState.page_size = 10;
+  mesState.page_index = 1;
+  refList.value = [];
+  let data = {
+    userId: useAuthStore().user.id,
+    page: mesState.page_index,
+    size: mesState.page_size,
+  };
+  getMesList(data);
+};
+const mesListRef = ref<HTMLElement | null>(null);
+const refList = ref<HTMLElement[]>([]);
+const customStyle =
+  "background:rgba(46, 49, 51, 0.30);border-radius: 4px;margin-bottom: 10px;border: 0;overflow: hidden;";
+const detailContent = ref("");
+const mesList = ref<any>([]);
+const getMesList = (data) => {
+  mesState.loading = true;
+  mesStore
+    .addMesList(data)
+    .then(() => {
+      mesState.loading = false;
+    })
+    .catch((e) => {
+      console.log(e);
+      uni.showToast({
+        title: "获取消息失败",
+        icon: "error",
+      });
+    });
+};
+const handleScroll = (e: any) => {
+  const { scrollTop, scrollHeight } = e.detail;
+
+  // 获取 scroll-view 可视区域高度
+  uni
+    .createSelectorQuery()
+    .select(".bg") // 确保 scroll-view 使用了 class="bg"
+    .boundingClientRect((rect: any) => {
+      if (!rect) return;
+      const clientHeight = rect.height;
+
+      // 判断是否触底
+      if (scrollTop + clientHeight >= scrollHeight - 20) {
+        // 防止重复触发
+        if (mesState.loading) return;
+
+        // 判断是否还有更多数据
+        if (mesStore.mesList.length >= mesStore.total) return;
+
+        mesState.loading = true; // 标记加载中
+        mesState.page_index++;
+
+        const data = {
+          userId: useAuthStore().user.id,
+          page: mesState.page_index,
+          size: mesState.page_size,
+        };
+
+        getMesList(data).finally(() => {
+          mesState.loading = false; // 请求结束后恢复
+        });
+      }
+    })
+    .exec();
+};
+</script>
+<style scoped lang="scss">
+.bg {
+  height: 100vh;
+}
+.card {
+  margin-top: 10px;
+  background: white;
+  border-radius: 10px;
+  box-shadow:
+    4px 4px 10px rgba(0, 0, 0, 0.1),
+    -4px -4px 10px rgba(255, 255, 255, 0.6);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 75%;
+  display: inline-block;
+}
+.detailContent {
+  :deep(ul) {
+    list-style: disc !important;
+    margin-left: 20px !important;
+    li {
+      list-style: disc !important;
+    }
+  }
+
+  :deep(ol) {
+    list-style: decimal !important;
+    margin-left: 20px !important;
+    li {
+      list-style: decimal !important;
+    }
+  }
+
+  text-align: left;
+  padding: 10px;
+}
+
+:deep(.van-collapse-item__title) {
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
+
+:deep(.van-collapse-item__title-text) {
+  text-align: left !important;
+  width: 100%;
+}
+
+.collapse-item {
+  margin-bottom: 10px;
+}
+
+:deep(.ant-select) {
+  margin: 0 !important;
+  .ant-select-selector {
+    width: 172px;
+    height: 48px !important;
+    line-height: 48px;
+    .ant-select-selection-item {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+:deep(.ant-collapse-header) {
+  flex-direction: column;
+  .extra {
+    position: absolute;
+    right: 10px;
+    .downBtn {
+      span {
+        display: flex !important;
+      }
+    }
+  }
+  .ant-collapse-header-text {
+    width: 100%;
+  }
+}
+:deep(.ant-form-item) {
+  margin: 0 !important;
+}
+:deep(.ant-input-wrapper) {
+  input {
+    height: 48px;
+    border: 0;
+  }
+  .ant-input-group-addon {
+    button {
+      height: 48px;
+      border: 0;
+    }
+  }
+}
+:deep(.ant-radio-wrapper),
+:deep(.ant-checkbox-wrapper) {
+  &:not(:first-child) {
+    margin-left: 40px;
+  }
+  span {
+    font-weight: 400;
+    font-size: 14px;
+
+    color: #ffffff;
+    line-height: 24px;
+    text-shadow: 1px 2px 8px rgba(0, 0, 0, 0.5);
+    font-style: normal;
+  }
+
+  .ant-radio-checked {
+    .ant-radio-inner {
+      background-color: #90a4ff;
+      &::after {
+        background-color: white;
+      }
+    }
+  }
+}
+.header {
+  width: 100%;
+  height: 4.375rem;
+  padding: 0 1.25rem;
+  // display: flex;
+  align-items: center;
+  // justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  img {
+    width: 20px;
+    height: 20px;
+    margin-left: 3px;
+  }
+  h2 {
+    font-weight: 600;
+    font-size: 18px;
+    color: #ffffff;
+    line-height: 25px;
+    text-align: center;
+    font-style: normal;
+    // position: absolute;
+    // left: 50%;
+    // transform: translateX(-50%);
+  }
+  .btn {
+    width: 66px;
+    height: 17px;
+    font-weight: 500;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 17px;
+    text-align: left;
+    font-style: normal;
+  }
+}
+.search {
+  width: 100vw;
+  padding: 0 1.25rem;
+  display: flex;
+  height: 48px;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.secCheck {
+  margin-top: 20px;
+  width: 100%;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  .allRead {
+    margin-left: 30px;
+    font-weight: 500;
+    font-size: 12px;
+    color: #90a4ff;
+    line-height: 17px;
+    text-align: left;
+    font-style: normal;
+  }
+}
+.right {
+  width: 100%;
+  text-align: center;
+  // background-color: rgba(0, 0, 0, 1);
+  padding: 25px 24px;
+  .header {
+    position: relative;
+    display: block;
+    margin-top: 20px;
+    .newTip {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #ff002d;
+      border-radius: 75%;
+    }
+    .title {
+      width: 100%;
+      white-space: nowrap; /* 禁止换行 */
+      overflow: hidden; /* 超出隐藏 */
+      text-overflow: ellipsis;
+      //   display: flex;
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-size: 18px;
+      color: #ffffff;
+      line-height: 25px;
+      text-align: left;
+      font-style: normal;
+    }
+    .time {
+      font-weight: 500;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 17px;
+      text-align: left;
+      font-style: normal;
+    }
+  }
+  .extra {
+    height: 47px;
+    display: flex;
+    align-items: center;
+    .downBtn {
+      width: 100px;
+      height: 36px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: 500;
+      font-size: 13px;
+      color: #ffffff;
+      line-height: 22px;
+      text-align: center;
+      font-style: normal;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      span {
+        display: inline-block;
+        height: 18px;
+      }
+    }
+  }
+}
+.emptystatus {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  .emptyImg {
+    width: 100%;
+    height: 6.25rem;
+    margin-bottom: 1rem;
+  }
+  .emptyText {
+    font-family:
+      PingFangSC,
+      PingFang SC;
+    font-weight: 500;
+    font-size: 14px;
+    color: black;
+    line-height: 20px;
+    font-style: normal;
+  }
+}
+.bottom_text {
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+</style>

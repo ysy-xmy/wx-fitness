@@ -1,0 +1,50 @@
+name: Publish fitness-echarts to npm
+
+on:
+  push:
+    branches:
+      - monoreportTest
+    paths:
+      - "packages/fitness-echarts/**" # 只有 fitness-echarts 目录变动才触发
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --filter fitness-echarts...
+
+      - name: Check if version changed
+        id: version-check
+        run: |
+          PREV_VERSION=$(npm view fitness-echarts version || echo "0.0.0")
+          CURR_VERSION=$(node -p "require('./packages/fitness-echarts/package.json').version")
+          echo "Current version: $CURR_VERSION"
+          echo "Previous version on npm: $PREV_VERSION"
+          if [ "$PREV_VERSION" = "$CURR_VERSION" ]; then
+            echo "Version has not changed, skipping publish."
+            exit 0
+          fi
+
+      - name: Build package
+        run: pnpm --filter fitness-echarts run build
+
+      - name: Publish to npm
+        run: pnpm --filter fitness-echarts publish --access public
+        env:
+          NODE_AUTH_TOKEN: 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

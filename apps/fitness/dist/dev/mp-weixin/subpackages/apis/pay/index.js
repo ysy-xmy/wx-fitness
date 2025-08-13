@@ -1,0 +1,1 @@
+"use strict";const e=require("../../../utils/request.js"),u=t=>e.http.post("/api/pay/buyCourse",t),r=t=>e.http.post("/api/pay/wx/signature",t),s=t=>e.http.post("/api/pay/buy/check",t);exports.buyCourse=u;exports.checkPay=s;exports.getPaySignature=r;

@@ -1,0 +1,1 @@
+"use strict";const r=require("../../common/vendor.js"),e=require("../../utils/request.js"),n=()=>e.http.get("/api/user/getInfo"),o=t=>e.http.put("/api/user/update",t),s=()=>e.http.post("/api/user/token/refresh?Token="+r.index.getStorageSync("token")),u=()=>e.http.get("/api/user/getHW");exports.getHWInfo=u;exports.getUserInfo=n;exports.refreshToken=s;exports.updateUserInfo=o;
