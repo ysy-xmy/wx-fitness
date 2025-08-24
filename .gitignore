@@ -84,4 +84,4 @@ yarn.lock
 
 # uni-app 相关
 hbuilder.log
-uni_modules/
+# uni_modules/
