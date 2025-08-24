@@ -69,6 +69,13 @@
       <div class="flex items-center">
         <span class="mr-2">{{ plan.PlanTime }}</span>
         <div
+          class="edit-btn ml-2 mr-2 w-[20px] h-[20px] rounded-full bg-[#4dff53] flex justify-center items-center"
+          @click.stop="handleEdit(plan)"
+          v-if="!plan.Complete"
+        >
+          <van-icon name="edit" size="14px" color="#fff" />
+        </div>
+        <div
           v-if="!plan.Complete"
           style="
             width: 20px;
@@ -86,13 +93,44 @@
       </div>
     </li>
   </ul>
+
+  <!-- 写一个弹窗，用来修改名字和日期 -->
+  <van-dialog
+    use-slot
+    :title="`编辑 ${editForm.title || '课程'} 信息`"
+    :show="showDialog"
+    show-cancel-button
+    @confirm="handleEditConfirm"
+    @close="handleDialogClose"
+  >
+    <input
+      :value="editForm.name"
+      class="edit-input"
+      placeholder="请输入课程名"
+      border="true"
+      @change="changeName"
+    />
+    <view class="cu-form-group">
+      <view class="title">日期选择</view>
+      <picker
+        mode="date"
+        :value="editForm.date"
+        @change="(e: any) => (editForm.date = e.detail.value)"
+      >
+        <view class="picker">
+          {{ editForm.date || "请选择日期" }}
+        </view>
+      </picker>
+    </view>
+  </van-dialog>
+  <!-- 移除不必要的日期选择器，直接在picker中选择日期 -->
 </template>
 
 <script lang="ts" setup>
-import { ref, PropType, watch } from "vue";
+import { ref, PropType, watch, reactive } from "vue";
 import { useRouter } from "uni-mini-router";
 import { useActionsStore } from "@/state/modules/actions";
-import { actionClok } from "@/api/courses/courses";
+import { actionClok, updateCoursePlan } from "@/api/courses/courses";
 import { deletePlan } from "@/api/action/action";
 import dayjs from "dayjs";
 
@@ -105,7 +143,10 @@ type ActionGroupType = {
   CreatedAt: string;
   Complete: boolean;
 };
-
+const changeName = (e: any) => {
+  console.log(e, "e");
+  editForm.name = e.detail.value;
+};
 const props = defineProps({
   title: {
     type: String,
@@ -133,9 +174,59 @@ const props = defineProps({
   },
 });
 const planList = ref<ActionGroupType[]>(props.actionGroups);
+const showDialog = ref(false);
+const editForm = reactive({
+  name: "",
+  date: "",
+  id: 0,
+  title: "",
+});
+const handleEditConfirm = () => {
+  console.log(editForm, "editForm");
+  let data = {
+    ID: editForm.id,
+    PlanTitle: editForm.name,
+    PlanTime: editForm.date,
+  };
+  console.log(data, "data");
+  updateCoursePlan(data)
+    .then((res) => {
+      if (res.data.code !== 200) {
+        uni.showToast({
+          title: res.data.msg,
+          icon: "error",
+          duration: 2000,
+        });
+      } else {
+        uni.showToast({
+          title: "更新成功",
+          icon: "success",
+          duration: 2000,
+        });
+        showDialog.value = false;
+        uni.$emit("reload", true);
+      }
+    })
+    .catch((err) => {
+      uni.showToast({
+        title: "更新失败",
+        icon: "error",
+        duration: 2000,
+      });
+    });
+};
 
+const handleDialogClose = () => {
+  showDialog.value = false;
+};
 const router = useRouter();
-
+const handleEdit = (item: any) => {
+  showDialog.value = true;
+  editForm.name = item.PlanTitle;
+  editForm.date = item.PlanTime;
+  editForm.id = item.ID;
+  editForm.title = item.PlanTitle;
+};
 const formatDateRange = (startDate?: string, endDate?: string) => {
   if (!startDate) return "";
 
@@ -209,7 +300,7 @@ const handlePunchIn = (id: any, status: boolean, index: number) => {
             })
             .catch((err) => {
               uni.showToast({
-                title: r.data.msg,
+                title: err.data.msg,
                 icon: "error",
                 duration: 2000,
                 mask: false,
@@ -260,7 +351,7 @@ const handlePunchIn = (id: any, status: boolean, index: number) => {
             })
             .catch((err) => {
               uni.showToast({
-                title: r.data.msg,
+                title: err.data.msg,
                 icon: "error",
                 duration: 2000,
                 mask: false,
@@ -372,5 +463,14 @@ watch(
   margin-bottom: 20px;
   word-spacing: 1.5px;
   font-size: 16px;
+}
+.edit-input {
+  width: 100%;
+  /* border: 1px solid #dcdfe6; */
+  padding: 1rpx 30rpx;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100rpx;
 }
 </style>

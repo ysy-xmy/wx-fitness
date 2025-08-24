@@ -216,23 +216,6 @@
         border="true"
         @change="onChangeAddClassName"
       />
-      <!-- <van-field
-        type="date"
-        :value="actionTime"
-        placeholder="请输入日期"
-        min-date="minDate"
-        max-date="maxDate"
-        border="true"
-        disabled
-        @tap="selectTime"
-        @change="(e: any) => (currentDate = e.detail)"
-        @blur="showSelectTime = false"
-
-
-           start="minDate"
-          end="maxDate"
-      /> -->
-
       <view class="cu-form-group">
         <view class="title">日期选择</view>
         <picker

@@ -71,12 +71,12 @@ export default defineConfig({
     uvwt({
       disabled: WeappTailwindcssDisabled,
     }),
-    // visualizer({
-    //   filename: "./node_modules/.cache/visualizer/stats.html",
-    //   open: true,
-    //   gzipSize: true,
-    //   brotliSize: true,
-    // }),
+    visualizer({
+      filename: "./node_modules/.cache/visualizer/stats.html",
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+    }),
   ],
   css: {
     postcss: {

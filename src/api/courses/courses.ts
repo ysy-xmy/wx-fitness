@@ -90,3 +90,8 @@ export const getCourseStudentTag = (id: string) => {
 export const sendCourseStudentTag = (data: any) => {
   return request.post(`/api/course/saveUpdateLabels`, data);
 };
+
+//更新课程计划
+export const updateCoursePlan = (data: any) => {
+  return request.put(`/api/course/updatePlan`, data);
+};
