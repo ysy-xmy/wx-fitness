@@ -33,7 +33,7 @@ export default defineConfig({
     //跨域配置
     host: "0.0.0.0",
     port: 5173,
-    open: true, //是否自动打开浏览器
+    open: false, //是否自动打开浏览器
   },
   build: {
     minify: "terser",
