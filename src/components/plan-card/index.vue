@@ -209,7 +209,7 @@ const handleEditConfirm = () => {
     })
     .catch((err) => {
       uni.showToast({
-        title: "更新失败",
+        title: err.data,
         icon: "error",
         duration: 2000,
       });
