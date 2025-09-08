@@ -71,14 +71,14 @@
       @click-overlay="closepopup"
       :show="modalHidden == false"
       round
-      :style="{ padding: '64px' }"
+      :style="{ padding: '64px'}"
     >
       <view>
         <image
           :show-menu-by-longpress="true"
           v-if="wxcodeImg"
-          class="image"
           :src="wxcodeImg"
+          class="w-64 h-64"
           mode="aspectFill"
         >
         </image>
@@ -91,11 +91,6 @@
             description="很抱歉该教练还没上传"
           />
         </div>
-      </view>
-      <view v-if="wxcodeImg" class="w-full justify-center items-center">
-        <view class="title text-center text-black text-lg font-bold py-2">
-          添加教练微信
-        </view>
       </view>
     </van-popup>
   </div>
