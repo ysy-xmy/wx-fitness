@@ -46,7 +46,7 @@
         <div class="cu-form-group">
           <div class="title">类型</div>
           <div v-if="!ifDiy" class="flex flex-wrap w-3/5">
-            <div class="flex items-center justify-end w-full">
+            <div v-if="router.route.value.query.type != 'remote'" class="flex items-center justify-end w-full">
               <span class="mx-2">按课时收费</span>
               <radio
                 class="cyan"
@@ -55,7 +55,27 @@
                 value="LESSON"
               ></radio>
             </div>
-            <div class="flex flex-row w-full justify-end mt-2">
+            <div v-else class="flex items-center justify-end w-full flex-wrap">
+              <div>
+                <radio
+                  class="cyan"
+                  :class="packageNo == 'ONLINE_AUTO' ? 'checked' : ''"
+                  :checked="packageNo == 'ONLINE_AUTO' ? true : false"
+                  value="ONLINE_AUTO"
+                ></radio>
+                <span class="mx-2">自主式线上私教课</span>
+              </div>
+              <div class="mt-2"> 
+                <radio
+                  class="cyan"
+                  :class="packageNo == 'ONLINE_VIDEO' ? 'checked' : 'x  '"
+                  :checked="packageNo == 'ONLINE_VIDEO' ? true : false"
+                  value="ONLINE_VIDEO"
+                ></radio>
+                <span class="mx-2">实时视频线上私教课</span>
+              </div>
+            </div>
+            <div v-if="router.route.value.query.type != 'remote'" class="flex flex-row w-full justify-end mt-2">
               <div class="flex items-center">
                 <span class="mx-2">包月</span>
                 <radio
@@ -90,7 +110,7 @@
           </div>
         </div>
       </radio-group>
-      <view v-if="packageNo == 'LESSON'" class="cu-form-group margin-top flex">
+      <view v-if="packageNo == 'LESSON' || packageNo == 'ONLINE_AUTO' || packageNo == 'ONLINE_VIDEO'" class="cu-form-group margin-top flex">
         <view class="title">节数</view>
         <radio-group class="block" @change="RadioChange" v-if="!ifDiy">
           <view class="cu-form-group margin-top">
@@ -342,6 +362,10 @@ onMounted(() => {
     } else {
       ifDiy.value = false;
     }
+    if(router.route.value.query.type == "remote") {
+      packageNo.value = "LESSON";
+      courseInfo.title = "远程私教课";
+    }
   }
   //   console.log(router.route.value.query);
 });
@@ -388,7 +412,7 @@ const toLocation = () => {
 };
 const pay = async () => {
   if (loading.value) return;
-
+  console.log(packageNo.value, "packageNo");
   // 修改登录状态判断逻辑
   if (!uni.getStorageSync("token")) {
     const params = {

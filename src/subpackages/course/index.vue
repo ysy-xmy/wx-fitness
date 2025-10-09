@@ -422,7 +422,7 @@ const contact = () => {
 };
 
 const buyCourse = () => {
-  router.push(`/subpackages/coursePurchase/index?ifDiy=false`);
+  router.push(`/subpackages/coursePurchase/index?ifDiy=false&type=${router.route.value.query?.type}`);
 };
 </script>
 
