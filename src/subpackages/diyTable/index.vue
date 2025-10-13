@@ -8,6 +8,34 @@
           src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250305/1741105971033.png" />
       </div>
       <view class="cu-form-group margin-top" style="width: 100%; background: 0">
+        <view class="label-title">类型</view>
+
+        <radio-group class="block" @change="handleType">
+          <view class="cu-form-group margin-top">
+            <!-- <view class="title">{{}}节</view> -->
+            <view class="title">实体私教课</view>
+            <radio
+              class="cyan margin-left-sm"
+              :class="form.type == 'offline' ? 'checked' : ''"
+              :checked="form.type == 'offline' ? true : false"
+              value="offline"
+            >
+            </radio>
+          </view>
+          <!-- #ifndef MP-ALIPAY -->
+          <view class="cu-form-group">
+            <view class="title">自主式私教课</view>
+            <radio
+              class="cyan margin-left-sm"
+              :class="form.type == 'remote' ? 'checked' : ''"
+              :checked="form.type == 'remote' ? true : false"
+              value="remote"
+            ></radio>
+          </view>
+          <!-- #endif -->
+        </radio-group>
+      </view>
+      <view class="cu-form-group margin-top" style="width: 100%; background: 0">
         <view class="label-title">课程数</view>
         <input placeholder="请输入课程数" name="input" v-model="form.num" />
       </view>
@@ -19,7 +47,7 @@
         class="cu-btn round large margin-top mb-5"
         open-type="share"
         style="background-color:#94d0f2 ;color: #fff;"
-        :disabled="form.money == '' || form.num == ''">
+        :disabled="form.money == '' || form.num == '' || form.type == ''">
         点击分享
       </button>
     </div>
@@ -36,18 +64,24 @@ onShareAppMessage((res) => {
   console.log(res, user, form.num, form.money, "res");
   return {
     title: `${user.name}分享的课程`,
-    path: `/subpackages/coursePurchase/index?name=${user.name}&&phone=${user.phone ? user.phone : "暂无联系方式"}&&img=${user.img}&&count=${form.num}&&price=${form.money}&&ifDiy=true&&id=${user.id}&&sex=${user.sex}`,
+    path: `/subpackages/coursePurchase/index?name=${user.name}&&phone=${user.phone ? user.phone : "暂无联系方式"}&&img=${user.img}&&count=${form.num}&&price=${form.money}&&ifDiy=true&&id=${user.id}&&sex=${user.sex}&&type=${form.type}`,
   };
 });
 
 type form = {
   num: string;
   money: string;
+  type: string;
 };
 const form = reactive<form>({
   num: "",
   money: "",
+  type: "",
 });
+const handleType = (e: any) => {
+  console.log(e, "handleType");
+  form.type = e.detail.value;
+};
 </script>
 <style scoped>
 .card-wrap {

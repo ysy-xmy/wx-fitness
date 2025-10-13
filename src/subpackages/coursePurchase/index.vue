@@ -45,7 +45,7 @@
       >
         <div class="cu-form-group">
           <div class="title">类型</div>
-          <div v-if="!ifDiy" class="flex flex-wrap w-3/5">
+          <div class="flex flex-wrap w-3/5">
             <div v-if="router.route.value.query.type != 'remote'" class="flex items-center justify-end w-full">
               <span class="mx-2">按课时收费</span>
               <radio
@@ -105,9 +105,7 @@
               </div>
             </div>
           </div>
-          <div v-else>
-            <span class="mx-2">按课时收费</span>
-          </div>
+
         </div>
       </radio-group>
       <view v-if="packageNo == 'LESSON' || packageNo == 'ONLINE_AUTO' || packageNo == 'ONLINE_VIDEO'" class="cu-form-group margin-top flex">
@@ -363,8 +361,12 @@ onMounted(() => {
       ifDiy.value = false;
     }
     if(router.route.value.query.type == "remote") {
-      packageNo.value = "LESSON";
+      packageNo.value = "ONLINE_AUTO";
       courseInfo.title = "远程私教课";
+    }
+    if(router.route.value.query.type == "offline") {
+      packageNo.value = "LESSON";
+      courseInfo.title = "私教课";
     }
   }
   //   console.log(router.route.value.query);
