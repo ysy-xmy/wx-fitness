@@ -108,44 +108,23 @@
 
         </div>
       </radio-group>
-      <view v-if="packageNo == 'LESSON' || packageNo == 'ONLINE_AUTO' || packageNo == 'ONLINE_VIDEO'" class="cu-form-group margin-top flex">
+      <view v-if="shouldShowLessons" class="cu-form-group margin-top flex">
         <view class="title">节数</view>
         <radio-group class="block" @change="RadioChange" v-if="!ifDiy">
-          <view class="cu-form-group margin-top">
-            <!-- <view class="title">{{}}节</view> -->
-            <view class="title">10节</view>
+          <view 
+            v-for="(lesson, index) in currentCourseConfig.lessons" 
+            :key="lesson"
+            class="cu-form-group"
+            :class="index === 0 ? 'margin-top' : ''"
+          >
+            <view class="title">{{ lesson }}节</view>
             <radio
               class="cyan margin-left-sm"
-              :class="pitchNumber == '10' ? 'checked' : ''"
-              :checked="pitchNumber == '10' ? true : false"
-              value="10"
-            >
-            </radio>
-          </view>
-          <!-- #ifndef MP-ALIPAY -->
-          <view class="cu-form-group">
-            <view class="title">15节</view>
-            <radio
-              class="cyan margin-left-sm"
-              :class="pitchNumber == '15' ? 'checked' : ''"
-              :checked="pitchNumber == '15' ? true : false"
-              value="15"
+              :class="pitchNumber == lesson ? 'checked' : ''"
+              :checked="pitchNumber == lesson ? true : false"
+              :value="lesson"
             ></radio>
           </view>
-          <view class="cu-form-group">
-            <view class="title">25节</view>
-            <view>
-              <!-- <radio class='blue radio' :class="radio == 'C' ? 'checked' : ''"
-                                :checked="radio == 'C' ? true : false" value="C"></radio> -->
-              <radio
-                class="cyan margin-left-sm"
-                :class="pitchNumber == '25' ? 'checked' : ''"
-                :checked="pitchNumber == '25' ? true : false"
-                value="25"
-              ></radio>
-            </view>
-          </view>
-          <!-- #endif -->
         </radio-group>
         <view class="title" v-else>{{ coachForm.mount }}节</view>
       </view>
@@ -288,6 +267,47 @@ import {
 import { getUserInfo } from "@/api/user";
 const router = useRouter();
 const AuthStore = useAuthStore();
+
+// 课程类型配置
+const courseTypeConfig = {
+  LESSON: {
+    name: '按课时收费',
+    title: '私教课',
+    defaultLesson: '10',
+    lessons: ['10', '15', '25']
+  },
+  ONLINE_AUTO: {
+    name: '自主式线上私教课',
+    title: '远程私教课',
+    defaultLesson: '12',
+    lessons: ['12', '36', '72']
+  },
+  ONLINE_VIDEO: {
+    name: '实时视频线上私教课',
+    title: '远程私教课',
+    defaultLesson: '10',
+    lessons: ['10', '30', '70']
+  },
+  MONTH: {
+    name: '包月',
+    title: '私教课',
+    defaultLesson: null,
+    lessons: []
+  },
+  QUARTER: {
+    name: '包季',
+    title: '私教课',
+    defaultLesson: null,
+    lessons: []
+  },
+  YEAR: {
+    name: '包年',
+    title: '私教课',
+    defaultLesson: null,
+    lessons: []
+  }
+};
+
 type Data = {
   CoachID: string;
   CourseType: string;
@@ -302,7 +322,6 @@ type Data = {
   UserID: number;
 };
 const computedPrice = () => {
-  console.log(pitchNumber.value, "num");
   //计算价格在这
   if (!ifDiy.value) {
     if (coachForm.id != "") {
@@ -320,9 +339,10 @@ const computedPrice = () => {
         UserRealName: inputPhone.value || 0,
         Amount: Number(courseInfo.price) || 0,
       };
-      if (packageNo.value == "LESSON" && pitchNumber.value)
+      if ((packageNo.value == "LESSON" || packageNo.value == "ONLINE_AUTO" || packageNo.value == "ONLINE_VIDEO") && pitchNumber.value){
         data.LessonCount = Number(pitchNumber.value);
-      if (packageNo.value == "LESSON" && !pitchNumber.value) {
+      }
+      if ((packageNo.value == "LESSON" || packageNo.value == "ONLINE_AUTO" || packageNo.value == "ONLINE_VIDEO") && !pitchNumber.value) {
         uni.hideLoading();
         return;
       }
@@ -362,11 +382,15 @@ onMounted(() => {
     }
     if(router.route.value.query.type == "remote") {
       packageNo.value = "ONLINE_AUTO";
-      courseInfo.title = "远程私教课";
+      const config = courseTypeConfig.ONLINE_AUTO;
+      courseInfo.title = config.title;
+      pitchNumber.value = config.defaultLesson;
     }
     if(router.route.value.query.type == "offline") {
       packageNo.value = "LESSON";
-      courseInfo.title = "私教课";
+      const config = courseTypeConfig.LESSON;
+      courseInfo.title = config.title;
+      pitchNumber.value = config.defaultLesson;
     }
   }
   //   console.log(router.route.value.query);
@@ -393,6 +417,16 @@ const courseInfo = reactive({
   place: "北京市海淀区西二旗北路10号院",
 });
 
+// 计算属性：获取当前课程类型的配置
+const currentCourseConfig = computed(() => {
+  return courseTypeConfig[packageNo.value as keyof typeof courseTypeConfig] || courseTypeConfig.LESSON;
+});
+
+// 计算属性：是否需要显示节数选择
+const shouldShowLessons = computed(() => {
+  return ['LESSON', 'ONLINE_AUTO', 'ONLINE_VIDEO'].includes(packageNo.value);
+});
+
 const choosecoach = () => {
   router.push({
     path: "/subpackages/coachcontact/index?ifChoose=true",
@@ -414,7 +448,6 @@ const toLocation = () => {
 };
 const pay = async () => {
   if (loading.value) return;
-  console.log(packageNo.value, "packageNo");
   // 修改登录状态判断逻辑
   if (!uni.getStorageSync("token")) {
     const params = {
@@ -437,7 +470,6 @@ const pay = async () => {
     });
     return;
   }
-  console.log("身份验证");
   if (
     !AuthStore.user ||
     Object.keys(AuthStore.user).length === 0 ||
@@ -502,9 +534,6 @@ const pay = async () => {
     // 获取支付签名
     const signatureRes = await getPaySignature(data);
     const paymentData = signatureRes.data.data;
-    console.log(signatureRes, 123);
-    console.log(signatureRes.data, 123);
-    console.log(paymentData, 123);
     const data2 = {
       CoachID: Number(coachForm.id),
       CourseType: packageNo.value,
@@ -517,7 +546,7 @@ const pay = async () => {
       Amount: Number(courseInfo.price),
       UserID: Number(AuthStore.user.id),
     };
-    if (packageNo.value === "LESSON") {
+    if (shouldShowLessons.value) {
       data2.LessonCount = Number(pitchNumber.value);
     }
     const checkRes = await checkPay(data2);
@@ -596,8 +625,16 @@ const copyPhone = () => {
   });
 };
 const handlePackageNo = (e: any) => {
-  console.log(packageNo.value);
+  console.log(e.detail.value, "e.detail.value");
   packageNo.value = e.detail.value;
+  
+  // 根据课程类型配置设置默认节数和标题
+  const config = currentCourseConfig.value;
+  if (config.defaultLesson) {
+    pitchNumber.value = config.defaultLesson;
+  }
+  courseInfo.title = config.title;
+  
   computedPrice();
 };
 const RadioChange = (e: any) => {
