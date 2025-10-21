@@ -69,11 +69,22 @@
           </van-tab>
           <van-tab title="已完成">
             <PlanCard
-              title="私教课"
+              title="线下计划"
               :startDate="state.CreatedAt"
               :endDate="state.EndTime"
-              :status="someStatus"
-              :actionGroups="list.filter((item) => item.Complete)"
+              :status="1"
+              :actionGroups="
+                list.filter((item) => item.Complete && item.Type === 'outline')
+              "
+            />
+            <PlanCard
+              title="线上任务"
+              :startDate="state.CreatedAt"
+              :endDate="state.EndTime"
+              :status="1"
+              :actionGroups="
+                list.filter((item) => item.Complete && item.Type === 'online')
+              "
             />
           </van-tab>
         </van-tabs>
