@@ -369,7 +369,7 @@ const computedPrice = () => {
   }
 };
 onMounted(() => {
-  if (!localStorage.getItem("token") || !AuthStore.isLogin) {
+  if (!uni.getStorageSync("token") || !AuthStore.isLogin) {
     router.push({ name: "login" });
     return;
   }
@@ -468,6 +468,10 @@ const toLocation = () => {
     scale: 18, // 地图缩放级别，范围5-18
   });
 };
+const isPhoneNumber = (str: string): boolean => {
+  const phoneRegex = /^1[3-9]\d{9}$/; // 简单的手机号验证，适用于中国大陆手机号
+  return phoneRegex.test(str);
+};
 const pay = async () => {
   if (loading.value) return;
   // 修改登录状态判断逻辑
@@ -543,7 +547,21 @@ const pay = async () => {
       });
       return;
     }
-
+    if (!isPhoneNumber(inputPhone.value.toString())) {
+      uni.showToast({
+        title: "请填写正确的手机号",
+        icon: "error",
+      });
+      return;
+    }
+    // 验证节数选择
+    if (shouldShowLessons.value && !pitchNumber.value) {
+      uni.showToast({
+        title: "请选择节数",
+        icon: "error",
+      });
+      return;
+    }
     // // 准备请求数据
     loading.value = true;
     uni.showLoading();
@@ -553,6 +571,7 @@ const pay = async () => {
       // Amount: 1,
       OpenID: AuthStore.user.OpenID,
     };
+
     // 获取支付签名
     const signatureRes = await getPaySignature(data);
     const paymentData = signatureRes.data.data;
