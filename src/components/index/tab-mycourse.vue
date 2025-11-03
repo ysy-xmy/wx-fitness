@@ -93,7 +93,7 @@
             <img
               src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250101/1735724206120.png"
               alt="icon"
-              style="height: 100px; width: 100px"
+              style="height: 20vw; width: 20vw"
             />
           </div>
           <van-button
