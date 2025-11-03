@@ -55,12 +55,21 @@
                 white-space: nowrap;
               "
             >
-              <text v-if="it.CoachID !== 0"
-                >私教课程 (
+              <text v-if="it.CoachID !== 0">
                 {{
-                  it.CourseType === "lesson" ? it.LessonCount + "节" : "包月"
-                }})</text
-              >
+                  it.CourseType === "lesson"
+                    ? `私教课程 ${it.LessonCount}节`
+                    : it.CourseType === "month"
+                    ? "私教课程(包月)"
+                    : it.CourseType === "quarter"
+                    ? "私教课程(包季)"
+                    : it.CourseType === "year"
+                    ? "私教课程(包年)"
+                    : it.CourseType === "online_auto" || it.CourseType === "online_video"
+                    ? `远程私教课程（${it.LessonCount}节）`
+                    : "私教课程"
+                }}
+              </text>
               <text v-else>自我训练</text>
             </div>
             <div
