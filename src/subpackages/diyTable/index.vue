@@ -37,7 +37,13 @@
       </view>
       <view class="cu-form-group margin-top" style="width: 100%; background: 0">
         <view class="label-title">课程数</view>
-        <input placeholder="请输入课程数" name="input" v-model="form.num" />
+        <input 
+          type="digit" 
+          placeholder="请输入课程数" 
+          name="input" 
+          v-model="form.num" 
+          @input="handleNumInput"
+          @blur="validateNum" />
       </view>
       <view class="cu-form-group margin-top" style="width: 100%; background: 0">
         <view class="label-title">价&nbsp;格</view>
@@ -81,6 +87,31 @@ const form = reactive<form>({
 const handleType = (e: any) => {
   console.log(e, "handleType");
   form.type = e.detail.value;
+};
+
+const handleNumInput = (e: any) => {
+  const value = e.detail.value;
+  // 只保留数字
+  const numValue = value.replace(/[^\d]/g, '');
+  if (value !== numValue) {
+    form.num = numValue;
+    uni.showToast({
+      title: '只能输入数字',
+      icon: 'none',
+      duration: 2000
+    });
+  }
+};
+
+const validateNum = () => {
+  if (form.num && !/^\d+$/.test(form.num)) {
+    uni.showToast({
+      title: '课程数只能输入数字',
+      icon: 'none',
+      duration: 2000
+    });
+    form.num = form.num.replace(/[^\d]/g, '');
+  }
 };
 </script>
 <style scoped>
