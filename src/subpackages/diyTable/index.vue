@@ -47,7 +47,13 @@
       </view>
       <view class="cu-form-group margin-top" style="width: 100%; background: 0">
         <view class="label-title">价&nbsp;格</view>
-        <input placeholder="请输入价格" name="input" v-model="form.money" />
+        <input 
+          type="digit" 
+          placeholder="请输入价格" 
+          name="input" 
+          v-model="form.money" 
+          @input="handleMoneyInput"
+          @blur="validateMoney" />
       </view>
       <button
         class="cu-btn round large margin-top mb-5"
@@ -91,26 +97,82 @@ const handleType = (e: any) => {
 
 const handleNumInput = (e: any) => {
   const value = e.detail.value;
-  // 只保留数字
+  // 只保留数字，过滤掉小数点和其他非数字字符
   const numValue = value.replace(/[^\d]/g, '');
   if (value !== numValue) {
     form.num = numValue;
-    uni.showToast({
-      title: '只能输入数字',
-      icon: 'none',
-      duration: 2000
-    });
+    // 如果包含小数点，提示必须是整数
+    if (value.includes('.')) {
+      uni.showToast({
+        title: '课程数必须是整数',
+        icon: 'none',
+        duration: 2000
+      });
+    } else {
+      uni.showToast({
+        title: '只能输入数字',
+        icon: 'none',
+        duration: 2000
+      });
+    }
   }
 };
 
 const validateNum = () => {
-  if (form.num && !/^\d+$/.test(form.num)) {
+  // 过滤掉所有非数字字符（包括小数点）
+  const cleaned = form.num.replace(/[^\d]/g, '');
+  if (form.num !== cleaned) {
+    form.num = cleaned;
     uni.showToast({
-      title: '课程数只能输入数字',
+      title: '课程数必须是整数',
+      icon: 'none',
+      duration: 2000
+    });
+  } else if (form.num && !/^\d+$/.test(form.num)) {
+    uni.showToast({
+      title: '课程数必须是整数',
       icon: 'none',
       duration: 2000
     });
     form.num = form.num.replace(/[^\d]/g, '');
+  }
+};
+
+const handleMoneyInput = (e: any) => {
+  const value = e.detail.value;
+  // 只保留数字和小数点
+  let numValue = value.replace(/[^\d.]/g, '');
+  // 确保只有一个小数点
+  const parts = numValue.split('.');
+  if (parts.length > 2) {
+    numValue = parts[0] + '.' + parts.slice(1).join('');
+  }
+  if (value !== numValue) {
+    form.money = numValue;
+    uni.showToast({
+      title: '只能输入数字和小数点',
+      icon: 'none',
+      duration: 2000
+    });
+  } else {
+    form.money = numValue;
+  }
+};
+
+const validateMoney = () => {
+  if (form.money && !/^\d+(\.\d+)?$/.test(form.money)) {
+    uni.showToast({
+      title: '价格只能输入数字和小数点',
+      icon: 'none',
+      duration: 2000
+    });
+    // 清理格式：只保留数字和小数点，确保只有一个小数点
+    let cleaned = form.money.replace(/[^\d.]/g, '');
+    const parts = cleaned.split('.');
+    if (parts.length > 2) {
+      cleaned = parts[0] + '.' + parts.slice(1).join('');
+    }
+    form.money = cleaned;
   }
 };
 </script>

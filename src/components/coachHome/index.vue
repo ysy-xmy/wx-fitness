@@ -7,11 +7,11 @@
     </view>
 
     <div class="w-full relative flex justify-centers rounded-sm overflow-hidden">
-      <div class="w-full h-full bg-black absolute z-20 opacity-25 rounded-sm"></div>
+      <!-- <div class="w-full h-full bg-black absolute z-20 opacity-25 rounded-sm"></div> -->
       <img
         class="w-full h-50 "
-        src="https://img.js.design/assets/img/668c2ed952a8c9cae69e281b.png#4da10c88bc2ff6efbe0d64ef8f3eee6d" />
-      <div
+        src="https://lms.dgut.edu.cn/uobs/view/resources/12997893/202511230204563517.jpg" />
+      <!-- <div
         class="absolute z-50 text-white bottom-0 w-full p-2 flex-wrap flex justify-center items-center">
         <div class="text-left mb-5">
           “健身不只是身体上的锻炼，它还是心灵和情感的一种训练。”
@@ -24,7 +24,7 @@
             <span>亚里士多德</span>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="tabs w-full h-0" style="flex: 1;">
