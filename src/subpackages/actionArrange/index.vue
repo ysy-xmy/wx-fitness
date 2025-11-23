@@ -540,26 +540,46 @@ function throttle(func: any, limit: any) {
 function transformCategories(source: SourceCategory[]): TargetCategory[] {
   const target: TargetCategory[] = [];
 
+  // 安全检查：如果source不是数组或为空，返回空数组
+  if (!Array.isArray(source) || source.length === 0) {
+    return target;
+  }
+
   source.forEach((item) => {
+    // 安全检查：确保FirstCategory存在
+    if (!item || !item.FirstCategory) {
+      return;
+    }
+    
     const firstCategory = item.FirstCategory;
     const targetItem: TargetCategory = {
-      name: firstCategory.Name,
-      id: firstCategory.ID,
-      OrderNum: firstCategory.OrderNum,
+      name: firstCategory.Name || '',
+      id: firstCategory.ID || 0,
+      OrderNum: firstCategory.OrderNum || 0,
       children: [],
     };
 
-    if (item.SecondCategoryInfos) {
+    if (item.SecondCategoryInfos && Array.isArray(item.SecondCategoryInfos)) {
       item.SecondCategoryInfos.forEach((secondCatInfo) => {
+        // 安全检查：确保SecondCategory存在
+        if (!secondCatInfo || !secondCatInfo.SecondCategory) {
+          return;
+        }
+        
         const secondCategory = secondCatInfo.SecondCategory;
         const targetSecondCat: TargetCategory = {
-          name: secondCategory.Name,
-          id: secondCategory.ID,
-          OrderNum: secondCategory.OrderNum,
+          name: secondCategory.Name || '',
+          id: secondCategory.ID || 0,
+          OrderNum: secondCategory.OrderNum || 0,
           children: [],
         };
-        if (secondCatInfo.ActionInfos) {
+        if (secondCatInfo.ActionInfos && Array.isArray(secondCatInfo.ActionInfos)) {
           secondCatInfo.ActionInfos.forEach((actionInfo) => {
+            // 安全检查：确保ActionInfos存在
+            if (!actionInfo || !actionInfo.ActionInfos) {
+              return;
+            }
+            
             const actionItem: ActionItem = {
               CreatedAt: actionInfo.ActionInfos.CreatedAt,
               Description: actionInfo.ActionInfos.Description,
@@ -570,17 +590,6 @@ function transformCategories(source: SourceCategory[]): TargetCategory[] {
             };
             targetSecondCat.children.push(actionItem);
           });
-          // secondCatInfo.ActionInfos.ActionInfos.forEach(actionInfo => {
-          //     const actionItem: ActionItem = {
-          //         CreatedAt: actionInfo.CreatedAt,
-          //         Description: actionInfo.Description,
-          //         ID: actionInfo.ID,
-          //         Name: actionInfo.Name,
-          //         OrderNum: actionInfo.OrderNum,
-          //         SecondCategoryID: actionInfo.SecondCategoryID,
-          //     };
-          //     targetSecondCat.children.push(actionItem);
-          // });
         }
 
         targetItem.children.push(targetSecondCat);
@@ -668,6 +677,11 @@ const handlelocation = (actionid: number) => {
     (item) => item.id === firstCategoryId
   );
 
+  // 安全检查：确保firstIndex有效
+  if (firstIndex === -1 || !actionrouterList.value[firstIndex]?.children) {
+    return;
+  }
+
   // 找到二级类目在其父级中的索引
   const secondIndex = actionrouterList.value[firstIndex].children.findIndex(
     (item) => item.id === secondCategoryId
@@ -727,26 +741,37 @@ const handlelocation = (actionid: number) => {
 const secMenuSelect = (item: ListItem, index: number) => {
   actionrouterList.value[mainCur.value].children[index].active =
     !actionrouterList.value[mainCur.value].children[index].active;
-  if (actionrouterList.value[mainCur.value].children[index].children[0].Imgs)
+  // 安全检查：确保children存在且有元素
+  const children = actionrouterList.value[mainCur.value].children[index].children;
+  if (children && children.length > 0 && children[0].Imgs) {
     return;
+  }
 
-  getActionsBySec(String(item.id)).then((res) => {
-    //更新对应的二级目录
-    actionrouterList.value[mainCur.value].children[index].children =
-      res.data.data.map((item) => {
-        return {
-          id: item.ID,
-          name: item.Name,
-          OrderNum: item.OrderNum,
-          children: [],
-          Imgs: item.Imgs,
-          Videos: item.Videos,
-          Description: item.Description,
-          CreatedAt: item.CreatedAt,
-        };
-      });
-    actionrouterList.value = sortByOrderNumDescending(actionrouterList.value);
-  });
+  getActionsBySec(String(item.id))
+    .then((res) => {
+      // 安全地处理数据，如果数据为空或null，使用空数组
+      const dataArray = res?.data?.data;
+      if (Array.isArray(dataArray)) {
+        actionrouterList.value[mainCur.value].children[index].children =
+          dataArray.map((item) => {
+            return {
+              id: item.ID,
+              name: item.Name,
+              OrderNum: item.OrderNum,
+              children: [],
+              Imgs: item.Imgs,
+              Videos: item.Videos,
+              Description: item.Description,
+              CreatedAt: item.CreatedAt,
+            };
+          });
+        actionrouterList.value = sortByOrderNumDescending(actionrouterList.value);
+      }
+    })
+    .catch((error) => {
+      // 静默处理错误，不显示错误提示
+      console.error("获取动作列表失败:", error);
+    });
 };
 
 //定义搜索方法：
@@ -805,7 +830,10 @@ onMounted(async () => {
 
     // 获取全部完整的信息
     const actionAllResponse = await getActionAll();
-    const transformedData = transformCategories(actionAllResponse.data.data);
+    // 安全地处理数据，如果数据为空或null，使用空数组
+    const sourceData = actionAllResponse?.data?.data;
+    const safeData = Array.isArray(sourceData) ? sourceData : [];
+    const transformedData = transformCategories(safeData);
     actionrouterList.value = sortByOrderNumDescending(transformedData);
 
     // 自动选择第一个一级目录
@@ -822,7 +850,11 @@ onMounted(async () => {
     uni.hideLoading();
   } catch (error) {
     uni.hideLoading();
-    uni.showToast({ title: "加载失败", icon: "error" });
+    // 只有当真正的错误（网络错误、服务器错误等）时才显示错误提示
+    // 如果只是数据为空，不显示错误提示
+    if (error && typeof error === 'object' && 'message' in error) {
+      uni.showToast({ title: "加载失败", icon: "error" });
+    }
     console.error("初始化数据失败:", error);
   }
 });
@@ -865,9 +897,11 @@ const getSelection = async (item: ListItem) => {
     });
 
     const res = await getSecByFirst(firstmenuid);
-    if (res.data.data.length > 0) {
+    // 安全地处理数据，如果数据为空或null，使用空数组
+    const dataArray = res?.data?.data;
+    if (Array.isArray(dataArray) && dataArray.length > 0) {
       actionrouterList.value.find((item) => item.id === firstmenuid)!.children =
-        res.data.data.map((item) => ({
+        dataArray.map((item) => ({
           id: item.ID,
           name: item.Name,
           OrderNum: item.OrderNum,
@@ -878,6 +912,9 @@ const getSelection = async (item: ListItem) => {
 
     toSecmenu(item);
     actionrouterList.value = sortByOrderNumDescending(actionrouterList.value);
+  } catch (error) {
+    // 静默处理错误，不显示错误提示，让页面正常显示空状态
+    console.error("获取二级目录失败:", error);
   } finally {
     uni.hideLoading();
   }

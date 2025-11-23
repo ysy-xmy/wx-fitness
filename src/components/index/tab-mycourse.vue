@@ -224,11 +224,19 @@ let list = ref<any>({});
 const getList = () => {
   getMycourese()
     .then((res) => {
-      list.value = [];
-      const temp = (res.data.data || []).sort(
-        (a: any, b: any) =>
-          dayjs(b.CreatedAt).valueOf() - dayjs(a.CreatedAt).valueOf()
-      );
+      list.value = {};
+      // 安全地获取数据，处理 null/undefined 情况
+      const dataArray = res?.data?.data;
+      const temp = Array.isArray(dataArray) 
+        ? dataArray.sort(
+            (a: any, b: any) =>
+              dayjs(b.CreatedAt).valueOf() - dayjs(a.CreatedAt).valueOf()
+          )
+        : [];
+      if (temp.length === 0) {
+        uni.hideLoading();
+        return;
+      }
       temp.forEach((item: any) => {
         console.log(dayjs(item.CreatedAt).format("YYYY-MM"));
         if (!list.value[dayjs(item.CreatedAt).format("YYYY-MM")]) {
@@ -240,6 +248,7 @@ const getList = () => {
     })
     .catch((err) => {
       console.log(err);
+      list.value = {};
       uni.hideLoading();
       uni.showToast({
         title: "加载数据错误",
