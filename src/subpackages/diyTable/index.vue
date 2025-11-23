@@ -1,11 +1,21 @@
 <template>
-  <div class="w-screen h-screen card-wrap" style="background-image: url('https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250224/1740412443021.png');background-position: center;background-size: cover;">
+  <div
+    class="w-screen h-screen card-wrap"
+    :style="{
+      backgroundImage:
+        'url(https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250224/1740412443021.png)',
+      backgroundPosition: 'center',
+      backgroundSize: 'cover',
+    }"
+  >
     <div class="card" style="background-color: #fff">
       <div
-        class="w-full exhibition-box relative flex justify-centers rounded-t-[20px] overflow-hidden">
+        class="w-full exhibition-box relative flex justify-centers rounded-t-[20px] overflow-hidden"
+      >
         <img
           class="w-full h-50"
-          src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250305/1741105971033.png" />
+          src="https://zhanjiang-fitness.oss-cn-guangzhou.aliyuncs.com/20250305/1741105971033.png"
+        />
       </div>
       <view class="cu-form-group margin-top" style="width: 100%; background: 0">
         <view class="label-title">类型</view>
@@ -37,29 +47,37 @@
       </view>
       <view class="cu-form-group margin-top" style="width: 100%; background: 0">
         <view class="label-title">课程数</view>
-        <input 
-          type="digit" 
-          placeholder="请输入课程数" 
-          name="input" 
-          v-model="form.num" 
+        <input
+          type="number"
+          placeholder="请输入课程数"
+          name="input"
+          v-model="form.num"
           @input="handleNumInput"
-          @blur="validateNum" />
+          @blur="validateNum"
+        />
       </view>
       <view class="cu-form-group margin-top" style="width: 100%; background: 0">
         <view class="label-title">价&nbsp;格</view>
-        <input 
-          type="digit" 
-          placeholder="请输入价格" 
-          name="input" 
-          v-model="form.money" 
+        <input
+          type="digit"
+          placeholder="请输入价格"
+          name="input"
+          v-model="form.money"
           @input="handleMoneyInput"
-          @blur="validateMoney" />
+          @blur="validateMoney"
+        />
       </view>
       <button
         class="cu-btn round large margin-top mb-5"
         open-type="share"
-        style="background-color:#94d0f2 ;color: #fff;"
-        :disabled="form.money == '' || form.num == '' || form.type == ''">
+        style="background-color: #94d0f2; color: #fff"
+        :disabled="
+          form.money == '' ||
+          form.num == '' ||
+          isNaN(Number(form.num)) ||
+          form.type == ''
+        "
+      >
         点击分享
       </button>
     </div>
@@ -98,21 +116,21 @@ const handleType = (e: any) => {
 const handleNumInput = (e: any) => {
   const value = e.detail.value;
   // 只保留数字，过滤掉小数点和其他非数字字符
-  const numValue = value.replace(/[^\d]/g, '');
+  const numValue = value.replace(/[^\d]/g, "");
   if (value !== numValue) {
     form.num = numValue;
     // 如果包含小数点，提示必须是整数
-    if (value.includes('.')) {
+    if (value.includes(".")) {
       uni.showToast({
-        title: '课程数必须是整数',
-        icon: 'none',
-        duration: 2000
+        title: "课程数必须是整数",
+        icon: "none",
+        duration: 2000,
       });
     } else {
       uni.showToast({
-        title: '只能输入数字',
-        icon: 'none',
-        duration: 2000
+        title: "只能输入数字",
+        icon: "none",
+        duration: 2000,
       });
     }
   }
@@ -120,39 +138,39 @@ const handleNumInput = (e: any) => {
 
 const validateNum = () => {
   // 过滤掉所有非数字字符（包括小数点）
-  const cleaned = form.num.replace(/[^\d]/g, '');
+  const cleaned = form.num.replace(/[^\d]/g, "");
   if (form.num !== cleaned) {
     form.num = cleaned;
     uni.showToast({
-      title: '课程数必须是整数',
-      icon: 'none',
-      duration: 2000
+      title: "课程数必须是整数",
+      icon: "none",
+      duration: 2000,
     });
   } else if (form.num && !/^\d+$/.test(form.num)) {
     uni.showToast({
-      title: '课程数必须是整数',
-      icon: 'none',
-      duration: 2000
+      title: "课程数必须是整数",
+      icon: "none",
+      duration: 2000,
     });
-    form.num = form.num.replace(/[^\d]/g, '');
+    form.num = form.num.replace(/[^\d]/g, "");
   }
 };
 
 const handleMoneyInput = (e: any) => {
   const value = e.detail.value;
   // 只保留数字和小数点
-  let numValue = value.replace(/[^\d.]/g, '');
+  let numValue = value.replace(/[^\d.]/g, "");
   // 确保只有一个小数点
-  const parts = numValue.split('.');
+  const parts = numValue.split(".");
   if (parts.length > 2) {
-    numValue = parts[0] + '.' + parts.slice(1).join('');
+    numValue = parts[0] + "." + parts.slice(1).join("");
   }
   if (value !== numValue) {
     form.money = numValue;
     uni.showToast({
-      title: '只能输入数字和小数点',
-      icon: 'none',
-      duration: 2000
+      title: "只能输入数字和小数点",
+      icon: "none",
+      duration: 2000,
     });
   } else {
     form.money = numValue;
@@ -162,15 +180,15 @@ const handleMoneyInput = (e: any) => {
 const validateMoney = () => {
   if (form.money && !/^\d+(\.\d+)?$/.test(form.money)) {
     uni.showToast({
-      title: '价格只能输入数字和小数点',
-      icon: 'none',
-      duration: 2000
+      title: "价格只能输入数字和小数点",
+      icon: "none",
+      duration: 2000,
     });
     // 清理格式：只保留数字和小数点，确保只有一个小数点
-    let cleaned = form.money.replace(/[^\d.]/g, '');
-    const parts = cleaned.split('.');
+    let cleaned = form.money.replace(/[^\d.]/g, "");
+    const parts = cleaned.split(".");
     if (parts.length > 2) {
-      cleaned = parts[0] + '.' + parts.slice(1).join('');
+      cleaned = parts[0] + "." + parts.slice(1).join("");
     }
     form.money = cleaned;
   }

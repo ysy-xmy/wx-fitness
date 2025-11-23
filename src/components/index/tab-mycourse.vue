@@ -60,14 +60,16 @@
                   it.CourseType === "lesson"
                     ? `私教课程 ${it.LessonCount}节`
                     : it.CourseType === "month"
-                    ? "私教课程(包月)"
-                    : it.CourseType === "quarter"
-                    ? "私教课程(包季)"
-                    : it.CourseType === "year"
-                    ? "私教课程(包年)"
-                    : it.CourseType === "online_auto" || it.CourseType === "online_video"
-                    ? `远程私教课程（${it.LessonCount}节）`
-                    : "私教课程"
+                      ? "私教课程(包月)"
+                      : it.CourseType === "quarter"
+                        ? "私教课程(包季)"
+                        : it.CourseType === "year"
+                          ? "私教课程(包年)"
+                          : it.CourseType === "online_auto"
+                            ? `远程私教课程（${it.LessonCount}节）`
+                            : it.CourseType === "online_video"
+                              ? `远程视频课（${it.LessonCount}节）`
+                              : "私教课程"
                 }}
               </text>
               <text v-else>自我训练</text>

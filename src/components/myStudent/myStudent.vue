@@ -4,7 +4,8 @@
       <template v-for="(item, index) in list" :key="item.ID">
         <div class="bg-white coachlist p-1">
           <div
-            class="lists-item flex flex-nowrap items-start justify-between p-1">
+            class="lists-item flex flex-nowrap items-start justify-between p-1"
+          >
             <div class="w-12 h-12 mr-2">
               <img
                 class="w-12 h-12 rounded-full"
@@ -13,15 +14,18 @@
                     ? item.Avatar
                     : 'https://img.yzcdn.cn/vant/user-inactive.png'
                 "
-                alt="" />
+                alt=""
+              />
             </div>
             <div
-              class="flex-1 flex pl-1 w-0 flex-row items-start justify-between">
+              class="flex-1 flex pl-1 w-0 flex-row items-start justify-between"
+            >
               <div class="text-box">
                 <div class="title">
                   <h1 class="w-full flex text-lg font-bold pt-2 items-center">
                     <span
-                      class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden">
+                      class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden"
+                    >
                       {{ item.CoachID !== 0 ? item.Username : "自我训练" }}
                     </span>
                     <span
@@ -29,38 +33,31 @@
                       class="max-w-[180px] mr-1 whitespace-nowrap text-ellipsis overflow-hidden text-[#fd72729d] text-xs"
                       >({{ item.StudentRemark }})</span
                     >
-                    <!-- <text
-                      v-if="item.Sex && item.CoachID !== 0"
-                      style="font-size: 25px; color: #a54aff"
-                      class="cuIcon-female w-10 h-10 text-2xl text-red margin-right-xs"
-                    ></text>
-
-                    <text
-                      v-if="item.CoachID !== 0"
-                      style="font-size: 25px; color: #16a9fa"
-                      class="cuIcon-male w-10 h-10 text-2xl text-red margin-right-xs"
-                    ></text> -->
                   </h1>
 
                   <p
                     v-if="item.CoachID !== 0"
-                    class="text-[#6b7280] text-[12px] w-max-[180px] break-all">
-                    {{ item.Name }} {{ handleCourseType(item.CourseType) }}
-                    {{ item.LessonCount ? item.LessonCount + "节" : "" }}
+                    class="text-[#6b7280] text-[12px] w-max-[180px] break-all"
+                  >
+                    <!-- {{ item.Name }} {{ handleCourseType(item.CourseType) }}
+                    {{ item.LessonCount ? item.LessonCount + "节" : "" }} -->
+                    {{ getLessonTypeMap(item.CourseType, item.LessonCount) }}
                     <span v-if="item.remark" class="text-[#ff6b6b]"
                       >({{ item.remark }})</span
                     >
                   </p>
                   <p
                     v-else
-                    class="text-[#6b7280] text-[12px] w-max-[180px] break-all">
+                    class="text-[#6b7280] text-[12px] w-max-[180px] break-all"
+                  >
                     为自己安排训练计划
                   </p>
                 </div>
               </div>
 
               <div
-                class="btn h-full mt-[17px] flex flex-row items-center gap-2">
+                class="btn h-full mt-[17px] flex flex-row items-center gap-2"
+              >
                 <van-button
                   @click="
                     todetail(
@@ -68,7 +65,8 @@
                       item.ID,
                       item.CoachPunchInAuth,
                       item.Name,
-                      item.StudentRemark
+                      item.StudentRemark,
+                      item.CourseType
                     )
                   "
                   color="#5ccee0"
@@ -99,26 +97,28 @@
         <van-empty description="暂无学员" />
       </div>
     </template>
-  <!-- 添加备注弹窗 -->
-  <van-dialog
-    use-slot
-    title="添加备注"
-    :show="showDialogAddTags"
-    show-cancel-button
-    @confirm="addTags"
-    @close="
-      () => {
-        addTagVal = '';
-        showDialogAddTags = false;
-      }
-    ">
-    <van-field
-      :value="addTagVal"
-      placeholder="输入备注"
-      maxlength="10"
-      @change="(e) => (addTagVal = e.detail)" />
-  </van-dialog>
-</div>
+    <!-- 添加备注弹窗 -->
+    <van-dialog
+      use-slot
+      title="添加备注"
+      :show="showDialogAddTags"
+      show-cancel-button
+      @confirm="addTags"
+      @close="
+        () => {
+          addTagVal = '';
+          showDialogAddTags = false;
+        }
+      "
+    >
+      <van-field
+        :value="addTagVal"
+        placeholder="输入备注"
+        maxlength="10"
+        @change="(e) => (addTagVal = e.detail)"
+      />
+    </van-dialog>
+  </div>
 </template>
 <script lang="ts" setup>
 import { useRouter } from "uni-mini-router";
@@ -132,6 +132,21 @@ const showDialogAddTags = ref(false);
 const currentRemark = ref("");
 const currentIndex = ref(-1);
 const addTagVal = ref("");
+const getLessonTypeMap = (type: string, count: number) => {
+  return type === "lesson"
+    ? `私教课程 ${count}节`
+    : type === "month"
+      ? "私教课程(包月)"
+      : type === "quarter"
+        ? "私教课程(包季)"
+        : type === "year"
+          ? "私教课程(包年)"
+          : type === "online_auto"
+            ? `远程私教课程（${count}节）`
+            : type === "online_video"
+              ? `远程视频课（${count}节）`
+              : "默认课程";
+};
 onMounted(() => {
   uni.showLoading({ title: "数据加载中" });
   getListData();
@@ -207,7 +222,8 @@ const todetail = (
   courseId: any,
   CoachPunchInAuth: any,
   name: any,
-  remark: any
+  remark: any,
+  courseType: any
 ) => {
   console.log("查看");
   useActionsStore().setClassID(courseId);
@@ -219,6 +235,7 @@ const todetail = (
       studentId: stuid,
       courseId: courseId,
       CoachPunchInAuth: CoachPunchInAuth,
+      CourseType: courseType,
     },
   });
 };

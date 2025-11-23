@@ -59,12 +59,14 @@
             />
           </van-tab>
           <van-tab title="线上任务">
-            <PlanList
-              type="online"
-              :list="list"
-              :LessonCount="state.LessonCount"
-              :EndTime="state.EndTime"
-              :CoachName="state.CoachName"
+            <PlanCard
+              :title="typeMap[onlineType]?.title || '--'"
+              :startDate="state.CreatedAt"
+              :endDate="state.EndTime"
+              :status="0"
+              :actionGroups="
+                list.filter((item) => !item.Complete && item.Type === 'online')
+              "
             />
           </van-tab>
           <van-tab title="已完成">
@@ -106,6 +108,17 @@ import type { actionGroup } from "@/components/mycourse/course";
 import PlanList from "@/components/mycourse/PlanList.vue";
 import PlanCard from "@/components/plan-card/index.vue";
 const checked = ref(false);
+const onlineType = ref("");
+const typeMap = {
+  online_auto: {
+    title: "远程私教课",
+    type: "online_auto",
+  },
+  online_video: {
+    title: "实时视频课",
+    type: "online_video",
+  },
+};
 let list = ref<actionGroup[]>([]); // 确保 list 被初始化为一个空数组
 const iddd = ref();
 const courseId = ref("");
@@ -220,6 +233,7 @@ const getIfTruth = () => {
     res.data.data.forEach((item) => {
       if (item.ID == courseId.value) {
         checked.value = item.CoachPunchInAuth;
+        onlineType.value = item.CourseType;
         return;
       }
     });
