@@ -90,12 +90,21 @@
 
     <div class="tab-title mt-2 bg-[#f8fafc] w-full">
       <van-tabs :active="tabStatus" @change="changeTab">
-        <van-tab title="线下计划" name="outline"></van-tab>
+        <van-tab
+          title="线下计划"
+          name="outline"
+          v-if="courseType !== 'online_auto' && courseType !== 'online_video'"
+        ></van-tab>
         <van-tab title="线上任务" name="online"></van-tab>
         <van-tab title="已完成" name="finish"></van-tab>
       </van-tabs>
     </div>
-    <van-collapse :value="activeName" @change="onChange" class="w-full">
+    <van-collapse
+      :value="activeName"
+      @change="onChange"
+      class="w-full"
+      v-if="tabStatus != 'finish'"
+    >
       <van-collapse-item name="1">
         <template v-slot:title>
           <div class="cardTitle py-2 w-full leading-10 px-3 rounded">
@@ -121,52 +130,6 @@
             </div>
           </div>
         </template>
-        <!-- <div
-          style="align-items: start"
-          class="w-full flex content-start items-start bg-[rgba(248,250,255,1)] justify-center cardBody flex-wrap"
-        >
-          <div
-            v-if="planList"
-            v-for="item in planList"
-            :key="item.ID"
-            class="action-group w-full"
-          >
-            <div class="flex justify-between items-center w-full">
-              <h2 class="text-xl font-extrabold px-2 py-2">
-                {{ item.PlanTime }}
-              </h2>
-              <span
-                v-if="item.show"
-                class="cuIcon-unfold"
-                @click="item.show = !item.show"
-              ></span>
-              <span
-                v-else
-                class="cuIcon-fold"
-                @click="item.show = !item.show"
-              ></span>
-            </div>
-            <div v-if="item.show">
-              <div
-                v-for="item2 in item.Actions"
-                :key="item2.title"
-                class="action-item flex my-1 flex-row w-full justify-between items-center"
-              >
-                <p class="ml-6 py-1">
-                  {{ item2.ActionName }} x {{ item2.GroupNum }}组
-                </p>
-                <van-checkbox
-                  :value="item2.Complete"
-                  checked-color="#ec6853"
-                  @change="changeCheck(item2)"
-                ></van-checkbox>
-              </div>
-            </div>
-          </div>
-          <div v-else>
-            <van-empty class="h-28" description="该课程暂无计划" />
-          </div>
-        </div> -->
         <PlanCard
           :isHideHeader="true"
           :status="1"
@@ -176,9 +139,95 @@
       </van-collapse-item>
     </van-collapse>
 
-    <!-- <div class="showmore w-11/12 text-center bg-[rgba(248,250,255,1)]">
-      展示更多 <van-icon name="arrow-down" />
-    </div> -->
+    <van-collapse
+      :value="activeName"
+      @change="onChange"
+      class="w-full"
+      v-if="tabStatus == 'finish'"
+    >
+      <van-collapse-item name="online">
+        <template v-slot:title>
+          <div class="cardTitle py-2 w-full leading-10 px-3 rounded">
+            <div class="font-bold">
+              {{ title
+              }}<span
+                class="ml-2 font-thin tracking-wider"
+                style="color: #6d819cff; margin-left: 2px"
+              ></span>
+            </div>
+            <div
+              style="
+                font-size: 14px;
+                margin-top: 10px;
+                width: 100%;
+                display: flex;
+                font-weight: 500;
+                justify-content: space-between;
+              "
+            >
+              <!-- <div>{{ item.day }} (起始时间)</div> -->
+              <div>线上任务</div>
+            </div>
+          </div>
+        </template>
+        <PlanCard
+          :isHideHeader="true"
+          :status="1"
+          :actionGroups="
+            showList.filter(
+              (item) =>
+                item.Type === 'online_auto' || item.Type === 'online_video'
+            )
+          "
+          @del="deletePlan"
+        />
+      </van-collapse-item>
+    </van-collapse>
+
+    <van-collapse
+      :value="activeName"
+      @change="onChange"
+      class="w-full"
+      v-if="
+        tabStatus == 'finish' &&
+        courseType !== 'online_auto' &&
+        courseType !== 'online_video'
+      "
+    >
+      <van-collapse-item name="outline">
+        <template v-slot:title>
+          <div class="cardTitle py-2 w-full leading-10 px-3 rounded">
+            <div class="font-bold">
+              {{ title
+              }}<span
+                class="ml-2 font-thin tracking-wider"
+                style="color: #6d819cff; margin-left: 2px"
+              ></span>
+            </div>
+            <div
+              style="
+                font-size: 14px;
+                margin-top: 10px;
+                width: 100%;
+                display: flex;
+                font-weight: 500;
+                justify-content: space-between;
+              "
+            >
+              <!-- <div>{{ item.day }} (起始时间)</div> -->
+              <div>线下计划</div>
+            </div>
+          </div>
+        </template>
+        <PlanCard
+          :isHideHeader="true"
+          :status="1"
+          :actionGroups="showList.filter((item) => item.Type === 'outline')"
+          @del="deletePlan"
+        />
+      </van-collapse-item>
+    </van-collapse>
+
     <div class="addmore w-11/12" @click="toAddClass">+ 添加课表</div>
     <van-dialog
       use-slot
@@ -205,6 +254,7 @@
             clickable
             data-name="OUTLINE"
             @click="() => chooseType('OUTLINE')"
+            v-if="courseType !== 'online_auto' && courseType !== 'online_video'"
           >
             <van-radio name="OUTLINE" />
           </van-cell>
@@ -299,6 +349,7 @@ const tagsList = ref<{ content: string; color: string }[]>([]);
 const tagsColor = ["rgb(144,199,97)", "rgb(226,198,29)", "rgb(217,9,84)"];
 const tabStatus = ref("outline");
 const columns = ref(["私教课"]);
+const courseType = ref("");
 const showSelectTime = ref(false);
 const changeTab = (e: any) => {
   console.log(e, "changeTab");
@@ -595,6 +646,7 @@ const getTags = async () => {
 // };
 onMounted(() => {
   query.value = router.route.value.query;
+  courseType.value = query.value.CourseType;
   initData();
   getTags();
   uni.$on("getNew", () => {
